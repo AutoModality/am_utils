@@ -12,7 +12,7 @@
 #include <geometry_msgs/Vector3Stamped.h>
 #include <iostream>
 #include <string>
-#include <brain_box_msgs/Latency.h>
+#include <am_utils/Latency.h>
 
 namespace am
 {
@@ -27,7 +27,7 @@ public:
 
     void setVector(geometry_msgs::Vector3Stamped& vec);
     void setVector(geometry_msgs::Vector3Stamped& vec, ros::Time t);
-    void setLatency(brain_box_msgs::Latency& latency);
+    void setLatency(am_utils::Latency& latency);
 
     void addData(double data_point);
 
