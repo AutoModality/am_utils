@@ -1,0 +1,3 @@
+LatencyHeader header
+
+geometry_msgs/PoseWithCovarianceStamped msg
