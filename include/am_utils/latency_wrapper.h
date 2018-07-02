@@ -155,6 +155,10 @@ public:
         max_epoch_time_ = max_epoch_time;
     }
 
+    void setLastMessageStamp(const ros::Time& t) {
+        last_msg_stamp_ = t;
+        last_message_stamp_init_ = true;
+    }
 private:
     unsigned char node_id_;
 
@@ -176,10 +180,6 @@ private:
     am_utils::LatencyHeader header_;
     ros::Time last_msg_stamp_;
     bool last_message_stamp_init_ {false};
-    void setLastMessageStamp(const ros::Time& t) {
-        last_msg_stamp_ = t;
-        last_message_stamp_init_ = true;
-    }
     void getLastMessageStamp(ros::Time& t) {
         t = last_message_stamp_init_ ? last_msg_stamp_ : ros::Time::now();
     }
