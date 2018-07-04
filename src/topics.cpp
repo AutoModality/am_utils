@@ -1,0 +1,20 @@
+#include <string>
+#include <am_utils/topics.h>
+
+using namespace am;
+
+constexpr char am_topics::FEATURE_ODOMETRY[];
+constexpr char am_topics::LIDAR_SCAN[];
+constexpr char am_topics::LIDAR_POINTCLOUD[];
+
+std::string am_topics::addLatencySuffix(const char *topic)
+{
+	std::string latency_topic = std::string(topic) + "/latency";
+	return latency_topic;
+}
+
+std::string am_topics::addDebugPrefix(const char *topic)
+{
+	std::string debug_topic = "/debug" + std::string(topic);
+	return debug_topic;
+}
