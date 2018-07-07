@@ -7,6 +7,18 @@ constexpr char am_topics::FEATURE_ODOMETRY[];
 constexpr char am_topics::LIDAR_SCAN[];
 constexpr char am_topics::LIDAR_POINTCLOUD[];
 
+std::string am_topics::addBodySuffix(const char *topic)
+{
+	std::string latency_topic = std::string(topic) + "/body_FLU";
+	return latency_topic;
+}
+
+std::string am_topics::addBodyLevelSuffix(const char *topic)
+{
+	std::string latency_topic = std::string(topic) + "/body_Level_FLU";
+	return latency_topic;
+}
+
 std::string am_topics::addLatencySuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "/latency";
