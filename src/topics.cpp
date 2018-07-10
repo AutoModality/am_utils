@@ -21,7 +21,7 @@ std::string am_topics::addBodyLevelSuffix(const char *topic)
 
 std::string am_topics::addLatencySuffix(const char *topic)
 {
-	std::string latency_topic = std::string(topic) + "/latency";
+	std::string latency_topic = std::string(topic) + "_latency";
 	return latency_topic;
 }
 
