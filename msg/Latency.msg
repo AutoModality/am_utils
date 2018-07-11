@@ -6,6 +6,8 @@ uint8 LOCATOR=10
 uint8 URG_NODE=20
 uint8 PCM=30
 uint8 CORR=40
+uint8 TEST_SEND=50
+uint8 TEST_RECV=60
 
 uint8 node_id
 
