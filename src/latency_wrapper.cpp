@@ -18,6 +18,14 @@ LatencyWrapper::~LatencyWrapper() {
     // TODO Auto-generated destructor stub
 }
 
+void LatencyWrapper::copyStats(const am_utils::LatencyHeader& header,
+                                     const ros::Time& stamp) {
+    // first copy string of existing stats
+    header_ = header;
+//    send_stats_updated_ = false;
+    setLastMessageStamp(stamp);
+}
+
 void LatencyWrapper::updateRecvStats(const am_utils::LatencyHeader& header,
                                      const ros::Time& stamp) {
     // first copy string of existing stats

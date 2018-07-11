@@ -160,7 +160,7 @@ public:
         last_message_stamp_init_ = true;
     }
 
-    void updateRecvStats(const am_utils::LatencyHeader& header, const ros::Time& stamp);
+    void copyStats(const am_utils::LatencyHeader& header, const ros::Time& stamp);
 
 private:
     unsigned char node_id_;
@@ -187,6 +187,7 @@ private:
         t = last_message_stamp_init_ ? last_msg_stamp_ : ros::Time::now();
     }
 
+    void updateRecvStats(const am_utils::LatencyHeader& header, const ros::Time& stamp);
     void updateSendStats(const ros::Time& stamp);
     void updateStats(am::Statistics& stats, ros::Time& last_epoch_stamp, const ros::Time& stamp);
 
