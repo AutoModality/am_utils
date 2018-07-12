@@ -23,6 +23,7 @@ add_message_files(
 	Latency_TwistWithCovarianceStamped.msg
 	Latency.msg
 	LatencyHeader.msg
+	LatencyTest.msg
 	)
 	
 generate_messages( DEPENDENCIES std_msgs nav_msgs geometry_msgs sensor_msgs)
