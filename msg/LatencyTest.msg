@@ -1,2 +1,2 @@
 Header header
-float32[100000] ranges
+float32[1000] ranges

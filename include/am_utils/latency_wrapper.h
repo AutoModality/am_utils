@@ -113,10 +113,10 @@ public:
 
     // This template should be called with the Latency_XXX type
     template <typename LT>
-    void advertise(std::string topic) {
+    void advertise(std::string topic, uint32_t queue_size) {
         pub_topic_ = topic + "_latency";
         ROS_INFO("LATENCY: Advertising to topic[%s]", pub_topic_.c_str());
-        pub_ = nh_->advertise<LT>(pub_topic_, 2);
+        pub_ = nh_->advertise<LT>(pub_topic_, queue_size);
     }
 
     // This template should be called with the Latency_XXX and the XXX type
@@ -128,6 +128,17 @@ public:
         updateSendStats(stamp);
         m.header = header_;
         m.msg = message;
+        pub_.publish(m);
+    }
+
+    template <typename LT, typename T>
+    void publishPtr(const T& message) {
+        LT m;
+        ros::Time stamp;
+        getLastMessageStamp(stamp);
+        updateSendStats(stamp);
+        m->header = header_;
+        m->msg = message;
         pub_.publish(m);
     }
 

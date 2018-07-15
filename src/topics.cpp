@@ -3,30 +3,47 @@
 
 using namespace am;
 
-constexpr char am_topics::FEATURE_ODOMETRY[];
-constexpr char am_topics::LIDAR_SCAN[];
-constexpr char am_topics::LIDAR_POINTCLOUD[];
+constexpr char am_topics::DJI_SDK_IMU[];
+constexpr char am_topics::DJI_SDK_RTK_POSITION[];
 
-std::string am_topics::addBodySuffix(const char *topic)
+constexpr char am_topics::FEATURE_ODOMETRY[];
+constexpr char am_topics::FEATURE_SEARCH_IDS[];
+
+constexpr char am_topics::SENSOR_LIDAR_SCAN[];
+constexpr char am_topics::SENSOR_LIDAR_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SS1_DEPTH_IMAGE_RECT[];
+constexpr char am_topics::SENSOR_SS1_DEPTH_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SS1_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SS2_DEPTH_IMAGE_RECT[];
+constexpr char am_topics::SENSOR_SS2_DEPTH_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SS2_POINTCLOUD[];
+
+constexpr char am_topics::STATUS_CEIL[];
+constexpr char am_topics::STATUS_CORR[];
+constexpr char am_topics::STATUS_LIDAR[];
+constexpr char am_topics::STATUS_SS1[];
+constexpr char am_topics::STATUS_SS2[];
+
+const char *am_topics::addBodySuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "/body_FLU";
-	return latency_topic;
+	return latency_topic.c_str();
 }
 
-std::string am_topics::addBodyLevelSuffix(const char *topic)
+const char *am_topics::addBodyLevelSuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "/body_Level_FLU";
-	return latency_topic;
+	return latency_topic.c_str();
 }
 
-std::string am_topics::addLatencySuffix(const char *topic)
+const char *am_topics::addLatencySuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "_latency";
-	return latency_topic;
+	return latency_topic.c_str();
 }
 
-std::string am_topics::addDebugPrefix(const char *topic)
+const char *am_topics::addDebugPrefix(const char *topic)
 {
 	std::string debug_topic = "/debug" + std::string(topic);
-	return debug_topic;
+	return debug_topic.c_str();
 }
