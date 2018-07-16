@@ -131,9 +131,9 @@ public:
         pub_.publish(m);
     }
 
-    template <typename LT, typename T>
+    template <typename LTP, typename LT, typename T>
     void publishPtr(const T& message) {
-        LT::Ptr m(new LT);
+        LTP m(new LT);
         ros::Time stamp;
         getLastMessageStamp(stamp);
         updateSendStats(stamp);
