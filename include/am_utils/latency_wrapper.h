@@ -133,7 +133,7 @@ public:
 
     template <typename LT, typename T>
     void publishPtr(const T& message) {
-        LT m;
+        LT::Ptr m(new LT);
         ros::Time stamp;
         getLastMessageStamp(stamp);
         updateSendStats(stamp);
