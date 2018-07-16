@@ -24,26 +24,47 @@ constexpr char am_topics::STATUS_LIDAR[];
 constexpr char am_topics::STATUS_SS1[];
 constexpr char am_topics::STATUS_SS2[];
 
-const char *am_topics::addBodySuffix(const char *topic)
+std::string am_topics::addBodySuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "/body_FLU";
-	return latency_topic.c_str();
+	return latency_topic;
 }
 
-const char *am_topics::addBodyLevelSuffix(const char *topic)
+std::string am_topics::addBodySuffix(std::string topic)
+{
+	return am_topics::addBodySuffix(topic.c_str());
+}
+
+std::string am_topics::addBodyLevelSuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "/body_Level_FLU";
-	return latency_topic.c_str();
+	return latency_topic;
 }
 
-const char *am_topics::addLatencySuffix(const char *topic)
+std::string am_topics::addBodyLevelSuffix(std::string topic)
+{
+	return am_topics::addBodyLevelSuffix(topic.c_str());
+}
+
+std::string am_topics::addLatencySuffix(const char *topic)
 {
 	std::string latency_topic = std::string(topic) + "_latency";
-	return latency_topic.c_str();
+	return latency_topic;
 }
 
-const char *am_topics::addDebugPrefix(const char *topic)
+std::string am_topics::addLatencySuffix(std::string topic)
+{
+	return am_topics::addLatencySuffix(topic.c_str());
+}
+
+std::string am_topics::addDebugPrefix(const char *topic)
 {
 	std::string debug_topic = "/debug" + std::string(topic);
-	return debug_topic.c_str();
+	return debug_topic;
 }
+
+std::string am_topics::addDebugPrefix(std::string topic)
+{
+	return am_topics::addDebugPrefix(topic.c_str());
+}
+

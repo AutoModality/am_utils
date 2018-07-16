@@ -28,10 +28,14 @@ public:
 	static constexpr char STATUS_SS1[] = "/status/ss1";
 	static constexpr char STATUS_SS2[] = "/status/ss2";
 
-	static const char *addBodySuffix(const char *topic);
-	static const char *addBodyLevelSuffix(const char *topic);
-	static const char *addLatencySuffix(const char *topic);
-	static const char *addDebugPrefix(const char *topic);
+	static std::string addBodySuffix(const char *topic);
+	static std::string addBodySuffix(std::string topic);
+	static std::string addBodyLevelSuffix(const char *topic);
+	static std::string addBodyLevelSuffix(std::string topic);
+	static std::string addLatencySuffix(const char *topic);
+	static std::string addLatencySuffix(std::string topic);
+	static std::string addDebugPrefix(const char *topic);
+	static std::string addDebugPrefix(std::string topic);
 };
 
 }
