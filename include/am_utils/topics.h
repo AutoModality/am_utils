@@ -21,6 +21,12 @@ public:
 	static constexpr char SENSOR_SS2_DEPTH_IMAGE_RECT[] = "/sensor/ss2/depth/image_rect";
 	static constexpr char SENSOR_SS2_DEPTH_CAMERA_INFO[] = "/sensor/ss2/depth/camera_info";
 	static constexpr char SENSOR_SS2_POINTCLOUD[] = "/sensor/ss2/pointcloud";
+	static constexpr char SENSOR_SC1_IMU[] = "/sensor/sc1/imu";
+	static constexpr char SENSOR_SC1_VISIBLE_IMAGE[] = "/sensor/sc1/visible/image";
+	static constexpr char SENSOR_SC1_VISIBLE_CAMERA_INFO[] = "/sensor/sc1/visible/camera_info";
+	static constexpr char SENSOR_SC1_DEPTH_IMAGE_RECT[] = "/sensor/sc1/depth/image_rect";
+	static constexpr char SENSOR_SC1_DEPTH_CAMERA_INFO[] = "/sensor/sc1/depth/camera_info";
+	static constexpr char SENSOR_SC1_POINTCLOUD[] = "/sensor/sc1/pointcloud";
 
 	static constexpr char STATUS_CEIL[] = "/status/ceil";
 	static constexpr char STATUS_CORR[] = "/status/corr";
