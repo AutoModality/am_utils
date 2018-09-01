@@ -17,12 +17,15 @@ constexpr char am_topics::SENSOR_SS1_POINTCLOUD[];
 constexpr char am_topics::SENSOR_SS2_DEPTH_IMAGE_RECT[];
 constexpr char am_topics::SENSOR_SS2_DEPTH_CAMERA_INFO[];
 constexpr char am_topics::SENSOR_SS2_POINTCLOUD[];
-constexpr char am_topics::SENSOR_SC1_IMU[];
-constexpr char am_topics::SENSOR_SC1_VISIBLE_IMAGE[];
-constexpr char am_topics::SENSOR_SC1_VISIBLE_CAMERA_INFO[];
+
 constexpr char am_topics::SENSOR_SC1_DEPTH_IMAGE_RECT[];
 constexpr char am_topics::SENSOR_SC1_DEPTH_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SC1_IMU[];
+constexpr char am_topics::SENSOR_SC1_IR_IMAGE[];
+constexpr char am_topics::SENSOR_SC1_IR_CAMERA_INFO[];
 constexpr char am_topics::SENSOR_SC1_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SC1_VISIBLE_IMAGE[];
+constexpr char am_topics::SENSOR_SC1_VISIBLE_CAMERA_INFO[];
 
 constexpr char am_topics::STATUS_CEIL[];
 constexpr char am_topics::STATUS_CORR[];
