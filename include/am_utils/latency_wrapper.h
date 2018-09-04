@@ -113,7 +113,7 @@ public:
 
     // This template should be called with the Latency_XXX type
     template <typename LT>
-    void advertise(std::string topic, uint32_t queue_size) {
+    void advertise(std::string topic, uint32_t queue_size = 10) {
         pub_topic_ = topic + "_latency";
         ROS_INFO("LATENCY: Advertising to topic[%s]", pub_topic_.c_str());
         pub_ = nh_->advertise<LT>(pub_topic_, queue_size);
