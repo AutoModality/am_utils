@@ -47,7 +47,7 @@ include_directories(
 )
 
 add_library(am_utils
-  src/latency_wrapper.cpp src/am_statistics.cpp src/topics.cpp
+  src/latency_wrapper.cpp src/am_statistics.cpp src/topics.cpp src/cansocket.cpp
  )
 target_link_libraries(am_utils ${catkin_LIBRARIES})
 add_dependencies(am_utils am_utils_generate_messages_cpp)
