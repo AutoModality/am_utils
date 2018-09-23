@@ -5,8 +5,8 @@
  *      Author: Automodality Inc.
  */
 
-#ifndef VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CANSOCKET_H_
-#define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CANSOCKET_H_
+#ifndef AM_UTILS_INCLUDE_CANSOCKET_H_
+#define AM_UTILS_INCLUDE_CANSOCKET_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,4 +50,4 @@ private:
 };
 
 
-#endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CANSOCKET_H_ */
+#endif /* AM_UTILS_INCLUDE_CANSOCKET_H_ */
