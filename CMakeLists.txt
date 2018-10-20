@@ -22,8 +22,10 @@ add_message_files(
 	Latency_TwistStamped.msg
 	Latency_TwistWithCovarianceStamped.msg
 	Latency.msg
+        Latency_String.msg
 	LatencyHeader.msg
 	LatencyTest.msg
+        DelayStats.msg
 	)
 	
 generate_messages( DEPENDENCIES std_msgs nav_msgs geometry_msgs sensor_msgs)
@@ -47,7 +49,7 @@ include_directories(
 )
 
 add_library(am_utils
-  src/latency_wrapper.cpp src/am_statistics.cpp src/topics.cpp src/cansocket.cpp
+  src/latency_wrapper.cpp src/am_statistics.cpp src/topics.cpp src/cansocket.cpp src/am_onlinestatistics.cpp 
  )
 target_link_libraries(am_utils ${catkin_LIBRARIES})
 add_dependencies(am_utils am_utils_generate_messages_cpp)
