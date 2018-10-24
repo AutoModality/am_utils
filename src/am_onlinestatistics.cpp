@@ -68,7 +68,7 @@ void OnlineStatistics::setDelayStats( am_utils::DelayStats &msg )
 {
   msg.count = cb.size();
   msg.mean_delay = getMean();
-  msg.variance_delay = getVariance();
+  msg.stddev_delay = sqrt(getVariance());
   msg.min_delay = getMin(); 
   msg.max_delay = getMax();
   msg.median_delay = getMedian();
