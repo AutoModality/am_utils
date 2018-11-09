@@ -22,8 +22,10 @@ add_message_files(
 	Latency_TwistStamped.msg
 	Latency_TwistWithCovarianceStamped.msg
 	Latency.msg
+        Latency_String.msg
 	LatencyHeader.msg
 	LatencyTest.msg
+        DelayStats.msg
 	)
 	
 generate_messages( DEPENDENCIES std_msgs nav_msgs geometry_msgs sensor_msgs)
@@ -31,7 +33,7 @@ generate_messages( DEPENDENCIES std_msgs nav_msgs geometry_msgs sensor_msgs)
 set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include include/am_utils
   LIBRARIES am_utils
   CATKIN_DEPENDS
     message_runtime
@@ -46,8 +48,15 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
 add_library(am_utils
-  src/latency_wrapper.cpp src/am_statistics.cpp src/topics.cpp
+  src/latency_wrapper.cpp src/am_statistics.cpp src/topics.cpp src/cansocket.cpp src/am_onlinestatistics.cpp 
  )
 target_link_libraries(am_utils ${catkin_LIBRARIES})
 add_dependencies(am_utils am_utils_generate_messages_cpp)
+
+install(TARGETS am_utils 
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  )
