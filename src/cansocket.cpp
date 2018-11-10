@@ -115,6 +115,9 @@ int CanSocket::readCAN(struct can_frame *frame)
 			ROS_INFO("nbytes: %d.", nbytes);
 			ROS_INFO("sizeof(struct can_frame): %d.", (int)sizeof(struct can_frame));
 			ROS_INFO("Read CAN: incomplete CAN frame.");
+			
+			releaseCANKey();
+			
 			return -1;
 		}
 		
