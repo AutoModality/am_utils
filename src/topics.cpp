@@ -10,13 +10,20 @@ constexpr char am_topics::FEATURE_ODOMETRY[];
 constexpr char am_topics::FEATURE_SEARCH_IDS[];
 
 constexpr char am_topics::SENSOR_LIDAR_SCAN[];
+constexpr char am_topics::SENSOR_LIDAR_SCAN_FILTERED[];
 constexpr char am_topics::SENSOR_LIDAR_POINTCLOUD[];
+constexpr char am_topics::SENSOR_LIDAR_POINTCLOUD2[];
+
 constexpr char am_topics::SENSOR_SS1_DEPTH_IMAGE_RECT[];
 constexpr char am_topics::SENSOR_SS1_DEPTH_CAMERA_INFO[];
 constexpr char am_topics::SENSOR_SS1_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SS1_POINTCLOUD2[];
+constexpr char am_topics::SENSOR_SS1_PCL[];
 constexpr char am_topics::SENSOR_SS2_DEPTH_IMAGE_RECT[];
 constexpr char am_topics::SENSOR_SS2_DEPTH_CAMERA_INFO[];
 constexpr char am_topics::SENSOR_SS2_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SS2_POINTCLOUD2[];
+constexpr char am_topics::SENSOR_SS2_PCL[];
 
 constexpr char am_topics::SENSOR_SC1_DEPTH_IMAGE_RECT[];
 constexpr char am_topics::SENSOR_SC1_DEPTH_CAMERA_INFO[];
@@ -26,6 +33,27 @@ constexpr char am_topics::SENSOR_SC1_IR_CAMERA_INFO[];
 constexpr char am_topics::SENSOR_SC1_POINTCLOUD[];
 constexpr char am_topics::SENSOR_SC1_VISIBLE_IMAGE[];
 constexpr char am_topics::SENSOR_SC1_VISIBLE_CAMERA_INFO[];
+
+constexpr char am_topics::SENSOR_SC2_DEPTH_IMAGE_RECT[];
+constexpr char am_topics::SENSOR_SC2_DEPTH_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SC2_IMU[];
+constexpr char am_topics::SENSOR_SC2_IR_IMAGE[];
+constexpr char am_topics::SENSOR_SC2_IR_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SC2_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SC2_VISIBLE_IMAGE[];
+constexpr char am_topics::SENSOR_SC2_VISIBLE_CAMERA_INFO[];
+
+constexpr char am_topics::SENSOR_SC3_DEPTH_IMAGE_RECT[];
+constexpr char am_topics::SENSOR_SC3_DEPTH_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SC3_IMU[];
+constexpr char am_topics::SENSOR_SC3_IR_IMAGE[];
+constexpr char am_topics::SENSOR_SC3_IR_CAMERA_INFO[];
+constexpr char am_topics::SENSOR_SC3_POINTCLOUD[];
+constexpr char am_topics::SENSOR_SC3_VISIBLE_IMAGE[];
+constexpr char am_topics::SENSOR_SC3_VISIBLE_CAMERA_INFO[];
+
+constexpr char am_topics::SENSOR_DISTANCE_AGL[];
+constexpr char am_topics::SENSOR_DISTANCE_DISTANCES_LW20[];
 
 constexpr char am_topics::STATUS_CEIL[];
 constexpr char am_topics::STATUS_CORR[];

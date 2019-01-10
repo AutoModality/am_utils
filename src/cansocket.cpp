@@ -54,12 +54,17 @@ int CanSocket::init(std::string ifname)
 	tv.tv_usec = 0;        // Not init'ing this can cause strange errors
 	setsockopt(s_, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
 
+	addr.can_family  = AF_CAN;
+
 	//ifr.ifr_name = ifname.c_str(); incompatible types in assignment of ‘const char*’ to ‘char [16]’
 	strcpy(ifr.ifr_name, ifname.c_str());
 	//ROS_INFO_STREAM("Interface name: " << ifr.ifr_name);
-	ioctl(s_, SIOCGIFINDEX, &ifr);
+	if(ioctl(s_, SIOCGIFINDEX, &ifr) < 0)
+	{
+		perror("SIOCGIFINDEX");
+		return -1;
+	}
 
-	addr.can_family  = AF_CAN;
 	addr.can_ifindex = ifr.ifr_ifindex;
 
 	ROS_INFO_STREAM(ifr.ifr_name << " at index " << ifr.ifr_ifindex);
@@ -115,6 +120,9 @@ int CanSocket::readCAN(struct can_frame *frame)
 			ROS_INFO("nbytes: %d.", nbytes);
 			ROS_INFO("sizeof(struct can_frame): %d.", (int)sizeof(struct can_frame));
 			ROS_INFO("Read CAN: incomplete CAN frame.");
+			
+			releaseCANKey();
+			
 			return -1;
 		}
 		
