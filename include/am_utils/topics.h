@@ -65,6 +65,8 @@ public:
 	static constexpr char STATUS_SS1[] = "/status/ss1";
 	static constexpr char STATUS_SS2[] = "/status/ss2";
 
+	static constexpr char LED_BLINK[] = "/blinkm_command";
+
 	static std::string addBodySuffix(const char *topic);
 	static std::string addBodySuffix(std::string topic);
 	static std::string addBodyLevelSuffix(const char *topic);

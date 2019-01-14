@@ -53,6 +53,7 @@ constexpr char am_topics::SENSOR_SC3_VISIBLE_IMAGE[];
 constexpr char am_topics::SENSOR_SC3_VISIBLE_CAMERA_INFO[];
 
 constexpr char am_topics::SENSOR_DISTANCE_AGL[];
+constexpr char am_topics::LED_BLINK[];
 constexpr char am_topics::SENSOR_DISTANCE_DISTANCES_LW20[];
 
 constexpr char am_topics::STATUS_CEIL[];
