@@ -18,6 +18,8 @@ public:
 	static constexpr char SENSOR_LIDAR_POINTCLOUD[] = "/sensor/lidar/pointcloud";
 	static constexpr char SENSOR_LIDAR_POINTCLOUD2[] = "/sensor/lidar/pointcloud2";
 
+	static constexpr char SENSOR_OUSTER_POINTCLOUD2[] = "/sensor/ouster/pointcloud2";
+
 	static constexpr char SENSOR_SS1_DEPTH_IMAGE_RECT[] = "/sensor/ss1/depth/image_rect";
 	static constexpr char SENSOR_SS1_DEPTH_CAMERA_INFO[] = "/sensor/ss1/depth/camera_info";
 	static constexpr char SENSOR_SS1_POINTCLOUD[] = "/sensor/ss1/pointcloud";

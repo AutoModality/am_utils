@@ -14,6 +14,8 @@ constexpr char am_topics::SENSOR_LIDAR_SCAN_FILTERED[];
 constexpr char am_topics::SENSOR_LIDAR_POINTCLOUD[];
 constexpr char am_topics::SENSOR_LIDAR_POINTCLOUD2[];
 
+constexpr char am_topics::SENSOR_OUSTER_POINTCLOUD2[];
+
 constexpr char am_topics::SENSOR_SS1_DEPTH_IMAGE_RECT[];
 constexpr char am_topics::SENSOR_SS1_DEPTH_CAMERA_INFO[];
 constexpr char am_topics::SENSOR_SS1_POINTCLOUD[];
