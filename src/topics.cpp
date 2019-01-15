@@ -55,7 +55,7 @@ constexpr char am_topics::SENSOR_SC3_VISIBLE_IMAGE[];
 constexpr char am_topics::SENSOR_SC3_VISIBLE_CAMERA_INFO[];
 
 constexpr char am_topics::SENSOR_DISTANCE_AGL[];
-constexpr char am_topics::LED_BLINK[];
+constexpr char am_topics::SENSOR_DISTANCE_AGL_LW[];
 constexpr char am_topics::SENSOR_DISTANCE_DISTANCES_LW20[];
 
 constexpr char am_topics::STATUS_CEIL[];
@@ -63,6 +63,8 @@ constexpr char am_topics::STATUS_CORR[];
 constexpr char am_topics::STATUS_LIDAR[];
 constexpr char am_topics::STATUS_SS1[];
 constexpr char am_topics::STATUS_SS2[];
+
+constexpr char am_topics::LED_BLINK[];
 
 std::string am_topics::addBodySuffix(const char *topic)
 {
