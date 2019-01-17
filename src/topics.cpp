@@ -65,6 +65,8 @@ constexpr char am_topics::STATUS_SS1[];
 constexpr char am_topics::STATUS_SS2[];
 
 constexpr char am_topics::LED_BLINK[];
+constexpr char am_topics::BATTERY_STATE[];
+
 
 std::string am_topics::addBodySuffix(const char *topic)
 {

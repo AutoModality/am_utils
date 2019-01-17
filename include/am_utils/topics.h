@@ -69,6 +69,7 @@ public:
 	static constexpr char STATUS_SS2[] = "/status/ss2";
 
 	static constexpr char LED_BLINK[] = "/blinkm_command";
+	static constexpr char BATTERY_STATE[] = "/dji_sdk/battery_state";
 
 	static std::string addBodySuffix(const char *topic);
 	static std::string addBodySuffix(std::string topic);
