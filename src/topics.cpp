@@ -79,6 +79,23 @@ constexpr char am_topics::SENSOR_CAMERA_240P_RECT_DOWN_BACK[];
 
 constexpr char am_topics::SENSOR_CAMERA_FPV_MAIN[];
 
+//dji sdk camera services
+constexpr char am_topics::DJI_CAMERA_240P_SERVICE[];
+constexpr char am_topics::DJI_CAMERA_VGA_SERVICE[];
+constexpr char am_topics::DJI_CAMERA_FPV_MAIN_SERVICE[];
+
+//dji sdk raw camera streams
+constexpr char am_topics::DJI_CAMERA_FPV_STREAM[];
+constexpr char am_topics::DJI_CAMERA_MAIN_STREAM[];
+constexpr char am_topics::DJI_CAMERA_240P_FRONT_LEFT_STREAM[];
+constexpr char am_topics::DJI_CAMERA_240P_FRONT_RIGHT_STREAM[];
+constexpr char am_topics::DJI_CAMERA_240P_DOWN_FRONT_STREAM[];
+constexpr char am_topics::DJI_CAMERA_240P_DOWN_BACK_STREAM[];
+constexpr char am_topics::DJI_CAMERA_VGA_FRONT_LEFT_STREAM[];
+constexpr char am_topics::DJI_CAMERA_VGA_FRONT_RIGHT_STREAM[];
+
+constexpr char SENSOR_CAMERA_SELECT_SERVICE[];
+
 
 std::string am_topics::addBodySuffix(const char *topic)
 {
