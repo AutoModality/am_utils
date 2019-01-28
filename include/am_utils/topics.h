@@ -62,6 +62,18 @@ public:
 	static constexpr char SENSOR_DISTANCE_AGL_LW[] = "/sensor/distance/agl_lw";
 	static constexpr char SENSOR_DISTANCE_DISTANCES_LW20[] = "/sensor/distance/distances_lw20";
 
+	static constexpr char SENSOR_CAMERA_240P_RAW_FRONT_LEFT[] = "/sensor/camera/front_left/image_raw";
+	static constexpr char SENSOR_CAMERA_240P_RAW_FRONT_RIGHT[] = "/sensor/camera/front_left/image_raw";
+	static constexpr char SENSOR_CAMERA_240P_RAW_DOWN_FRONT[] = "/sensor/camera/down_front/image_raw";
+	static constexpr char SENSOR_CAMERA_240P_RAW_DOWN_BACK[] = "/sensor/camera/down_back/image_raw";
+
+	static constexpr char SENSOR_CAMERA_240P_RECT_FRONT_LEFT[] = "/sensor/camera/front_left/image_rect";
+	static constexpr char SENSOR_CAMERA_240P_RECT_FRONT_RIGHT[] = "/sensor/camera/front_left/image_rect";
+	static constexpr char SENSOR_CAMERA_240P_RECT_DOWN_FRONT[] = "/sensor/camera/down_front/image_rect";
+	static constexpr char SENSOR_CAMERA_240P_RECT_DOWN_BACK[] = "/sensor/camera/down_back/image_rect";
+
+	static constexpr char SENSOR_CAMERA_FPV_MAIN[] = "/sensor/camera/fpv_main/image_raw";
+
 	static constexpr char STATUS_CEIL[] = "/status/ceil";
 	static constexpr char STATUS_CORR[] = "/status/corr";
 	static constexpr char STATUS_LIDAR[] = "/status/lidar";

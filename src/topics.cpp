@@ -67,6 +67,18 @@ constexpr char am_topics::STATUS_SS2[];
 constexpr char am_topics::LED_BLINK[];
 constexpr char am_topics::BATTERY_STATE[];
 
+constexpr char am_topics::SENSOR_CAMERA_240P_RAW_FRONT_LEFT[];
+constexpr char am_topics::SENSOR_CAMERA_240P_RAW_FRONT_RIGHT[];
+constexpr char am_topics::SENSOR_CAMERA_240P_RAW_DOWN_FRONT[];
+constexpr char am_topics::SENSOR_CAMERA_240P_RAW_DOWN_BACK[];
+
+constexpr char am_topics::SENSOR_CAMERA_240P_RECT_FRONT_LEFT[];
+constexpr char am_topics::SENSOR_CAMERA_240P_RECT_FRONT_RIGHT[];
+constexpr char am_topics::SENSOR_CAMERA_240P_RECT_DOWN_FRONT[];
+constexpr char am_topics::SENSOR_CAMERA_240P_RECT_DOWN_BACK[];
+
+constexpr char am_topics::SENSOR_CAMERA_FPV_MAIN[];
+
 
 std::string am_topics::addBodySuffix(const char *topic)
 {
