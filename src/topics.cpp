@@ -79,6 +79,18 @@ constexpr char am_topics::SENSOR_CAMERA_240P_RECT_DOWN_BACK[];
 
 constexpr char am_topics::SENSOR_CAMERA_FPV_MAIN[];
 
+//shared_memory topics
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RAW_FRONT_LEFT[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RAW_FRONT_RIGHT[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RAW_DOWN_FRONT[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RAW_DOWN_BACK[];
+
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RECT_FRONT_LEFT[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RECT_FRONT_RIGHT[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RECT_DOWN_FRONT[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_240P_RECT_DOWN_BACK[];
+constexpr char am_topics::SENSOR_CAMERA_SHM_FPV_MAIN[];
+
 //dji sdk camera services
 constexpr char am_topics::DJI_CAMERA_240P_SERVICE[];
 constexpr char am_topics::DJI_CAMERA_VGA_SERVICE[];
