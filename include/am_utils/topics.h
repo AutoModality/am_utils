@@ -106,6 +106,15 @@ public:
 	static constexpr char DJI_CAMERA_VGA_FRONT_LEFT_STREAM[] = "/dji_sdk/stereo_vga_front_left_images";
 	static constexpr char DJI_CAMERA_VGA_FRONT_RIGHT_STREAM[] = "/dji_sdk/stereo_vga_front_right_images";
 
+	static constexpr char DJI_CAMERA_SHM_FPV_STREAM[] = "/dji_sdk/shm/fpv_camera_images";
+	static constexpr char DJI_CAMERA_SHM_MAIN_STREAM[] = "/dji_sdk/shm/main_camera_images";
+	static constexpr char DJI_CAMERA_SHM_240P_FRONT_LEFT_STREAM[] = "/dji_sdk/shm/stereo_240p_front_left_images";
+	static constexpr char DJI_CAMERA_SHM_240P_FRONT_RIGHT_STREAM[] = "/dji_sdk/shm/stereo_240p_front_right_images";
+	static constexpr char DJI_CAMERA_SHM_240P_DOWN_FRONT_STREAM[] = "/dji_sdk/shm/stereo_240p_down_front_images";
+	static constexpr char DJI_CAMERA_SHM_240P_DOWN_BACK_STREAM[] = "/dji_sdk/shm/stereo_240p_down_back_images";
+	static constexpr char DJI_CAMERA_SHM_VGA_FRONT_LEFT_STREAM[] = "/dji_sdk/shm/stereo_vga_front_left_images";
+	static constexpr char DJI_CAMERA_SHM_VGA_FRONT_RIGHT_STREAM[] = "/dji_sdk/shm/stereo_vga_front_right_images";
+
 	static constexpr char SENSOR_CAMERA_SELECT_SERVICE[] = "/sensor/camera/camera_select";
 
 
