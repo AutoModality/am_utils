@@ -9,6 +9,10 @@ class am_topics
 public:
 	static constexpr char DJI_SDK_IMU[] = "/dji_sdk/imu";
 	static constexpr char DJI_SDK_RTK_POSITION[] = "/dji_sdk/rtk_position";
+	static constexpr char DJI_SDK_RC[] = "/dji_sdk/rc";
+	static constexpr char DJI_SDK_GIMBAL_ANG_CMD[] = "/dji_sdk/gimbal_angle_cmd";
+	static constexpr char DJI_SDK_GIMBAL_SPD_CMD[] = "/dji_sdk/gimbal_speed_cmd";
+	static constexpr char DJI_SDK_GIMBAL_ANG[] = "/dji_sdk/gimbal_angle";
 
 	static constexpr char FEATURE_ODOMETRY[] = "/feature/odometry";
 	static constexpr char FEATURE_SEARCH_IDS[] = "/feature/search_ids";

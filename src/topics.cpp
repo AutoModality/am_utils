@@ -5,6 +5,10 @@ using namespace am;
 
 constexpr char am_topics::DJI_SDK_IMU[];
 constexpr char am_topics::DJI_SDK_RTK_POSITION[];
+constexpr char am_topics::DJI_SDK_RC[];
+constexpr char am_topics::DJI_SDK_GIMBAL_ANG_CMD[];
+constexpr char am_topics::DJI_SDK_GIMBAL_SPD_CMD[];
+constexpr char am_topics::DJI_SDK_GIMBAL_ANG[];
 
 constexpr char am_topics::FEATURE_ODOMETRY[];
 constexpr char am_topics::FEATURE_SEARCH_IDS[];
