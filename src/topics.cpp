@@ -118,6 +118,7 @@ constexpr char am_topics::DJI_CAMERA_SHM_240P_DOWN_FRONT_STREAM[];
 constexpr char am_topics::DJI_CAMERA_SHM_240P_DOWN_BACK_STREAM[];
 constexpr char am_topics::DJI_CAMERA_SHM_VGA_FRONT_LEFT_STREAM[];
 constexpr char am_topics::DJI_CAMERA_SHM_VGA_FRONT_RIGHT_STREAM[];
+constexpr char am_topics::SENSOR_LIDAR_GROUND_REMOVED_POINTCLOUD2[];
 
 constexpr char am_topics::SENSOR_CAMERA_SELECT_SERVICE[];
 
