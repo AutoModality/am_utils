@@ -1,0 +1,13 @@
+Source: ros-kinetic-am-utils
+Section: unknown
+Priority: extra
+Maintainer: Jimi Damon <jdamon@automodality.com>
+Build-Depends: cmake, debhelper (>=9),javahelper
+Standards-Version: 3.9.6
+Homepage: <insert the upstream URL, if relevant>
+
+Package: ros-kinetic-am-utils
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description:  Utilites for AM based ROs packages
