@@ -11,7 +11,8 @@ jobs:
     - name: builddir
       run: mkdir -p catkin_ws/src
     - uses: actions/checkout@v1
-      path: catkin_ws/src
+      with:
+        path: catkin_ws/src
     - name: configure
       run: echo "Hello CI build world!"
 #    - name: make
