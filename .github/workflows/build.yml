@@ -15,6 +15,10 @@ jobs:
         path: catkin_ws/src
     - name: configure
       run: echo "Hello CI build world!"
+    - name: Init
+      run: cd catkin_ws && catkin init --reset
+    - name: Build
+      run: cd catkin_ws && catkin build
 #    - name: make
 #      run: make
 #    - name: make check
