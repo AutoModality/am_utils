@@ -8,7 +8,9 @@ jobs:
     runs-on: ubuntu-16.04
     name: Full Build
     steps:
-    - uses: actions/checkout@v1
+    - name: builddir
+      run: mkdir -p catkin_ws/src
+    - uses: actions/checkout@v1 catkin_ws/src
     - name: configure
       run: echo "Hello CI build world!"
 #    - name: make
