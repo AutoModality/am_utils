@@ -13,7 +13,7 @@ namespace am {
 class OnlineStatistics {
 public:
  OnlineStatistics() : OnlineStatistics(0) {};
- OnlineStatistics(size_t N) : ary_(0), cb(N) {};
+ OnlineStatistics(size_t N) : ary_(0), cb_(N) {};
   void addData( double val );
   void setSize( size_t N );
   void insertion_sort(std::vector<double>& ary);
@@ -29,11 +29,11 @@ public:
   
 private:
   size_t N;
-  boost::circular_buffer<double> cb;
+  std::vector<double> ary_;
+  boost::circular_buffer<double> cb_;
   double mean_; //  mean, median
   double m2n_;        // sum of squares of differences from current mean
   double var_, skew_, kurt_; //  variance, skewness, and kurtosis
-  std::vector<double> ary_;
 };
 
 
