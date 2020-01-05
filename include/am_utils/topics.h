@@ -120,6 +120,8 @@ public:
 	static constexpr char DJI_CAMERA_SHM_VGA_FRONT_RIGHT_STREAM[] = "/dji_sdk/shm/stereo_vga_front_right_images";
 
 	static constexpr char SENSOR_CAMERA_SELECT_SERVICE[] = "/sensor/camera/camera_select";
+	
+	static constexpr char SENSOR_LIDAR_GROUND_REMOVED_POINTCLOUD2[] = "/sensor/lidar/ground_removed/pointcloud2";
 
 
 	static constexpr char STATUS_CEIL[] = "/status/ceil";
