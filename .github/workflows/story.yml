@@ -10,7 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: make
-        uses: docker://docker.cloudsmith.io/automodality/trial/amros-base:latest
-        run: debian/rules build
+        uses: docker://docker.cloudsmith.io/automodality/trial/amros-base:latest "debian/rules build"
 #uses: ./.github/actions/make@local
 
