@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v1
-      - name: make
-        uses: docker://docker.cloudsmith.io/automodality/trial/amros-base:latest "debian/rules build"
+      - uses: ./.github/actions/make@local
 #uses: ./.github/actions/make@local
 
