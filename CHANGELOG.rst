@@ -1,4 +1,4 @@
-(unreleased)
+v1.0.1 (2020-01-06)
 ------------
 - Adding changelog for original release feature/BB-772. [Jimi Damon]
 
