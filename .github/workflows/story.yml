@@ -12,5 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: make
-        uses: ./.github/actions/make@local
+        run: debian/rules build
+#uses: ./.github/actions/make@local
 
