@@ -10,6 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-16.04
     steps:
+      - uses: docker.cloudsmith.io/automodality/trial/amros-base:latest
       - uses: actions/checkout@v1
       - name: make
         run: debian/rules build
