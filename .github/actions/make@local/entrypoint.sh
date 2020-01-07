@@ -4,11 +4,11 @@ set -e # fail on error
 
 cd /github/workspace
 
-source /opt/ros/kinetic/setup.bash
-
-rm -rf build #clean the build
-mkdir build
-cd build
-pwd
-cmake ..
-make
+dpkg-buildpackage -b -us -uc
+# source /opt/ros/kinetic/setup.bash
+# rm -rf build #clean the build
+# mkdir build
+# cd build
+# pwd
+# cmake ..
+# make
