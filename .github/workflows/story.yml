@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v1
-      - name: make
-        uses: AutoModality/action-make-ros@v1.0.0
+      - name: Package
+        uses: AutoModality/action-package-debian-ros@v1.1.1
+
 

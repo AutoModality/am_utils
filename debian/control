@@ -1,13 +1,12 @@
 Source: ros-kinetic-am-utils
-Section: unknown
+Section: misc
 Priority: extra
-Maintainer: Jimi Damon <jdamon@automodality.com>
-Build-Depends: cmake, debhelper (>=9),javahelper
-Standards-Version: 3.9.6
-Homepage: <insert the upstream URL, if relevant>
+Maintainer: info <info@automodality.com>
+Build-Depends: debhelper (>= 9.0.0), ros-kinetic-catkin, ros-kinetic-geometry-msgs, ros-kinetic-message-generation, ros-kinetic-nav-msgs, ros-kinetic-rosconsole, ros-kinetic-roscpp, ros-kinetic-rostime, ros-kinetic-sensor-msgs, ros-kinetic-std-msgs
+Homepage: https://github.com/AutoModality/am-utils
+Standards-Version: 3.9.2
 
 Package: ros-kinetic-am-utils
 Architecture: any
-Multi-Arch: foreign
-Depends: ${misc:Depends}, ${shlibs:Depends}
-Description:  Utilites for AM based ROs packages
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-kinetic-geometry-msgs, ros-kinetic-message-runtime, ros-kinetic-nav-msgs, ros-kinetic-rosconsole, ros-kinetic-roscpp, ros-kinetic-rostime, ros-kinetic-sensor-msgs, ros-kinetic-std-msgs
+Description: The am utils package

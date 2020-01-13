@@ -14,14 +14,13 @@ jobs:
         with:
           semantic_version: 15.14.0
           extra_plugins: |
-            @semantic-release/git
             @semantic-release/changelog@3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Package
         if: steps.semantic.outputs.new_release_published == 'true'
         id: package
-        uses: AutoModality/action-package-debian-ros@v1.1.0
+        uses: AutoModality/action-package-debian-ros@v1.1.1
         with:
           version: ${{ steps.semantic.outputs.new_release_version }}
       - name: The generated package
