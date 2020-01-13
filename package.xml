@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>am_utils</name>
-  <version>0.0.0</version>
+  <version>1.0.1</version>
   <description>The am utils package</description>
   <maintainer email="info@automodality.com">info</maintainer>
   <license>BSD</license>
@@ -12,7 +12,9 @@
   <depend>nav_msgs</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
-
+  <depend>roscpp</depend>
+  <depend>rosconsole</depend>
+  <depend>rostime</depend>
   <build_depend>message_generation</build_depend>
   <exec_depend>message_runtime</exec_depend>
   
