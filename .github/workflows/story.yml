@@ -10,8 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Package
-        uses: AutoModality/action-package-debian-ros@BB-790/amros-dockerfile
-        with: 
-          dev-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_DEV_ENTITLEMENT }}
+        uses: AutoModality/action-package-debian-ros@v1.1.1
 
 
