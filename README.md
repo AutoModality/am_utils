@@ -10,6 +10,30 @@ A common library for sharing core code.
 | [![Release](https://github.com/AutoModality/am-utils/workflows/Release/badge.svg)](https://github.com/AutoModality/am-utils/actions?query=workflow%3A%22Release)  | [![Latest Version @ Cloudsmith](https://api-prd.cloudsmith.io/badges/version/automodality/release/deb/ros-kinetic-am-utils/latest/d=ubuntu%252Fxenial;t=1/?render=true&badge_token=gAAAAABeEYCXaXnvhWBdS0An17OCBntPch8LyCzJnPoQYMA4Ng8uIJnw2hvwdvv_NBqAOTu76_FBfvns72pfHrzV2xWoBFEvGA-hns2hV-4yu2BmqWtHCT0%3D)](https://cloudsmith.io/~automodality/repos/release/packages/detail/deb/ros-kinetic-am-utils/latest/d=ubuntu%252Fxenial;t=1/)|
 
 
+## Run in Docker
+
+Mounts your local clone of this repository to `/workspace` directory in a docker container.
+
+**Prerequisites**
+* Docker is installed
+* This repository is cloned 
+* Your current directory is the root of this repository
+
+```
+docker run -w /workspace -v `pwd`:/workspace -it docker.cloudsmith.io/automodality/dev/amros-base
+```
+
+## Build
+
+Build with debian in docker.
+
+```
+
+
+## Package 
+
+Runs `Build` and packages for installation.
+
 ## Releases
 
 See [releases](https://github.com/AutoModality/am-utils/releases) for the latest.  Follows the standard [Development Lifecycle](https://automodality.atlassian.net/wiki/spaces/AUTOMOD/pages/668664251/Development+Lifecycle). 
