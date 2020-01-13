@@ -7,7 +7,10 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   genmsg
   std_msgs
-  sensor_msgs)
+  sensor_msgs
+  rosconsole
+  rostime
+  )
 
 add_message_files( 
 	DIRECTORY msg
