@@ -21,6 +21,8 @@ Mounts your local clone of this repository to `/workspace` directory in a docker
 
 ```
 docker run -w /workspace -v `pwd`:/workspace -it docker.cloudsmith.io/automodality/dev/amros-base
+debian/rules clean
+debian/rules build
 ```
 
 ## Build
