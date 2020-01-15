@@ -1,4 +1,4 @@
-name: Release Candidate
+name: ARM Release Candidate
 on: 
   pull_request:
     branches:
