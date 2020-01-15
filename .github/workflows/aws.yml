@@ -1,4 +1,4 @@
-name: Story Development
+name: AWS Test Development
 
 on:
   push:
