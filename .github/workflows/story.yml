@@ -6,7 +6,11 @@ on:
       - master
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04,ubuntu-16.04, self-hosted]
+      fail-fast: true
     steps:
       - uses: actions/checkout@v1
       - name: Package
