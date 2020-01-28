@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2.1.3
+        uses: AutoModality/semantic-release-action@node-warning
         id: semantic   # `id` for output variables
         with:
           semantic_version: 16.0.4
