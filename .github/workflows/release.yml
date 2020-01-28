@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Semantic Release
+        # FIXME: change to released version
         uses: AutoModality/semantic-release-action@node-warning
         id: semantic   # `id` for output variables
         with:
