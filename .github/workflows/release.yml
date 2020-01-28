@@ -12,7 +12,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         id: semantic   # `id` for output variables
         with:
-          semantic_version: 15.14.0
+          semantic_version: 17.0.0
           extra_plugins: |
             @semantic-release/changelog@3.0.0
         env:
