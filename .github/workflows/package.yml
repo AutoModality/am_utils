@@ -8,13 +8,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04,self-hosted]
+        os: [ubuntu-18.04, self-hosted]
       fail-fast: true
     steps:
       - uses: actions/checkout@v1
       - name: Package
         id: package
-        uses: AutoModality/action-package-debian-ros@BB-789/sudo
+        uses: AutoModality/action-package-debian-ros@v1.3.0
         with:
           branch: ${{ github.event.pull_request.head.ref }}
           pull-request-number: ${{ github.event.number }}
