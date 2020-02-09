@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Package
-        uses: AutoModality/action-package-debian-ros@v1.3.0
+        uses: AutoModality/action-package-debian-ros@BB-800/melodic
         
 
 
