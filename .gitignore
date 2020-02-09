@@ -36,3 +36,5 @@ catkin_ws
 debian/ros-*
 debian/debhelper-build-stamp
 debian/source
+debian/.debhelper
+ros-*-build-deps_*
