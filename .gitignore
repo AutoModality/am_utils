@@ -33,7 +33,6 @@
 
 
 catkin_ws
-debian/ros-kinetic-*.debhelper.log
-debian/ros-kinetic-am-utils*
+debian/ros-*
 debian/debhelper-build-stamp
 debian/source
