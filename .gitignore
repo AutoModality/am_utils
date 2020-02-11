@@ -37,3 +37,6 @@ debian/ros-kinetic-*.debhelper.log
 debian/ros-kinetic-am-utils*
 debian/debhelper-build-stamp
 debian/source
+ros-*-am-utils-*
+debian/.debhelper
+debian/ros-*-am-utils*
