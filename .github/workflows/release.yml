@@ -43,6 +43,8 @@ jobs:
     needs: release
     name: Package if released
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Download release
         uses: actions/download-artifact@v1
         with:
