@@ -81,4 +81,3 @@ jobs:
           distro: 'ubuntu'
           release: 'xenial'
           file: '${{ steps.package.outputs.artifact-path }}'
-
