@@ -27,7 +27,7 @@ public:
 
     void setVector(geometry_msgs::Vector3Stamped& vec);
     void setVector(geometry_msgs::Vector3Stamped& vec, ros::Time t);
-    void setLatency(am_utils::Latency& latency);
+    void setLatency(brain_box_msgs::Latency& latency);
 
     void addData(double data_point);
 

@@ -17,7 +17,7 @@ public:
   void addData( double val );
   void setSize( size_t N );
   void insertion_sort(std::vector<double>& ary);
-  void setDelayStats( am_utils::DelayStats &msg );
+  void setDelayStats( brain_box_msgs::DelayStats &msg );
   inline double getMean() const {return mean_;}
   inline double getVariance() const {return var_;}
   inline double getMin() const {return ary_.front();}
