@@ -12,7 +12,7 @@
 #include <geometry_msgs/Vector3Stamped.h>
 #include <iostream>
 #include <string>
-#include <am_utils/Latency.h>
+#include <brain_box_msgs/Latency.h>
 
 namespace am
 {

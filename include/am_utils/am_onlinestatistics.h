@@ -6,7 +6,7 @@
 #include <math.h>       /* pow */
 #include <vector>
 #include <list>
-#include "am_utils/DelayStats.h"
+#include <brain_box_msgs/DelayStats.h>
 
 namespace am {
 
