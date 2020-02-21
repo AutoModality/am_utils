@@ -53,6 +53,8 @@ add_library(am_utils
 
 target_link_libraries(am_utils ${catkin_LIBRARIES})
 
+add_dependencies(am_utils brain_box_msgs_generate_messages_cpp)
+
 install(TARGETS am_utils 
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   )
