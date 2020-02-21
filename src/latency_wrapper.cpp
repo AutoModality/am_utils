@@ -18,7 +18,7 @@ LatencyWrapper::~LatencyWrapper() {
     // TODO Auto-generated destructor stub
 }
 
-void LatencyWrapper::copyStats(const am_utils::LatencyHeader& header,
+void LatencyWrapper::copyStats(const brain_box_msgs::LatencyHeader& header,
                                      const ros::Time& stamp) {
     // first copy string of existing stats
     header_ = header;
@@ -26,7 +26,7 @@ void LatencyWrapper::copyStats(const am_utils::LatencyHeader& header,
     setLastMessageStamp(stamp);
 }
 
-void LatencyWrapper::updateRecvStats(const am_utils::LatencyHeader& header,
+void LatencyWrapper::updateRecvStats(const brain_box_msgs::LatencyHeader& header,
                                      const ros::Time& stamp) {
     // first copy string of existing stats
     header_ = header;
@@ -37,7 +37,7 @@ void LatencyWrapper::updateRecvStats(const am_utils::LatencyHeader& header,
     updateStats(receive_stats_, last_recv_epoch_, stamp);
 
     // Add them to the received header
-    am_utils::Latency lt;
+    brain_box_msgs::Latency lt;
     receive_stats_.setLatency(lt);
     lt.send = false;
     lt.node_id = node_id_;
@@ -47,7 +47,7 @@ void LatencyWrapper::updateRecvStats(const am_utils::LatencyHeader& header,
 void LatencyWrapper::printStats(std::string prefix) {
     printf("%s\n", prefix.c_str());
     int i = 0;
-    for (std::vector<am_utils::Latency>::iterator it = header_.latency.begin();
+    for (std::vector<brain_box_msgs::Latency>::iterator it = header_.latency.begin();
             it != header_.latency.end(); it++)
     {
         printf("   %d: node_id[%u] send[%s] current[%0.4f] min[%0.4f]  max[%0.4f]  avg[%0.4f]\n", i++,
@@ -96,7 +96,7 @@ void LatencyWrapper::updateSendStats(const ros::Time& stamp) {
     else
     {
         // Add a new one to the header_
-        am_utils::Latency lt;
+    	brain_box_msgs::Latency lt;
         send_stats_.setLatency(lt);
         lt.send = true;
         lt.node_id = node_id_;
@@ -110,11 +110,11 @@ void LatencyWrapper::subscribe(std::string topic, PoseStamped_Func callback) {
     sub_topic_ = topic + "_latency";
     ROS_INFO("LATENCY: SUBSCRIBING TO topic[%s]", sub_topic_.c_str());
     pose_stamped_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_PoseStamped>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_PoseStamped>(
             sub_topic_, 10, &LatencyWrapper::poseStamped_CB, this);
 }
 void LatencyWrapper::poseStamped_CB(
-        const am_utils::Latency_PoseStamped::ConstPtr& msg) {
+        const brain_box_msgs::Latency_PoseStamped::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -127,11 +127,11 @@ void LatencyWrapper::subscribe(std::string topic, PoseWithCovarianceStamped_Func
     sub_topic_ = topic + "_latency";
 //    ROS_INFO("LATENCY: SUBSCRIBING TO topic[%s]", sub_topic_.c_str());
     pose_with_covariance_stamped_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_PoseWithCovarianceStamped>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_PoseWithCovarianceStamped>(
             sub_topic_, 10, &LatencyWrapper::poseWithCovarianceStamped_CB, this);
 }
 void LatencyWrapper::poseWithCovarianceStamped_CB(
-        const am_utils::Latency_PoseWithCovarianceStamped::ConstPtr& msg) {
+        const brain_box_msgs::Latency_PoseWithCovarianceStamped::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -143,11 +143,11 @@ void LatencyWrapper::poseWithCovarianceStamped_CB(
 void LatencyWrapper::subscribe(std::string topic, TwistStamped_Func callback) {
     sub_topic_ = topic + "_latency";
     twist_stamped_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_TwistStamped>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_TwistStamped>(
             sub_topic_, 10, &LatencyWrapper::twistStamped_CB, this);
 }
 void LatencyWrapper::twistStamped_CB(
-        const am_utils::Latency_TwistStamped::ConstPtr& msg) {
+        const brain_box_msgs::Latency_TwistStamped::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -159,11 +159,11 @@ void LatencyWrapper::twistStamped_CB(
 void LatencyWrapper::subscribe(std::string topic, TwistWithCovarianceStamped_Func callback) {
     sub_topic_ = topic + "_latency";
     twist_with_covariance_stamped_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_TwistWithCovarianceStamped>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_TwistWithCovarianceStamped>(
             sub_topic_, 10, &LatencyWrapper::twistWithCovarianceStamped_CB, this);
 }
 void LatencyWrapper::twistWithCovarianceStamped_CB(
-        const am_utils::Latency_TwistWithCovarianceStamped::ConstPtr& msg) {
+        const brain_box_msgs::Latency_TwistWithCovarianceStamped::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -175,11 +175,11 @@ void LatencyWrapper::twistWithCovarianceStamped_CB(
 void LatencyWrapper::subscribe(std::string topic, Odometry_Func callback) {
     sub_topic_ = topic + "_latency";
     odometry_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_Odometry>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_Odometry>(
             sub_topic_, 10, &LatencyWrapper::odometry_CB, this);
 }
 void LatencyWrapper::odometry_CB(
-        const am_utils::Latency_Odometry::ConstPtr& msg) {
+        const brain_box_msgs::Latency_Odometry::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -191,11 +191,11 @@ void LatencyWrapper::odometry_CB(
 void LatencyWrapper::subscribe(std::string topic, Image_Func callback) {
     sub_topic_ = topic + "_latency";
     image_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_Image>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_Image>(
             sub_topic_, 10, &LatencyWrapper::image_CB, this);
 }
 void LatencyWrapper::image_CB(
-        const am_utils::Latency_Image::ConstPtr& msg) {
+        const brain_box_msgs::Latency_Image::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -207,11 +207,11 @@ void LatencyWrapper::image_CB(
 void LatencyWrapper::subscribe(std::string topic, LaserScan_Func callback) {
     sub_topic_ = topic + "_latency";
     laser_scan_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_LaserScan>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_LaserScan>(
             sub_topic_, 10, &LatencyWrapper::laserScan_CB, this);
 }
 void LatencyWrapper::laserScan_CB(
-        const am_utils::Latency_LaserScan::ConstPtr& msg) {
+        const brain_box_msgs::Latency_LaserScan::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -223,11 +223,11 @@ void LatencyWrapper::laserScan_CB(
 void LatencyWrapper::subscribe(std::string topic, PointCloud_Func callback) {
     sub_topic_ = topic + "_latency";
     point_cloud_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_PointCloud>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_PointCloud>(
             sub_topic_, 10, &LatencyWrapper::pointCloud_CB, this);
 }
 void LatencyWrapper::pointCloud_CB(
-        const am_utils::Latency_PointCloud::ConstPtr& msg) {
+        const brain_box_msgs::Latency_PointCloud::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
@@ -239,11 +239,11 @@ void LatencyWrapper::pointCloud_CB(
 void LatencyWrapper::subscribe(std::string topic, PointCloud2_Func callback) {
     sub_topic_ = topic + "_latency";
     point_cloud2_cb_ = callback;
-    sub_ = nh_->subscribe<am_utils::Latency_PointCloud2>(
+    sub_ = nh_->subscribe<brain_box_msgs::Latency_PointCloud2>(
             sub_topic_, 10, &LatencyWrapper::pointCloud2_CB, this);
 }
 void LatencyWrapper::pointCloud2_CB(
-        const am_utils::Latency_PointCloud2::ConstPtr& msg) {
+        const brain_box_msgs::Latency_PointCloud2::ConstPtr& msg) {
     // update the stats
     updateRecvStats(msg->header, msg->msg.header.stamp);
 
