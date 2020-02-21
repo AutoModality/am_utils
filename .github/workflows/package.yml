@@ -14,7 +14,7 @@ jobs:
       - name: Remove File
         uses: JesseTG/rm@v1.0.0
         with:
-          path: .
+          path: ./*
       - uses: actions/checkout@v1
       - name: Package
         id: package
