@@ -11,6 +11,8 @@ jobs:
         os: [ubuntu-18.04, [self-hosted,linux,arm64]]
       fail-fast: true
     steps:
+      - name: Clean persistent build machines
+        run: sudo rm -rf *
       - uses: actions/checkout@v1
       - name: Package
         id: package
