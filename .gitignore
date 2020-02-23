@@ -38,3 +38,6 @@ debian/debhelper-build-stamp
 debian/source
 debian/.debhelper
 ros-*-build-deps_*
+ros-*-am-utils-*
+debian/.debhelper
+debian/ros-*-am-utils*
