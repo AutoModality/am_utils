@@ -19,8 +19,11 @@ jobs:
         with:
           path: catkin_ws
           key: ${{ hashFiles('CMakeLists.txt') }}
+      - name: Cache Found
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: du -sh catkin_ws/
       - name: Package
-        uses: AutoModality/action-package-debian-ros@v1.3.2
+        uses: AutoModality/action-package-debian-ros@AM-21/cache-needs-files
         with:
           dev-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_DEV_ENTITLEMENT }}
           release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
