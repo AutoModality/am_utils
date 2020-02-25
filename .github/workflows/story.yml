@@ -12,7 +12,13 @@ jobs:
         os: [ubuntu-18.04]
       fail-fast: true
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Cache
+        id: cache
+        uses: actions/cache@v1
+        with:
+          path: catkin_ws
+          key: ${{ hashFiles('CMakeLists.txt') }}
       - name: Package
         uses: AutoModality/action-package-debian-ros@v1.3.2
         with:
