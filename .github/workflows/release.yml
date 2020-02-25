@@ -61,10 +61,20 @@ jobs:
         with:
           path: 'release/release.properties'
           property: 'version'
+      - name: Cache
+        id: cache
+        if: steps.cache.outputs.cache-hit == 'true'
+        uses: actions/cache@v1
+        with:
+          path: catkin_ws
+          key: ${{ hashFiles('CMakeLists.txt') }}
+      - name: Cache Found
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: du -sh catkin_ws/
       - name: Package if published
         if: steps.published.outputs.value == 'true'
         id: package
-        uses: AutoModality/action-package-debian-ros@v1.3.2
+        uses: AutoModality/action-package-debian-ros@v1.4.1
         with:
           version: ${{ steps.version.outputs.value }}
           release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
