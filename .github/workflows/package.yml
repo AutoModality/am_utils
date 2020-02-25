@@ -10,14 +10,10 @@ jobs:
       matrix:
         os: [ubuntu-18.04, [self-hosted,linux,arm64]]
     steps:
-      - name: Remove File
-        uses: JesseTG/rm@v1.0.0
-        with:
-          path: '*'
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Package
         id: package
-        uses: AutoModality/action-package-debian-ros@v1.3.2
+        uses: AutoModality/action-package-debian-ros@v2.0.0
         with:
           branch: ${{ github.event.pull_request.head.ref }}
           pull-request-number: ${{ github.event.number }}
