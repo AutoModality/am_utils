@@ -6,12 +6,9 @@ on:
       - master
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-18.04]
-      fail-fast: true
+    runs-on: self-hosted
     steps:
+      - uses: .github/actions/clean@local
       - uses: actions/checkout@v2
       - name: Package
         uses: AutoModality/action-package-debian-ros@v2.0.0
