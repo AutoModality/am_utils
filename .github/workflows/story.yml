@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - uses: .github/actions/clean@local
+      - uses: ./.github/actions/clean@local
       - uses: actions/checkout@v2
       - name: Package
         uses: AutoModality/action-package-debian-ros@v2.0.0
