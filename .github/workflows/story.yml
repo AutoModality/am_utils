@@ -8,9 +8,7 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - uses: JesseTG/rm
-        with:
-          path: '*'
+      - uses: AutoModality/action-clean@master
       - uses: actions/checkout@v2
       - name: Package
         uses: AutoModality/action-package-debian-ros@v2.0.0
