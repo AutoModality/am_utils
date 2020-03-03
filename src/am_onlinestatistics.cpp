@@ -4,7 +4,7 @@
 #include <math.h>       /* pow */
 #include <vector>
 #include <list>
-#include "am_utils/am_onlinestatistics.h"
+#include <am_utils/am_onlinestatistics.h>
 
 namespace am {
 
@@ -64,7 +64,7 @@ void OnlineStatistics::setSize( size_t N )
   ary_.clear();
 }
   
-void OnlineStatistics::setDelayStats( am_utils::DelayStats &msg )
+void OnlineStatistics::setDelayStats( brain_box_msgs::DelayStats &msg )
 {
   msg.count = cb_.size();
   msg.mean_delay = getMean();

@@ -60,7 +60,7 @@ std::ostream& Statistics::operator <<(std::ostream& os) {
     return os;
 }
 
-void Statistics::setLatency(am_utils::Latency& latency) {
+void Statistics::setLatency(brain_box_msgs::Latency& latency) {
     latency.cur_delay = current;
     latency.avg_delay = average;
     latency.max_delay = maximum;
