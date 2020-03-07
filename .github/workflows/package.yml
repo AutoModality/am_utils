@@ -11,7 +11,8 @@ jobs:
         os: [ubuntu-18.04, [self-hosted,linux,arm64]]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v1
+      - uses: AutoModality/action-clean@v1
+      - uses: actions/checkout@v2
       - name: Package
         id: package
         uses: AutoModality/action-package-debian-ros@BB-800/melodic
