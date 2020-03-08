@@ -13,6 +13,7 @@ jobs:
         uses: AutoModality/action-package-debian-ros@BB-800/melodic-perception
         with:
           dev-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_DEV_ENTITLEMENT }}
+          release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
 
 
 
