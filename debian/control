@@ -2,11 +2,32 @@ Source: ros-melodic-am-utils
 Section: misc
 Priority: extra
 Maintainer: info <info@automodality.com>
-Build-Depends: debhelper (>= 9.0.0), ros-melodic-catkin, ros-melodic-geometry-msgs, ros-melodic-message-generation, ros-melodic-nav-msgs, ros-melodic-rosconsole, ros-melodic-roscpp, ros-melodic-rostime, ros-melodic-sensor-msgs, ros-melodic-std-msgs, ros-melodic-am-msgs, ros-melodic-uuid-msgs
+Build-Depends: debhelper (>= 9.0.0), 
+    ros-melodic-am-msgs, 
+    ros-melodic-catkin, 
+    ros-melodic-geometry-msgs, 
+    ros-melodic-message-generation, 
+    ros-melodic-nav-msgs, 
+    ros-melodic-rosconsole, 
+    ros-melodic-roscpp, 
+    ros-melodic-rostime, 
+    ros-melodic-sensor-msgs, 
+    ros-melodic-std-msgs, 
+    ros-melodic-uuid-msgs,
 Homepage: https://github.com/AutoModality/am-utils
 Standards-Version: 3.9.2
 
 Package: ros-melodic-am-utils
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ros-melodic-geometry-msgs, ros-melodic-message-runtime, ros-melodic-nav-msgs, ros-melodic-rosconsole, ros-melodic-roscpp, ros-melodic-rostime, ros-melodic-sensor-msgs, ros-melodic-std-msgs, ros-melodic-am-msgs, ros-melodic-uuid-msgs
-Description: The am utils package
+Depends: ${shlibs:Depends}, ${misc:Depends}, 
+    ros-melodic-am-msgs, 
+    ros-melodic-geometry-msgs, 
+    ros-melodic-message-runtime, 
+    ros-melodic-nav-msgs, 
+    ros-melodic-rosconsole, 
+    ros-melodic-roscpp, 
+    ros-melodic-rostime, 
+    ros-melodic-sensor-msgs, 
+    ros-melodic-std-msgs, 
+    ros-melodic-uuid-msgs,
+Description: Common code to assist with AutoModality libraries found in separate repositories.
