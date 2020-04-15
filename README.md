@@ -2,7 +2,6 @@
 
 A common library for sharing core code.
 
-
 | Github Action  | Kinetic Package | Melodic Package |
 | ------------- | ------------- |  ------------- |
 | [![Story Development](https://github.com/AutoModality/am-utils/workflows/Story%20Development/badge.svg)](https://github.com/AutoModality/am-utils/actions?query=workflow%3A%22Story+Development%22) | --  |
