@@ -1,4 +1,3 @@
-
 #include <am_utils/am_bag_utils.h>
 
 namespace brain_box {

@@ -1,0 +1,133 @@
+/*
+ * bag_logger.h
+ *
+ */
+
+#ifndef BAG_LOGGER_H_
+#define BAG_LOGGER_H_
+
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <string.h>
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+
+#include <ros/ros.h>
+#include <rosbag/bag.h>
+
+#define DEFAULT_BAG_DIR "/home/ubuntu/testdata/"
+
+#define LOG_MSG(topic, msg, level) { LOG_MSG_STAMP(topic, msg, ros::Time::now(), level) }
+
+#define LOG_MSG_STAMP(topic, msg, t, level) { if (BagLogger::instance()->isLogging() && \
+                                                 (level) <= BagLogger::instance()->getLogLevel()) { \
+    BagLogger::instance()->bag.write((topic), (t), (msg)); } }
+
+class BagLogger {
+    static BagLogger *s_instance_;
+
+    unsigned log_level_ {0};
+
+    bool is_logging_ {false};
+
+    std::string prefix_ {""};
+
+    std::string file_name_;
+
+public:
+    BagLogger() {};
+
+    ~BagLogger() {};
+
+    rosbag::Bag bag;
+
+    static BagLogger *instance() {
+        if (!s_instance_)
+        {
+            s_instance_ = new BagLogger;
+        }
+        return s_instance_;
+    }
+
+    bool isLogging() { return is_logging_; }
+
+    static std::string getLogFileDir();
+
+    static std::string getSequence(std::string dir, std::string prefix);
+
+    static std::string getLogFileName(std::string prefix, std::string suffix="bag");
+
+    void dumpParams(std::string prefix);
+
+    void startLogging(std::string prefix, unsigned log_level);
+
+    void stopLogging();
+
+    unsigned getLogLevel() const {
+        return log_level_;
+    }
+
+    bool isLogging() const {
+        return is_logging_;
+    }
+
+    enum BagLoggerLevel: unsigned int {OFF = 0, NORM = 1, FINE = 2, EXTRA = 3, ALL = 4};
+
+    // General purpose logging routines that can be used by any process supplying their own file descriptors
+    // These can be used like a printf and are mainly used to log printable text
+    static void open_log(std::string prefix, FILE **debug_file, int log_level);
+    static void close_log(FILE **debug_file);
+    static void debug_log(FILE **debug_file, const char* format, ...);
+
+    FILE **file_handle_ {NULL};
+    FILE *debug_file_ {NULL};
+
+    void setLogHandle(FILE** handle) {
+        if (file_handle_ != NULL)
+        {
+            ROS_ERROR("LOGGER:setLogHandle - file-handle already set and not NULL");
+            return;
+        }
+        file_handle_ = handle;
+    }
+    void open_log(std::string prefix, int log_level) {
+      return;
+      if (file_handle_ == NULL)
+        {
+            ROS_ERROR("LOGGER:open_log - file handle NULL and needs to be set");
+            return;
+        }
+        open_log(prefix, file_handle_, log_level);
+    }
+    void close_log() {
+      return;
+        if (file_handle_ == NULL)
+        {
+            ROS_ERROR("LOGGER:close_log - file handle NULL and needs to be set");
+            return;
+        }
+        close_log(file_handle_);
+    }
+    void debug_log(const char* format, ...) {
+      return;
+        if (file_handle_ == NULL)
+        {
+            ROS_ERROR("LOGGER:debug_log - file handle NULL and needs to be set");
+            return;
+        }
+        va_list args;
+        va_start( args, format );
+        debug_log(file_handle_, format, args);
+        va_end( args );
+    }
+
+private:
+
+};
+
+#endif /* BAG_LOGGER_H_ */

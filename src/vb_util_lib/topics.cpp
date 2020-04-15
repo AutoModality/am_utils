@@ -1,15 +1,33 @@
 #include <string>
-#include <am_utils/topics.h>
+#include <vb_util_lib/topics.h>
 
 using namespace am;
 
 constexpr char am_topics::DJI_SDK_IMU[];
+constexpr char am_topics::DJI_SDK_IMU_RPY[];
 constexpr char am_topics::DJI_SDK_RTK_POSITION[];
+constexpr char am_topics::DJI_SDK_RTK_VELOCITY[];
+constexpr char am_topics::DJI_SDK_RTK_YAW[];
 constexpr char am_topics::DJI_SDK_RC[];
 constexpr char am_topics::DJI_SDK_GIMBAL_ANG_CMD[];
 constexpr char am_topics::DJI_SDK_GIMBAL_SPD_CMD[];
 constexpr char am_topics::DJI_SDK_GIMBAL_ANG[];
-
+constexpr char am_topics::DJI_SDK_GPS_POSITION[];
+constexpr char am_topics::DJI_SDK_GLOBAL_POSITION[];
+constexpr char am_topics::DJI_SDK_FLIGHT_STATUS[];
+constexpr char am_topics::DJI_SDK_BATTERY_STATE[];
+constexpr char am_topics::DJI_SDK_CONTROL_STATUS[];
+constexpr char am_topics::DJI_SDK_FROM_MOBILE_DATA[];
+constexpr char am_topics::DJI_SDK_ACCELERATION_GROUND_FUSED[];
+constexpr char am_topics::DJI_SDK_VO_POSIITON[];
+constexpr char am_topics::DJI_SDK_VELOCITY[];
+constexpr char am_topics::DJI_SDK_ATTITUDE[];
+constexpr char am_topics::DJI_SDK_HEIGHT_ABOVE_TAKEOFF[];
+constexpr char am_topics::DJI_SDK_ANGULAR_VELOCITY_FUSED[];
+constexpr char am_topics::DJI_SDK_RELATIVE_POSITION[];
+constexpr char am_topics::DJI_SDK_ODOMETRY[];
+constexpr char am_topics::DJI_SDK_SEND_DATA_TO_MOBILE[];
+constexpr char am_topics::DJI_SDK_CORRECTED_ATTITUDE[];
 constexpr char am_topics::FEATURE_ODOMETRY[];
 constexpr char am_topics::FEATURE_SEARCH_IDS[];
 
@@ -99,6 +117,7 @@ constexpr char am_topics::SENSOR_CAMERA_SHM_FPV_MAIN[];
 constexpr char am_topics::DJI_CAMERA_240P_SERVICE[];
 constexpr char am_topics::DJI_CAMERA_VGA_SERVICE[];
 constexpr char am_topics::DJI_CAMERA_FPV_MAIN_SERVICE[];
+constexpr char am_topics::DJI_CAMERA_DEPTH_SERVICE[];
 
 //dji sdk raw camera streams
 constexpr char am_topics::DJI_CAMERA_FPV_STREAM[];
@@ -109,6 +128,7 @@ constexpr char am_topics::DJI_CAMERA_240P_DOWN_FRONT_STREAM[];
 constexpr char am_topics::DJI_CAMERA_240P_DOWN_BACK_STREAM[];
 constexpr char am_topics::DJI_CAMERA_VGA_FRONT_LEFT_STREAM[];
 constexpr char am_topics::DJI_CAMERA_VGA_FRONT_RIGHT_STREAM[];
+constexpr char am_topics::DJI_CAMERA_FRONT_DEPTH[];
 
 constexpr char am_topics::DJI_CAMERA_SHM_FPV_STREAM[];
 constexpr char am_topics::DJI_CAMERA_SHM_MAIN_STREAM[];
@@ -121,6 +141,26 @@ constexpr char am_topics::DJI_CAMERA_SHM_VGA_FRONT_RIGHT_STREAM[];
 constexpr char am_topics::SENSOR_LIDAR_GROUND_REMOVED_POINTCLOUD2[];
 
 constexpr char am_topics::SENSOR_CAMERA_SELECT_SERVICE[];
+constexpr char am_topics::SENSOR_CAMERA_IMAGE_CONTROLLER_IMAGE_RAW[];
+constexpr char am_topics::SENSOR_IMAGE_CONTROLLER_CAMERA_SELECT[];
+
+// Mavros specific topics
+constexpr char am_topics::MAVROS_RC_IN[];
+constexpr char am_topics::MAVROS_STATE[];
+constexpr char am_topics::MAVROS_EXTENDED_STATE[];
+constexpr char am_topics::MAVROS_ARMING[];
+constexpr char am_topics::MAVROS_LANDING[];
+constexpr char am_topics::MAVROS_TAKEOFF[];
+constexpr char am_topics::MAVROS_SET_MODE[];
+constexpr char am_topics::MAVROS_SETPOINT_LOCAL_RAW[];
+constexpr char am_topics::MAVROS_SETPOINT_ATTITUDE_RAW[];
+constexpr char am_topics::MAVROS_BATTERY[];
+constexpr char am_topics::MAVROS_GLOBAL_POSITION_GLOBAL[];
+constexpr char am_topics::MAVROS_LOCAL_POSITION_POSE[];
+constexpr char am_topics::MAVROS_LOCAL_POSITION_VELOCITY_BODY[];
+constexpr char am_topics::MAVROS_IMU_DATA[];
+
+constexpr char am_topics::ACSL_VO_VELOCITY[];
 
 
 std::string am_topics::addBodySuffix(const char *topic)
