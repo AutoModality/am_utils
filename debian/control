@@ -4,7 +4,8 @@ Priority: extra
 Maintainer: info <info@automodality.com>
 Build-Depends: debhelper (>= 9.0.0), 
     ros-melodic-am-control-toolbox, 
-     ros-melodic-am-osdk-ros,
+    ros-melodic-am-osdk-ros,
+    ros-melodic-image-transport,
     ros-melodic-am-msgs, 
     ros-melodic-catkin, 
     ros-melodic-geometry-msgs, 
@@ -24,6 +25,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, 
     ros-melodic-am-control-toolbox, 
     ros-melodic-am-osdk-ros,
+    ros-melodic-image-transport,
     ros-melodic-am-msgs, 
     ros-melodic-geometry-msgs, 
     ros-melodic-message-runtime, 
