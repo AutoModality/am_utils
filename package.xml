@@ -8,13 +8,20 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>geometry_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>roscpp</depend>
-  <depend>rosconsole</depend>
-  <depend>rostime</depend>
-  <depend>brain_box_msgs</depend>
-  
+   <depend>brain_box_msgs</depend>
+   <depend>control_toolbox</depend>
+   <depend>dji_sdk</depend>
+   <depend>image_transport </depend>
+   <depend>genmsg</depend>
+   <depend>geometry_msgs</depend>
+   <depend>nav_msgs</depend>
+   <depend>rosconsole</depend>
+   <depend>roscpp</depend>
+   <depend>rosbag</depend>
+   <depend>rostime</depend>
+   <depend>sensor_msgs</depend>
+   <depend>std_msgs</depend>
+   <depend>tf2</depend>
+   <depend>tf2_ros</depend>   
+ 
 </package>
