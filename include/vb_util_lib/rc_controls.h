@@ -9,7 +9,7 @@
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_RC_CONTROLS_H_
 
 #include <stdio.h>
-
+#include "rc_mapper.h"
 //3.3#include <dji_sdk/RCChannels.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
@@ -17,11 +17,29 @@
 
 #define MAX_DJI_CONTROL 10000.0
 
-enum class RC_MODE {ATT=0, ALT, POS, UNKNOWN};
-enum class RC_GEAR {DOWN=0, UP, UNKNOWN};
-enum class RC_TYPE {PX4=0, DJI, ACSL, UNKNOWN};
+enum class RC_MODE 
+{
+    ATT = 0, 
+    ALT, 
+    POS, 
+    UNKNOWN
+};
+enum class RC_GEAR 
+{
+    DOWN = 0, 
+    UP, 
+    UNKNOWN
+};
+enum class RC_TYPE 
+{
+    PX4 = rc_mapper::eRCT_PX4, 
+    DJI = rc_mapper::eRCT_DJI, 
+    ACSL = rc_mapper::eRCT_ACSL,
+    UNKNOWN = rc_mapper::eRCT_Unknown
+};
 
-class RC_Controls {
+class RC_Controls 
+{
 public:
     RC_Controls();
     RC_Controls(ros::NodeHandle& n, RC_TYPE type = RC_TYPE::UNKNOWN);
@@ -51,6 +69,7 @@ public:
     double pitch {0.0};
 
     ros::Time stamp;
+    rc_mapper* rc_mapper_;
 
 //    const double MAX_DJI_CONTROL {10000.0};
 //
@@ -79,10 +98,10 @@ private:
     int MAX_VALUE_ {2000};
 	int MIN_VALUE_ {1000};
 
-	int throttle_sign {1};
-	int yaw_sign {1};
-	int roll_sign {1};
-	int pitch_sign {1};
+	int throttle_sign_ {1};
+	int yaw_sign_ {1};
+	int roll_sign_ {1};
+	int pitch_sign_ {1};
 
 	unsigned int RANGE_;
 	unsigned int ZERO_VALUE_;
