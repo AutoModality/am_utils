@@ -41,3 +41,4 @@ ros-*-build-deps_*
 ros-*-am-utils-*
 debian/.debhelper
 debian/ros-*-am-utils*
+debian/md5sums
