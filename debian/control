@@ -21,10 +21,9 @@ Build-Depends: debhelper (>= 9.0.0),
     ros-melodic-tf2-ros,
     ros-melodic-tf2-sensor-msgs, 
     ros-melodic-cv-bridge, 
-    
+
 Homepage: https://github.com/AutoModality/am-utils
 Standards-Version: 3.9.2
-
 Package: ros-melodic-am-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, 
@@ -42,7 +41,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
     ros-melodic-std-msgs, 
     ros-melodic-uuid-msgs,
     ros-melodic-tf2, 
-	ros-melodic-tf2-ros,
+    ros-melodic-tf2-ros,
     ros-melodic-tf2-sensor-msgs, 
     ros-melodic-cv-bridge, 
 Description: Common code to assist with AutoModality libraries found in separate repositories.
