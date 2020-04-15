@@ -3,6 +3,9 @@ Section: misc
 Priority: extra
 Maintainer: info <info@automodality.com>
 Build-Depends: debhelper (>= 9.0.0), 
+    ros-melodic-am-control-toolbox, 
+    ros-melodic-am-osdk-ros,
+    ros-melodic-image-transport,
     ros-melodic-am-msgs, 
     ros-melodic-catkin, 
     ros-melodic-geometry-msgs, 
@@ -14,12 +17,20 @@ Build-Depends: debhelper (>= 9.0.0),
     ros-melodic-sensor-msgs, 
     ros-melodic-std-msgs, 
     ros-melodic-uuid-msgs,
+    ros-melodic-tf2, 
+    ros-melodic-tf2-ros,
+    ros-melodic-tf2-sensor-msgs, 
+    ros-melodic-cv-bridge, 
+    ros-melodic-mavros-msgs, 
+
 Homepage: https://github.com/AutoModality/am-utils
 Standards-Version: 3.9.2
-
 Package: ros-melodic-am-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, 
+    ros-melodic-am-control-toolbox, 
+    ros-melodic-am-osdk-ros,
+    ros-melodic-image-transport,
     ros-melodic-am-msgs, 
     ros-melodic-geometry-msgs, 
     ros-melodic-message-runtime, 
@@ -30,4 +41,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
     ros-melodic-sensor-msgs, 
     ros-melodic-std-msgs, 
     ros-melodic-uuid-msgs,
+    ros-melodic-tf2, 
+    ros-melodic-tf2-ros,
+    ros-melodic-tf2-sensor-msgs, 
+    ros-melodic-cv-bridge, 
+    ros-melodic-mavros-msgs, 
 Description: Common code to assist with AutoModality libraries found in separate repositories.

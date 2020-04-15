@@ -1,5 +1,5 @@
-#ifndef AM_UTILS_AM_TOPICS_H
-#define AM_UTILS_AM_TOPICS_H
+#ifndef VB_UTIL_LIB_AM_TOPICS_H
+#define VB_UTIL_LIB_AM_TOPICS_H
 
 namespace am
 {
@@ -8,11 +8,30 @@ class am_topics
 {
 public:
 	static constexpr char DJI_SDK_IMU[] = "/dji_sdk/imu";
+	static constexpr char DJI_SDK_IMU_RPY[] = "/dji_sdk/imu_rpy";
 	static constexpr char DJI_SDK_RTK_POSITION[] = "/dji_sdk/rtk_position";
+	static constexpr char DJI_SDK_RTK_VELOCITY[] = "/dji_sdk/rtk_velocity";
+	static constexpr char DJI_SDK_RTK_YAW[] = "/dji_sdk/rtk_yaw";
 	static constexpr char DJI_SDK_RC[] = "/dji_sdk/rc";
 	static constexpr char DJI_SDK_GIMBAL_ANG_CMD[] = "/dji_sdk/gimbal_angle_cmd";
 	static constexpr char DJI_SDK_GIMBAL_SPD_CMD[] = "/dji_sdk/gimbal_speed_cmd";
 	static constexpr char DJI_SDK_GIMBAL_ANG[] = "/dji_sdk/gimbal_angle";
+	static constexpr char DJI_SDK_GLOBAL_POSITION[] = "/dji_sdk/global_position";
+	static constexpr char DJI_SDK_GPS_POSITION[] = "/dji_sdk/gps_position";
+	static constexpr char DJI_SDK_FLIGHT_STATUS[] = "/dji_sdk/flight_status";
+	static constexpr char DJI_SDK_BATTERY_STATE[] = "/dji_sdk/battery_state";
+	static constexpr char DJI_SDK_CONTROL_STATUS[] = "/dji_sdk/control_status";
+	static constexpr char DJI_SDK_FROM_MOBILE_DATA[] = "/dji_sdk/from_mobile_data";
+	static constexpr char DJI_SDK_ACCELERATION_GROUND_FUSED[] = "/dji_sdk/acceleration_ground_fused";
+	static constexpr char DJI_SDK_VO_POSIITON[] = "/dji_sdk/vo_position";
+	static constexpr char DJI_SDK_VELOCITY[] = "/dji_sdk/velocity";
+	static constexpr char DJI_SDK_ATTITUDE[] = "/dji_sdk/attitude";
+	static constexpr char DJI_SDK_HEIGHT_ABOVE_TAKEOFF[] = "/dji_sdk/height_above_takeoff";
+	static constexpr char DJI_SDK_ANGULAR_VELOCITY_FUSED[] = "/dji_sdk/angular_velocity_fused";
+	static constexpr char DJI_SDK_RELATIVE_POSITION[] = "/dji_sdk/relative_position";
+	static constexpr char DJI_SDK_ODOMETRY[] = "/dji_sdk/odometry";
+	static constexpr char DJI_SDK_SEND_DATA_TO_MOBILE[] = "/dji_sdk/send_data_to_mobile";
+	static constexpr char DJI_SDK_CORRECTED_ATTITUDE[] = "/dji_sdk/corrected_attitude";
 
 	static constexpr char FEATURE_ODOMETRY[] = "/feature/odometry";
 	static constexpr char FEATURE_SEARCH_IDS[] = "/feature/search_ids";
@@ -95,10 +114,14 @@ public:
 
 	static constexpr char SENSOR_CAMERA_SHM_FPV_MAIN[] = "/sensor/camera/shm/fpv_main/image_raw";
 
+	static constexpr char SENSOR_CAMERA_IMAGE_CONTROLLER_IMAGE_RAW[] = "/sensor/camera/image_controller/image_raw";
+	static constexpr char SENSOR_IMAGE_CONTROLLER_CAMERA_SELECT[] = "/image_controller/camera_select";
+
 	//dji sdk camera services
 	static constexpr char DJI_CAMERA_240P_SERVICE[] = "/dji_sdk/stereo_240p_subscription";
 	static constexpr char DJI_CAMERA_VGA_SERVICE[] = "/dji_sdk/stereo_vga_subscription";
 	static constexpr char DJI_CAMERA_FPV_MAIN_SERVICE[] = "/dji_sdk/setup_camera_stream";
+	static constexpr char DJI_CAMERA_DEPTH_SERVICE[] = "/dji_sdk/stereo_depth_subscription";
 
 	//dji sdk raw camera streams
 	static constexpr char DJI_CAMERA_FPV_STREAM[] = "/dji_sdk/fpv_camera_images";
@@ -109,6 +132,7 @@ public:
 	static constexpr char DJI_CAMERA_240P_DOWN_BACK_STREAM[] = "/dji_sdk/stereo_240p_down_back_images";
 	static constexpr char DJI_CAMERA_VGA_FRONT_LEFT_STREAM[] = "/dji_sdk/stereo_vga_front_left_images";
 	static constexpr char DJI_CAMERA_VGA_FRONT_RIGHT_STREAM[] = "/dji_sdk/stereo_vga_front_right_images";
+	static constexpr char DJI_CAMERA_FRONT_DEPTH[] = "/dji_sdk/stereo_240p_front_depth_images";
 
 	static constexpr char DJI_CAMERA_SHM_FPV_STREAM[] = "/dji_sdk/shm/fpv_camera_images";
 	static constexpr char DJI_CAMERA_SHM_MAIN_STREAM[] = "/dji_sdk/shm/main_camera_images";
@@ -120,9 +144,8 @@ public:
 	static constexpr char DJI_CAMERA_SHM_VGA_FRONT_RIGHT_STREAM[] = "/dji_sdk/shm/stereo_vga_front_right_images";
 
 	static constexpr char SENSOR_CAMERA_SELECT_SERVICE[] = "/sensor/camera/camera_select";
-	
-	static constexpr char SENSOR_LIDAR_GROUND_REMOVED_POINTCLOUD2[] = "/sensor/lidar/ground_removed/pointcloud2";
 
+	static constexpr char SENSOR_LIDAR_GROUND_REMOVED_POINTCLOUD2[] = "/sensor/lidar/ground_removed/pointcloud2";
 
 	static constexpr char STATUS_CEIL[] = "/status/ceil";
 	static constexpr char STATUS_CORR[] = "/status/corr";
@@ -132,6 +155,24 @@ public:
 
 	static constexpr char LED_BLINK[] = "/blinkm_command";
 	static constexpr char BATTERY_STATE[] = "/dji_sdk/battery_state";
+
+	// Mavros specific topics
+	static constexpr char MAVROS_RC_IN[] = "/mavros/rc/in";
+	static constexpr char MAVROS_STATE[] = "/mavros/state";
+	static constexpr char MAVROS_EXTENDED_STATE[] = "/mavros/extended_state";
+	static constexpr char MAVROS_ARMING[] = "/mavros/cmd/arming";
+	static constexpr char MAVROS_LANDING[] = "/mavros/cmd/land";
+	static constexpr char MAVROS_TAKEOFF[] = "/mavros/cmd/takeoff";
+	static constexpr char MAVROS_SET_MODE[] = "/mavros/set_mode";
+	static constexpr char MAVROS_SETPOINT_LOCAL_RAW[] = "/mavros/setpoint_raw/local";
+	static constexpr char MAVROS_SETPOINT_ATTITUDE_RAW[] = "/mavros/setpoint_raw/attitude";
+	static constexpr char MAVROS_BATTERY[] = "/mavros/battery";
+	static constexpr char MAVROS_GLOBAL_POSITION_GLOBAL[] = "/mavros/global_position/global";
+	static constexpr char MAVROS_LOCAL_POSITION_POSE[] = "/mavros/local_position/pose";
+	static constexpr char MAVROS_LOCAL_POSITION_VELOCITY_BODY[] = "/mavros/local_position/velocity_body";
+	static constexpr char MAVROS_IMU_DATA[] = "/mavros/imu/data";
+
+	static constexpr char ACSL_VO_VELOCITY[] = "/mavros/local_position/velocity_body";
 
 	static std::string addBodySuffix(const char *topic);
 	static std::string addBodySuffix(std::string topic);
