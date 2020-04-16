@@ -6,7 +6,7 @@
 *
 */
 
-#include <rc_mapper.h>
+#include <vb_util_lib/rc_mapper.h>
 #include <vb_util_lib/topics.h>
 
 rc_mapper::rc_mapper(ros::NodeHandle n)

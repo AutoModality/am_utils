@@ -9,7 +9,8 @@
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_RC_CONTROLS_H_
 
 #include <stdio.h>
-#include "rc_mapper.h"
+#include <vb_util_lib/rc_mapper.h>
+#include <vb_util_lib/rc_controls.h>
 //3.3#include <dji_sdk/RCChannels.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
