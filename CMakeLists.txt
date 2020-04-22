@@ -111,6 +111,8 @@ add_library(am_utils
 
 target_link_libraries(am_utils ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
+add_dependencies(am_utils ${catkin_EXPORTED_TARGETS})
+
 install(TARGETS am_utils
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   )
