@@ -11,6 +11,5 @@ jobs:
         id: package
         uses: AutoModality/action-package-debian-ros@v3-perception
         with:
-          dev-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_DEV_ENTITLEMENT }}
           release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
 
