@@ -146,6 +146,7 @@ public:
 	static constexpr char SENSOR_CAMERA_SELECT_SERVICE[] = "/sensor/camera/camera_select";
 
 	static constexpr char SENSOR_LIDAR_GROUND_REMOVED_POINTCLOUD2[] = "/sensor/lidar/ground_removed/pointcloud2";
+	static constexpr char SENSOR_LIDAR_POINTCLOUD2_WITH_NORMALS[] = "/sensor/lidar/pointcloud2/with_normals";
 
 	static constexpr char STATUS_CEIL[] = "/status/ceil";
 	static constexpr char STATUS_CORR[] = "/status/corr";
