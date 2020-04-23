@@ -23,11 +23,17 @@ public:
 	void setType(FileType type);
 	Directory getDir() const;
 	void setDir(Directory dir);
+	void setPath(std::string& base, std::string param, std::string env_name);
+	void getPath(std::string& full_name);
+	std::string getPrefix() {
+		return prefix_;
+	}
 
 private:
 	Directory dir_;
 	FileType type_;
 	std::string name_;
+	std::string prefix_ {""};
 	std::string md5_;
 	boost::posix_time::ptime date_;
 	int size_;
