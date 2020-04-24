@@ -20,7 +20,7 @@
 #include <ros/ros.h>
 #include <rosbag/bag.h>
 
-#define DEFAULT_BAG_DIR "/var/log/amros"
+#define DEFAULT_BAG_DIR "/var/log/amros/"
 #define DEFAULT_MEDIA_DIR "/media/amros"
 
 #define LOG_MSG(topic, msg, level) { LOG_MSG_STAMP(topic, msg, ros::Time::now(), level) }
