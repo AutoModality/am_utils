@@ -33,8 +33,9 @@ create_log_directory(){
 # create the log directory needed for bag files.  see bag_logger.cpp
 bag_logger_dirs(){
     
-    #prod_user comes from common scripts source
+    #amros_user comes from common scripts source
     #this is also defined in bag_logger.cpp
+    #the log locations (/var/log/amros) are defined by the platorm installation
     user=$(amros_app_user)
     create_log_directory $(amros_log_dir) $user
     create_log_directory $(amros_log_media_dir) $user
