@@ -1,46 +1,60 @@
-#!/bin/bash
+#!/usr/bin/env python3
+"""
+Set up /var/log/amros directory declared in bag_logger
+The script:
+1. creates the directory if not already exists
+2. grants access to the amros user if it exists
+3. grants access to everyone if amros user doesn't exist
 
-#post installation script to set up necessary resources
+The script depends upon platform scripts, as identified in the debian/control file.
+"""
 
-set -e
+import os
+import subprocess
 
+def make_log_dir_available_to_all(log_dir,user):
+    """changes access of directory allowing anyone to read and prints a warning"""
+    try:
+        subprocess.check_output(["chmod","777",log_dir])
+        print(f"WARNING: making log dir {log_dir} avilable to all users. The directory will be limited to {user} group in future releases.")
+    except subprocess.CalledProcessError as e:
+        print(f"ERROR: unable to modify access to log dir {log_dir}: {e}")
 
-# provides the prod_user we use 
-include_common(){
-    source "/opt/ros/melodic/lib/am_platform_scripts/scripts/amros/amros-constants.sh"
-}
+def grant_log_dir_ownership_to_user(log_dir,user):
+    """changes ownership if possible.  prints error if not"""
+    try:
+        subprocess.check_output(["chown", f"{user}:{user}",log_dir])
+    except:
+        print(f"ERROR: unable to grant access of log dir {log_dir} to user {user}: {e}")
 
-# creates a log directory granting access
-# outputs a message to the screen trace upon installation
-create_log_directory(){
+def modify_access_to_log_dir(log_dir,user):
+    """grants access to the amros user or everyone if the user is not available"""
+    # try:
+    #     subprocess.check_output(["id", "-u",user])
+    #     grant_log_dir_ownership_to_user(log_dir,user)  
+    # except subprocess.CalledProcessError:
+    #FIXME: enable the code above to grant access to AMROS group only
+    make_log_dir_available_to_all(log_dir,user)
 
-    #helpful to the viewer of the message to know the source
-    OUTPUT_PREFIX="visbox/debian/postinst:"
+def get_platform_constant(constant_name):
+    """Retrieves constants from scripts available in platform scripts.  Must be installed"""
+    return subprocess.check_output(["/opt/ros/melodic/lib/am_platform_scripts/scripts/amros/amros-constants.sh", constant_name]).decode("utf-8").strip()
 
-    dir=$1
-    user_group=$2
+def make_dir_if_needed(log_dir):
+    """creates the directory and grants access"""
+    try:
+        os.mkdir(log_dir)
+        print(f"INFO: Created log directory {log_dir}")
+        user=get_platform_constant("amros_app_user")
+        modify_access_to_log_dir(log_dir,user)
+    except FileExistsError:
+            print(f"INFO: Log directory {log_dir} already exists")
+    except OSError as e:
+        print(f"ERROR: Unable to create log directory {log_dir}: {e}")
 
-    # create the directory if it doesn't exist
-    if [[ -d "$dir" ]];then
-        echo "$OUTPUT_PREFIX '$dir' exists to receive logs"
-    else
-        mkdir -p "$dir"
-        chown "$user_group:$user_group" "$dir"
-        echo "$OUTPUT_PREFIX '$dir' created to receive logs"
-    fi
-}
+def make_dirs_if_needed():
+    """creates all directories needed to suppport am-utils requirements"""
+    make_dir_if_needed(get_platform_constant( "amros_log_dir"))
+    make_dir_if_needed(get_platform_constant( "amros_log_media_dir"))
 
-# create the log directory needed for bag files.  see bag_logger.cpp
-bag_logger_dirs(){
-    
-    #amros_user comes from common scripts source
-    #this is also defined in bag_logger.cpp
-    #the log locations (/var/log/amros) are defined by the platorm installation
-    user=$(amros_app_user)
-    create_log_directory $(amros_log_dir) $user
-    create_log_directory $(amros_log_media_dir) $user
-}
-
-# main ...
-include_common
-bag_logger_dirs
+make_dirs_if_needed()
