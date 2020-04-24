@@ -36,29 +36,6 @@ std::string get_file_contents(const char *filename)
   throw(errno);
 }
 
-std::string getMediaFileDir(std::string prefix) {
-    using namespace std;
-    using namespace boost::filesystem;
-
-    path p("/media/ubuntu");
-    for (auto i = directory_iterator(p); i != directory_iterator(); i++)
-    {
-        if (is_directory(i->path()))
-        {
-            std::size_t found = i->path().filename().string().find(prefix);
-            if (found!=std::string::npos)
-            {
-//                cout << "FOUND: "+i->path().filename().string()+"  AT: "+i->path().string() << endl;
-                return i->path().string()+"/";
-            }
-        }
-        else
-            continue;
-    }
-
-    return string("");
-}
-
 std::vector<std::string> getDirNameList(std::string root) {
     using namespace std;
     using namespace boost::filesystem;

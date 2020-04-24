@@ -6,7 +6,7 @@ std::string BagLogger::getLogFileDir() {
     using namespace std;
     using namespace boost::filesystem;
 
-    path p("/media/ubuntu");
+    path p(DEFAULT_MEDIA_DIR);
     for (auto i = directory_iterator(p); i != directory_iterator(); i++)
     {
         if (is_directory(i->path()))
