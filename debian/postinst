@@ -16,7 +16,7 @@ def make_log_dir_available_to_all(log_dir,user):
     """changes access of directory allowing anyone to read and prints a warning"""
     try:
         subprocess.check_output(["chmod","777",log_dir])
-        print(f"WARNING: making log dir {log_dir} avilable to all users since {user} does not exist.")
+        print(f"WARNING: making log dir {log_dir} avilable to all users. The directory will be limited to {user} group in future releases.")
     except subprocess.CalledProcessError as e:
         print(f"ERROR: unable to modify access to log dir {log_dir}: {e}")
 
@@ -29,19 +29,19 @@ def grant_log_dir_ownership_to_user(log_dir,user):
 
 def modify_access_to_log_dir(log_dir,user):
     """grants access to the amros user or everyone if the user is not available"""
-    try:
-        subprocess.check_output(["id", "-u",user])
-        grant_log_dir_ownership_to_user(log_dir,user)  
-    except subprocess.CalledProcessError:
-        make_log_dir_available_to_all(log_dir,user)
+    # try:
+    #     subprocess.check_output(["id", "-u",user])
+    #     grant_log_dir_ownership_to_user(log_dir,user)  
+    # except subprocess.CalledProcessError:
+    #FIXME: enable the code above to grant access to AMROS group only
+    make_log_dir_available_to_all(log_dir,user)
 
 def get_platform_constant(constant_name):
     """Retrieves constants from scripts available in platform scripts.  Must be installed"""
     return subprocess.check_output(["/opt/ros/melodic/lib/am_platform_scripts/scripts/amros/amros-constants.sh", constant_name]).decode("utf-8").strip()
 
-def make_dir_if_needed():
+def make_dir_if_needed(log_dir):
     """creates the directory and grants access"""
-    log_dir=get_platform_constant( "amros_log_dir")
     try:
         os.mkdir(log_dir)
         print(f"INFO: Created log directory {log_dir}")
@@ -52,4 +52,9 @@ def make_dir_if_needed():
     except OSError as e:
         print(f"ERROR: Unable to create log directory {log_dir}: {e}")
 
-make_dir_if_needed()
+def make_dirs_if_needed():
+    """creates all directories needed to suppport am-utils requirements"""
+    make_dir_if_needed(get_platform_constant( "amros_log_dir"))
+    make_dir_if_needed(get_platform_constant( "amros_log_media_dir"))
+
+make_dirs_if_needed()
