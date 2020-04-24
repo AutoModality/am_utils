@@ -7,8 +7,12 @@ set -e
 
 # provides the prod_user we use 
 include_common(){
+    # import amros_log_dir, amros_log_media_dir
     source "/opt/ros/melodic/lib/am_platform_scripts/scripts/amros/amros-constants.sh"
+    # import user_exists
+    source "/opt/ros/melodic/lib/am_platform_scripts/scripts/common/common.sh"
 }
+
 
 # creates a log directory granting access
 # outputs a message to the screen trace upon installation
@@ -25,7 +29,12 @@ create_log_directory(){
         echo "$OUTPUT_PREFIX '$dir' exists to receive logs"
     else
         mkdir -p "$dir"
-        chown "$user_group:$user_group" "$dir"
+        if [[ $(user_exists $user) ]];then
+            chown "$user_group:$user_group" "$dir"
+        else
+            echo "WARNING: $user user does not exist. Making $dir global writeable."
+            chmod +777 "$dir"
+        fi
         echo "$OUTPUT_PREFIX '$dir' created to receive logs"
     fi
 }
