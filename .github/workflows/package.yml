@@ -18,7 +18,6 @@ jobs:
         uses: AutoModality/action-package-debian-ros@v3-perception
         with:
           branch: ${{ github.event.pull_request.head.ref }}
-          pull-request-number: ${{ github.event.number }}
           build-number: ${{ github.run_number }}
           release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
       - name: The generated package
