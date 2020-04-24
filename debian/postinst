@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#post installation script to set up necessary resources
+
+set -e
+
+
+# provides the prod_user we use 
+include_common(){
+    source "/opt/ros/melodic/lib/am_platform_scripts/scripts/amros/amros-constants.sh"
+}
+
+# creates a log directory granting access
+# outputs a message to the screen trace upon installation
+create_log_directory(){
+
+    #helpful to the viewer of the message to know the source
+    OUTPUT_PREFIX="visbox/debian/postinst:"
+
+    dir=$1
+    user_group=$2
+
+    # create the directory if it doesn't exist
+    if [[ -d "$dir" ]];then
+        echo "$OUTPUT_PREFIX '$dir' exists to receive logs"
+    else
+        mkdir -p "$dir"
+        chown "$user_group:$user_group" "$dir"
+        echo "$OUTPUT_PREFIX '$dir' created to receive logs"
+    fi
+}
+
+# create the log directory needed for bag files.  see bag_logger.cpp
+bag_logger_dirs(){
+    
+    #prod_user comes from common scripts source
+    #this is also defined in bag_logger.cpp
+    user=$(amros_app_user)
+    create_log_directory $(amros_log_dir) $user
+    create_log_directory $(amros_log_media_dir) $user
+}
+
+# main ...
+include_common
+bag_logger_dirs
