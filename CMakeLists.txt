@@ -95,7 +95,8 @@ add_library(am_utils
   src/vb_util_lib/dji_challenge_util.cpp 
   src/vb_util_lib/am_histogram.cpp
   src/vb_util_lib/row_marker.cpp 
-  src/vb_util_lib/rc_controls.cpp 
+  src/vb_util_lib/rc_controls.cpp
+  src/vb_util_lib/rc_mapper.cpp 
   src/vb_util_lib/i2c.cpp 
   src/vb_util_lib/circ_list.cpp 
   src/vb_util_lib/time_synchronizer.cpp
