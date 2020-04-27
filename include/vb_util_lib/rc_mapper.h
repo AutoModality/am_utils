@@ -1,4 +1,8 @@
-
+/* rm_mapper.h
+ *
+ * Created on: 6 March 2020
+ *     Author: tkeitel
+ */
 
 #ifndef VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_RC_MAPPER_H_
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_RC_MAPPER_H_
