@@ -6,6 +6,7 @@
  */
 
 #include <vb_util_lib/rc_controls.h>
+#include <vb_util_lib/rc_mapper.h>
 #include <vb_util_lib/topics.h>
 
 using namespace am;
@@ -52,13 +53,15 @@ RC_Controls::~RC_Controls() {
     // TODO Auto-generated destructor stub
 }
 
-RC_Controls::RC_Controls(ros::NodeHandle& n, RC_TYPE type) : rc_type_(type) {
+RC_Controls::RC_Controls(ros::NodeHandle& n, RC_TYPE type) : rc_type_(type) 
+{
+	rc_mapper_ = new rc_mapper(n);
 	setSubscriber(n);
 }
 
 void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 	// Initialize the min and max constants
-	n.param("/RC/max_value", MAX_VALUE_, MAX_VALUE_);
+	/*n.param("/RC/max_value", MAX_VALUE_, MAX_VALUE_);
 	n.param("/RC/min_value", MIN_VALUE_, MIN_VALUE_);
 
 	std::string rc_type;
@@ -101,10 +104,10 @@ void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 		mode_idx_ = ACSL_MODE;
 		arm_idx_ =  ACSL_ARM;
 
-		throttle_sign = ACSL_THROTTLE_SIGN;
-		yaw_sign = ACSL_YAW_SIGN;
-		roll_sign = ACSL_ROLL_SIGN;
-		pitch_sign = ACSL_PITCH_SIGN;
+		throttle_sign_ = ACSL_THROTTLE_SIGN;
+		yaw_sign_ = ACSL_YAW_SIGN;
+		roll_sign_ = ACSL_ROLL_SIGN;
+		pitch_sign_ = ACSL_PITCH_SIGN;
 
 	    break;
 
@@ -120,13 +123,33 @@ void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 		mode_idx_ = PX4_MODE;
 		arm_idx_ =  PX4_ARM;
 
-		throttle_sign = PX4_THROTTLE_SIGN;
-		yaw_sign = PX4_YAW_SIGN;
-		roll_sign = PX4_ROLL_SIGN;
-		pitch_sign = PX4_PITCH_SIGN;
+		throttle_sign_ = PX4_THROTTLE_SIGN;
+		yaw_sign_ = PX4_YAW_SIGN;
+		roll_sign_ = PX4_ROLL_SIGN;
+		pitch_sign_ = PX4_PITCH_SIGN;
 
 		break;
-	}
+	}*/
+
+	rc_type_ = static_cast<RC_TYPE>(rc_mapper_->GetSetRC());
+
+	MIN_VALUE_ = rc_mapper_->GetMin();
+	MAX_VALUE_ = rc_mapper_->GetMax();
+
+	throttle_idx_ 	= rc_mapper_->GetChannel(rc_mapper::eRCThrottle);
+	yaw_idx_ 		= rc_mapper_->GetChannel(rc_mapper::eRCYaw);
+	roll_idx_ 		= rc_mapper_->GetChannel(rc_mapper::eRCRoll);
+	pitch_idx_		= rc_mapper_->GetChannel(rc_mapper::eRCPitch);
+	gear_idx_		= rc_mapper_->GetChannel(rc_mapper::eRCGear);
+	mode_idx_		= rc_mapper_->GetChannel(rc_mapper::eRCMode);
+	arm_idx_		= rc_mapper_->GetChannel(rc_mapper::eRCArm);
+
+	throttle_sign_ 	= rc_mapper_->GetSign(rc_mapper::eThrottleSign);
+	yaw_sign_ 		= rc_mapper_->GetSign(rc_mapper::eRCYaw);
+	roll_sign_ 		= rc_mapper_->GetSign(rc_mapper::eRollSign);
+	pitch_sign_ 		= rc_mapper_->GetSign(rc_mapper::eRCPitch);
+
+	ROS_INFO("RC: RC Param Settings: throttle[%d], yaw[%d], roll[%d], pitch[%d], gear[%d], mode[%d], arm[%d], throttle_sign_[%d], yaw_sign_[%d], roll_sign_[%d], pitch_sign_[%d], max[%d], min[%d]", throttle_idx_, yaw_idx_, roll_idx_, pitch_idx_, gear_idx_, mode_idx_, arm_idx_, throttle_sign_, yaw_sign_, roll_sign_, pitch_sign_, MAX_VALUE_, MIN_VALUE_);
 
 	RANGE_ = ((MAX_VALUE_ - MIN_VALUE_)/2);
 	ZERO_VALUE_ =  (MIN_VALUE_ + RANGE_);
@@ -151,12 +174,19 @@ void RC_Controls::setDJIControls(const sensor_msgs::Joy::ConstPtr& msg) {
 	stamp = msg->header.stamp;
 
 	// Set the raw values;
-	throttle_ = msg->axes[3];
+	/*throttle_ = msg->axes[3];
 	yaw_ = msg->axes[2];
 	pitch_ = msg->axes[1];
 	roll_ = msg->axes[0];
 	gear_ = msg->axes[5];
-	mode_ = msg->axes[4];
+	mode_ = msg->axes[4];*/
+
+	throttle_ = msg->axes[throttle_idx_];
+	yaw_ = msg->axes[yaw_idx_];
+	pitch_ = msg->axes[pitch_idx_];
+	roll_ = msg->axes[roll_idx_];
+	gear_ = msg->axes[gear_idx_];
+	mode_ = msg->axes[mode_idx_];
 
 	setDJIStickValue(yaw_, yaw);
 	setDJIStickValue(pitch_, pitch);
@@ -259,10 +289,10 @@ void RC_Controls::setPX4Controls(const mavros_msgs::RCIn::ConstPtr&  msg) {
 	mode_ = msg->channels[mode_idx_];
 	armed_ = msg->channels[arm_idx_];
 
-	setPX4StickValue(yaw_, yaw, yaw_sign);
-	setPX4StickValue(pitch_, pitch, pitch_sign);
-	setPX4StickValue(roll_, roll, roll_sign);
-	setPX4StickValue(throttle_, throttle, throttle_sign);
+	setPX4StickValue(yaw_, yaw, yaw_sign_);
+	setPX4StickValue(pitch_, pitch, pitch_sign_);
+	setPX4StickValue(roll_, roll, roll_sign_);
+	setPX4StickValue(throttle_, throttle, throttle_sign_);
 
 	setPX4ModeSwitch(mode_, mode);
 	setPX4GearSwitch(gear_, gear);
