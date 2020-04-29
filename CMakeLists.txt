@@ -24,9 +24,12 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(jsoncpp REQUIRED jsoncpp)
+
 catkin_package(
-  INCLUDE_DIRS include include/am_utils include/vb_util_lib
-  LIBRARIES am_utils
+  INCLUDE_DIRS include include/am_utils include/vb_util_lib ${jsoncpp_INCLUDE_DIRS}
+  LIBRARIES am_utils jsoncpp
   CATKIN_DEPENDS
   brain_box_msgs
   control_toolbox 
@@ -50,6 +53,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Eigen3_INCLUDE_DIRS}
+  ${jsoncpp_INCLUDE_DIRS}
   /usr/include/eigen3
 )
 
@@ -74,7 +78,7 @@ add_library(am_utils
   src/vb_util_lib/am_param.cpp 
   src/vb_util_lib/gis_entity.cpp 
   src/vb_util_lib/gis_util.cpp
-  src/vb_util_lib/jsoncpp.cpp
+  #src/vb_util_lib/jsoncpp.cpp
   src/vb_util_lib/json_utils.cpp 
   src/vb_util_lib/gs_json_utils.cpp 
   src/vb_util_lib/am_util.cpp 
@@ -109,7 +113,7 @@ add_library(am_utils
   src/vb_util_lib/vb_main.cpp
   src/vb_util_lib/bag_logger.cpp)
 
-target_link_libraries(am_utils ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(am_utils ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} jsoncpp)
 
 add_dependencies(am_utils ${catkin_EXPORTED_TARGETS})
 
