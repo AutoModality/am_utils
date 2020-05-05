@@ -70,7 +70,17 @@ namespace am
 
     static void rotate(double &x, double &y, double &z, geometry_msgs::Quaternion &q_rot);
 
-    static void rotate(geometry_msgs::Point32 &p, geometry_msgs::Quaternion &q_rot);
+    static void rotate(geometry_msgs::Point32 &p, const geometry_msgs::Quaternion &q_rot);
+
+    /*
+     * @brief transforms a point with the passed transformed stamped
+     */
+    static void transform(geometry_msgs::Point32 &p_in, const geometry_msgs::TransformStamped &tranform);
+
+    /*
+     * @brief inverse transform
+     */
+    static void reverse(geometry_msgs::Quaternion &q);
 
     //Static method to convert quaternion by component to rpy by component
     static void getRPY(double x, double y, double z, double w, double &roll, double &pitch, double &yaw);
@@ -100,6 +110,11 @@ namespace am
     static double toDegree(double ang);
     static void toRadian(geometry_msgs::Point &rpy);
     static void toDegree(geometry_msgs::Point &rpy);
+
+    /*
+     * @brief assure that the angle is between -M_PI and M_PI
+     */
+    static double wrap_pi(double angle);
 
   };
 }
