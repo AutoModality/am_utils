@@ -351,9 +351,9 @@ namespace am
 
   }
 
-  void Rotate::rotate(geometry_msgs::Point32 &p, geometry_msgs::Quaternion &q_rot)
+  void Rotate::rotate(geometry_msgs::Point32 &p, const geometry_msgs::Quaternion &q_rot)
   {
-	  geometry_msgs::Point32 old_p;
+	  geometry_msgs::Point32 old_p = p;
 	  p.x = q_rot.w*q_rot.w*old_p.x + 2*q_rot.y*q_rot.w*old_p.z - 2*q_rot.z*q_rot.w*old_p.y + q_rot.x*q_rot.x*old_p.x + 2*q_rot.y*q_rot.x*old_p.y + 2*q_rot.z*q_rot.x*old_p.z - q_rot.z*q_rot.z*old_p.x - q_rot.y*q_rot.y*old_p.x;
 	  p.y = 2*q_rot.x*q_rot.y*old_p.x + q_rot.y*q_rot.y*old_p.y + 2*q_rot.z*q_rot.y*old_p.z + 2*q_rot.w*q_rot.z*old_p.x - q_rot.z*q_rot.z*old_p.y + q_rot.w*q_rot.w*old_p.y - 2*q_rot.x*q_rot.w*old_p.z - q_rot.x*q_rot.x*old_p.y;
 	  p.z = 2*q_rot.x*q_rot.z*old_p.x + 2*q_rot.y*q_rot.z*old_p.y + q_rot.z*q_rot.z*old_p.z - 2*q_rot.w*q_rot.y*old_p.x - q_rot.y*q_rot.y*old_p.z + 2*q_rot.w*q_rot.x*old_p.y - q_rot.x*q_rot.x*old_p.z + q_rot.w*q_rot.w*old_p.z;
@@ -416,6 +416,50 @@ namespace am
 	  rpy.x = Rotate::toDegree(rpy.x);
 	  rpy.y = Rotate::toDegree(rpy.y);
 	  rpy.z = Rotate::toDegree(rpy.z);
+  }
+
+  /*
+   * @brief transforms a point with the passed transformed stamped
+   */
+  void Rotate::transform(geometry_msgs::Point32 &p, const geometry_msgs::TransformStamped &tranform)
+  {
+	  rotate(p, tranform.transform.rotation);
+	  p.x += tranform.transform.translation.x;
+	  p.y += tranform.transform.translation.y;
+	  p.z += tranform.transform.translation.z;
+  }
+
+  /*
+   * @brief inverse transform
+   */
+  void Rotate::reverse(geometry_msgs::Quaternion &q)
+  {
+	  double roll, pitch, yaw;
+	  getRPY(q, roll, pitch, yaw);
+
+	  yaw -= M_PI;
+	  pitch -= M_PI;
+	  roll -=M_PI;
+
+	  q = toQuaternionMsg(wrap_pi(roll), wrap_pi(pitch), wrap_pi(yaw));
+  }
+
+  /*
+   * @brief wrap_pi
+   */
+  double Rotate::wrap_pi(double angle)
+  {
+    while (angle >= M_PI)
+      {
+    	angle -= 2 * M_PI;
+      }
+
+    while (angle <= -M_PI)
+      {
+    	angle += 2 * M_PI;
+      }
+
+    return angle;
   }
 
 }
