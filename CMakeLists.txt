@@ -111,7 +111,8 @@ add_library(am_utils
   src/vb_util_lib/imu_class.cpp
   src/vb_util_lib/am_heartbeat.cpp
   src/vb_util_lib/vb_main.cpp
-  src/vb_util_lib/bag_logger.cpp)
+  src/vb_util_lib/bag_logger.cpp
+  src/vb_util_lib/csv_logger.cpp)
 
 target_link_libraries(am_utils ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} jsoncpp)
 
