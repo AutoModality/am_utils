@@ -6,7 +6,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   brain_box_msgs
   control_toolbox 
-  dji_sdk
+  dji_osdk_ros
   image_transport 
   genmsg
   geometry_msgs
@@ -33,7 +33,7 @@ catkin_package(
   CATKIN_DEPENDS
   brain_box_msgs
   control_toolbox 
-  dji_sdk
+  dji_osdk_ros
   image_transport 
   genmsg
   geometry_msgs

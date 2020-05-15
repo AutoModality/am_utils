@@ -11,7 +11,7 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <brain_box_msgs/GPSLocation.h>
 #include <vb_util_lib/topics.h>
-//3.3#include <dji_sdk/GlobalPosition.h>
+//3.3#include <dji_osdk_ros/GlobalPosition.h>
 
 using namespace am;
 
@@ -130,7 +130,7 @@ public:
         status_ = msg->status;
     }
 
-/*3.3    void setGPSLocation(const dji_sdk::GlobalPosition::ConstPtr& msg) {
+/*3.3    void setGPSLocation(const dji_osdk_ros::GlobalPosition::ConstPtr& msg) {
         latitude_ = msg->latitude;
         longitude_ = msg->longitude;
         altitude_ = msg->altitude;

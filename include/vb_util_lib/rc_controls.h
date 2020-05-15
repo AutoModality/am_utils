@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include "rc_mapper.h"
-//#include <dji_sdk/RCChannels.h>
+//#include <dji_osdk_ros/RCChannels.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
 #include <mavros_msgs/RCIn.h>
