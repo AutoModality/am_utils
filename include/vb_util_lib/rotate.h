@@ -6,6 +6,8 @@
 #include <tf/tf.h>
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/Point32.h>
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 namespace am
 {
@@ -70,12 +72,20 @@ namespace am
 
     static void rotate(double &x, double &y, double &z, geometry_msgs::Quaternion &q_rot);
 
+    static void rotate(double &x, double &y, double &z, const geometry_msgs::Quaternion &q_rot);
+
     static void rotate(geometry_msgs::Point32 &p, const geometry_msgs::Quaternion &q_rot);
+
 
     /*
      * @brief transforms a point with the passed transformed stamped
      */
     static void transform(geometry_msgs::Point32 &p_in, const geometry_msgs::TransformStamped &tranform);
+
+    /*
+     * @brief transforms a pose with another pose
+     */
+    static void transform(const geometry_msgs::Pose &src, geometry_msgs::Pose &des);
 
     /*
      * @brief inverse transform
@@ -90,6 +100,9 @@ namespace am
 
     //Static method to convert quaternion to rpy
     static void getRPY(tf::Quaternion &q, double &roll, double &pitch, double &yaw);
+
+    //Static method to convert pose to rpy in geometry_msgs::Vector3
+    static geometry_msgs::Vector3 getRPY(const geometry_msgs::Pose &pose);
 
     //Static method to get Yaw from geometry_msgs Quaternion
     static double getYaw(const geometry_msgs::Quaternion &q);

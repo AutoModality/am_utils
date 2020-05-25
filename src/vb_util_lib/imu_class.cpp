@@ -11,11 +11,18 @@
 
 namespace am
 {
+
+ImuClass::ImuClass(ros::NodeHandle &nh, const std::string &imu_topic, int imu_pot_size): imu_pot_size_(imu_pot_size), imu_cnt_(-1)
+{
+	nh_ = nh;
+	px4_imu_sub_= nh_.subscribe<sensor_msgs::Imu>(imu_topic, 100, &ImuClass::imuCB, this);
+	imu_pot_ = std::vector<sensor_msgs::Imu>(imu_pot_size);
+}
+
 ImuClass::ImuClass(ros::NodeHandle &nh, int imu_pot_size): imu_cnt_(-1)
 {
 	nh_ = nh;
 	dji_imu_sub_ = nh_.subscribe<sensor_msgs::Imu>(am_topics::DJI_SDK_IMU, 100, &ImuClass::imuCB, this);
-	//TODO: use PX4_IMU_TOPIC from am_topics
 	px4_imu_sub_ = nh_.subscribe<sensor_msgs::Imu>(am_topics::MAVROS_IMU_DATA, 100, &ImuClass::imuCB, this);
 	imu_pot_size_ = imu_pot_size;
 	imu_pot_ = std::vector<sensor_msgs::Imu>(imu_pot_size_);

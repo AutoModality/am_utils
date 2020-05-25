@@ -339,6 +339,16 @@ namespace am
     m.getRPY(roll, pitch, yaw);
   }
 
+  geometry_msgs::Vector3 Rotate::getRPY(const geometry_msgs::Pose &pose)
+  {
+  	tf2::Quaternion tf2_q;
+  	tf2::fromMsg(pose.orientation, tf2_q);
+  	geometry_msgs::Vector3 rpy;
+
+  	tf2::Matrix3x3(tf2_q).getRPY(rpy.x, rpy.y, rpy.z);
+  	return rpy;
+  }
+
   void Rotate::rotate(double &x, double &y, double &z, geometry_msgs::Quaternion &q_rot)
   {
 	  double old_x = x;
@@ -348,6 +358,18 @@ namespace am
 	  x = q_rot.w*q_rot.w*old_x + 2*q_rot.y*q_rot.w*old_z - 2*q_rot.z*q_rot.w*old_y + q_rot.x*q_rot.x*old_x + 2*q_rot.y*q_rot.x*old_y + 2*q_rot.z*q_rot.x*old_z - q_rot.z*q_rot.z*old_x - q_rot.y*q_rot.y*old_x;
 	  y = 2*q_rot.x*q_rot.y*old_x + q_rot.y*q_rot.y*old_y + 2*q_rot.z*q_rot.y*old_z + 2*q_rot.w*q_rot.z*old_x - q_rot.z*q_rot.z*old_y + q_rot.w*q_rot.w*old_y - 2*q_rot.x*q_rot.w*old_z - q_rot.x*q_rot.x*old_y;
 	  z = 2*q_rot.x*q_rot.z*old_x + 2*q_rot.y*q_rot.z*old_y + q_rot.z*q_rot.z*old_z - 2*q_rot.w*q_rot.y*old_x - q_rot.y*q_rot.y*old_z + 2*q_rot.w*q_rot.x*old_y - q_rot.x*q_rot.x*old_z + q_rot.w*q_rot.w*old_z;
+
+  }
+
+  void Rotate::rotate(double &x, double &y, double &z, const geometry_msgs::Quaternion &q_rot)
+  {
+  	double old_x = x;
+  	double old_y = y;
+  	double old_z = z;
+
+  	x = q_rot.w*q_rot.w*old_x + 2*q_rot.y*q_rot.w*old_z - 2*q_rot.z*q_rot.w*old_y + q_rot.x*q_rot.x*old_x + 2*q_rot.y*q_rot.x*old_y + 2*q_rot.z*q_rot.x*old_z - q_rot.z*q_rot.z*old_x - q_rot.y*q_rot.y*old_x;
+  	y = 2*q_rot.x*q_rot.y*old_x + q_rot.y*q_rot.y*old_y + 2*q_rot.z*q_rot.y*old_z + 2*q_rot.w*q_rot.z*old_x - q_rot.z*q_rot.z*old_y + q_rot.w*q_rot.w*old_y - 2*q_rot.x*q_rot.w*old_z - q_rot.x*q_rot.x*old_y;
+  	z = 2*q_rot.x*q_rot.z*old_x + 2*q_rot.y*q_rot.z*old_y + q_rot.z*q_rot.z*old_z - 2*q_rot.w*q_rot.y*old_x - q_rot.y*q_rot.y*old_z + 2*q_rot.w*q_rot.x*old_y - q_rot.x*q_rot.x*old_z + q_rot.w*q_rot.w*old_z;
 
   }
 
@@ -460,6 +482,21 @@ namespace am
       }
 
     return angle;
+  }
+
+  void Rotate::transform(const geometry_msgs::Pose &src, geometry_msgs::Pose &des)
+  {
+  	des.position.x = des.position.x - src.position.x;
+  	des.position.y = des.position.y - src.position.y;
+  	des.position.z = des.position.z - src.position.z;
+
+  	geometry_msgs::Vector3 rpy = Rotate::getRPY(src);
+  	rpy.x *= -1;
+  	rpy.y *= -1;
+  	rpy.z *= -1;
+  	//ROS_INFO("Q:[%f,%f,%f,%f]", src.orientation.x, src.orientation.y, src.orientation.z, src.orientation.w);
+  	Rotate::rotate(des.position.x, des.position.y, des.position.z, toQuaternionMsg(rpy.x, rpy.y, rpy.z));
+
   }
 
 }
