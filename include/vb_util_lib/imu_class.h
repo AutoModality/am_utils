@@ -45,9 +45,29 @@ namespace am
   class ImuClass
   {
   public:
+	/*
+	 * @brief default constructor. the user needs to subscribe to imu topics
+	 */
     ImuClass();
+
+    /*
+     * @brief constructor
+     */
     ImuClass(int imu_pot_size);
+
+    /*
+     * @brief constructor for PX4 and DJI imu
+     */
     ImuClass(ros::NodeHandle &nh, int imu_pot_size = 400);
+
+    /*
+     * @brief constructor for customized imu source
+     */
+    ImuClass(ros::NodeHandle &nh, const std::string &imu_topic, int imu_pot_size = 400);
+
+    /*
+     * @brief destructor
+     */
     ~ImuClass();
 
     void addImu(const sensor_msgs::Imu &imu);
