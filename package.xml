@@ -10,7 +10,6 @@
 
    <depend>brain_box_msgs</depend>
    <depend>control_toolbox</depend>
-   <depend>dji_sdk</depend>
    <depend>image_transport </depend>
    <depend>genmsg</depend>
    <depend>geometry_msgs</depend>
