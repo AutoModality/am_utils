@@ -5,6 +5,9 @@
 #include <brain_box_msgs/NodeStatus.h>
 #include <unistd.h>
 
+void initNode(ros::NodeHandle& n);
+
+
 class SuperStatus
 {
 private:
