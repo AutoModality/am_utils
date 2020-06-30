@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [[x64,self-hosted,linux, build]]
+        os: [ubuntu-18.04]
     steps:
       - uses: AutoModality/action-clean@v1.1.0
       - name: Checkout
