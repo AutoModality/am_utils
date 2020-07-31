@@ -1,9 +1,9 @@
 #ifndef AM_UTILS_INCLUDE_AM_UTILS_POINT_TYPE_H_
 #define AM_UTILS_INCLUDE_AM_UTILS_POINT_TYPE_H_
 
-#include <pcl-1.8/pcl/point_types.h>
-#include <pcl-1.8/pcl/point_types.h>
-#include <pcl-1.8/pcl/point_types.h>
+#include <pcl/point_types.h>
+#include <pcl/point_types.h>
+#include <pcl/point_types.h>
 
 namespace pcl {
 
