@@ -15,7 +15,7 @@ CurrentENUKinematics::CurrentENUKinematics() {
 
 CurrentENUKinematics::CurrentENUKinematics(ros::NodeHandle *n, std::string topic,
         bool pub_on_change, double pub_rate) :
-            Kinematics(n, topic!="" ? topic : VEHICLE_CURRENT_ENU_TOPIC,
+            Kinematics(n, topic!="" ? topic : am::am_topics::CTRL_VX_VEHICLE_CURRENTENU,
             		Asset_ENU, pub_on_change, pub_rate) {
 
 	//tfListener_ = new tf2_ros::TransformListener(tfBuffer);

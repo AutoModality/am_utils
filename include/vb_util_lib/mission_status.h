@@ -10,15 +10,14 @@
 
 #include <brain_box_msgs/VxMissionStatus.h>
 #include <brain_box_msgs/VxFlightPlanStatus.h>
+#include <vb_util_lib/topics.h>
 
 #include <ros/ros.h>
-
-#define DEFAULT_MISSION_STATUS_TOPIC "/ctrl/vx/mission_status"
 
 class MissionStatus {
 public:
 	MissionStatus() {};
-	MissionStatus(ros::NodeHandle *n, std::string topic=DEFAULT_MISSION_STATUS_TOPIC,
+	MissionStatus(ros::NodeHandle *n, std::string topic=am::am_topics::CTRL_VX_MISSION_STATUS,
 	        bool pub_on_change=false, double pub_rate=0.0) :
         topic_(topic), pub_on_change_(pub_on_change), pub_rate_(pub_rate) {
 	    initROS(n);
