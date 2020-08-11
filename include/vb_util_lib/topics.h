@@ -156,7 +156,7 @@ public:
 	static constexpr char STATUS_SS1[] = "/status/ss1";
 	static constexpr char STATUS_SS2[] = "/status/ss2";
 
-	// CTRL messages
+	// visbox CTRL messages
 	static constexpr char CTRL_VX_CMND[] = "/ctrl/vx/cmnd";
 	static constexpr char CTRL_VX_FCU_STATUS[] = "/ctrl/vx/fcu_status";
 	static constexpr char CTRL_VX_FLIGHT_CONTROL[] = "/ctrl/vx/flight_control";
