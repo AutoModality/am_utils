@@ -35,22 +35,11 @@
 //#include <brain_box_msgs/VxKinematics.h>
 #include <visualization_msgs/Marker.h>
 
+#include <vb_util_lib/topics.h>
 #include <vb_util_lib/control_util.h>
 #include <vb_util_lib/am_geometry.h>
 #include <vb_util_lib/transformer.h>
 #include <vb_util_lib/frame_names.h>
-
-#define VEHICLE_CURRENT_ENU_TOPIC "/ctrl/vx/vehicle/currentENU"
-#define VEHICLE_COMMAND_ENU_TOPIC "/ctrl/vx/vehicle/commandENU"
-#define VEHICLE_SETPOINT_ENU_TOPIC "/ctrl/vx/vehicle/setpointENU"
-
-#define VEHICLE_CURRENT_NED_TOPIC "/ctrl/vx/vehicle/currentNED"
-#define VEHICLE_COMMAND_NED_TOPIC "/ctrl/vx/vehicle/commandNED"
-#define VEHICLE_SETPOINT_NED_TOPIC "/ctrl/vx/vehicle/setpointNED"
-
-#define VEHICLE_SETPOINT_ATTITUDE_TOPIC "/ctrl/vx/vehicle/att_cmd"
-#define VEHICLE_SETPOINT_RELPOS_TOPIC "/ctrl/vx/vehicle/relpos_cmd"
-#define VEHICLE_SETPOINT_ABSPOS_TOPIC "/ctrl/vx/vehicle/abspos_cmd"
 
 /**
  * Wrapper method for vehicle Kinematics

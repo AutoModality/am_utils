@@ -9,18 +9,17 @@
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CURRENTENUKINEMATICS_H_
 
 #include <vb_util_lib/kinematics.h>
+#include <vb_util_lib/topics.h>
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Float64.h>
 
 #include <vb_util_lib/transformer.h>
 
-#define VEHICLE_CURRENT_ENU_TOPIC "/ctrl/vx/vehicle/currentENU"
-
 class CurrentENUKinematics: public Kinematics {
 public:
     CurrentENUKinematics();
 
-    CurrentENUKinematics(ros::NodeHandle *n, std::string topic=VEHICLE_CURRENT_ENU_TOPIC,
+    CurrentENUKinematics(ros::NodeHandle *n, std::string topic=am::am_topics::CTRL_VX_VEHICLE_CURRENTENU,
             bool pub_on_change=false, double pub_rate=0.0);
 
     virtual ~CurrentENUKinematics();
