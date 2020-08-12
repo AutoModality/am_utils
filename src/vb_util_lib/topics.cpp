@@ -28,6 +28,7 @@ constexpr char am_topics::DJI_SDK_RELATIVE_POSITION[];
 constexpr char am_topics::DJI_SDK_ODOMETRY[];
 constexpr char am_topics::DJI_SDK_SEND_DATA_TO_MOBILE[];
 constexpr char am_topics::DJI_SDK_CORRECTED_ATTITUDE[];
+
 constexpr char am_topics::FEATURE_ODOMETRY[];
 constexpr char am_topics::FEATURE_SEARCH_IDS[];
 
@@ -85,6 +86,39 @@ constexpr char am_topics::STATUS_CORR[];
 constexpr char am_topics::STATUS_LIDAR[];
 constexpr char am_topics::STATUS_SS1[];
 constexpr char am_topics::STATUS_SS2[];
+
+constexpr char am_topics::CTRL_VX_CMND[];
+constexpr char am_topics::CTRL_VX_FCU_STATUS[];
+constexpr char am_topics::CTRL_VX_FLIGHT_CONTROL[];
+constexpr char am_topics::CTRL_VX_FLIGHTPLAN[];
+constexpr char am_topics::CTRL_VX_FLIGHTPAN_STATUS[];
+constexpr char am_topics::CTRL_VX_GLOBAL_POS_NAV_ACTION[];
+constexpr char am_topics::CTRL_VX_GPS_LOCATION[];
+constexpr char am_topics::CTRL_VX_LOCAL_POS_NAV_ACTION[];
+constexpr char am_topics::CTRL_VX_MISSION[];
+constexpr char am_topics::CTRL_VX_MISSION_MESSAGE[];
+constexpr char am_topics::CTRL_VX_MISSION_STATUS[];
+constexpr char am_topics::CTRL_VX_PID_PARAM[];
+constexpr char am_topics::CTRL_VX_PROXIMITY[];
+constexpr char am_topics::CTRL_VX_RTL_ACTION[];
+constexpr char am_topics::CTRL_VX_TARGET_CURRENT_ENU[];
+constexpr char am_topics::CTRL_VX_VEHICLE_CURRENTENU[];
+constexpr char am_topics::CTRL_VX_VELOCITY[];
+constexpr char am_topics::CTRL_VX_WAYPOINT_NAV_ACTION[];
+
+constexpr char am_topics::CTRL_FEATURE_STATUS_LIST[];
+constexpr char am_topics::CTRL_FEATURE_STATUS[];
+constexpr char am_topics::CTRL_FEATURE_STATUS_UPDATE[];
+constexpr char am_topics::CTRL_FEATURE_END_LIST[];
+
+constexpr char am_topics::CTRL_DEPTH_CMND[];
+constexpr char am_topics::CTRL_LOG_CONTROL[];
+constexpr char am_topics::CTRL_ROUTE[];
+constexpr char am_topics::CTRL_VIDEO_CMND[];
+constexpr char am_topics::CTRL_VISION_CMND[];
+constexpr char am_topics::CTRL_VISION_MARKER_OFFSET[];
+
+constexpr char am_topics::REMOTE_CTRL_VX_MISSION[];
 
 constexpr char am_topics::LED_BLINK[];
 constexpr char am_topics::BATTERY_STATE[];

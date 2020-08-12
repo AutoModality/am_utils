@@ -15,8 +15,6 @@
 
 using namespace am;
 
-#define DEFAULT_GPS_LOCATION_TOPIC "/ctrl/vx/gps_location"
-
 /**
  * Wrapper method for the global GPS location.
  * Can use this class either as a publisher or a subscriber for the GPS Location.
@@ -28,7 +26,7 @@ using namespace am;
 class GPSLocation {
 public:
     GPSLocation() {};
-    GPSLocation(ros::NodeHandle *n, std::string topic=DEFAULT_GPS_LOCATION_TOPIC,
+    GPSLocation(ros::NodeHandle *n, std::string topic=am::am_topics::CTRL_VX_GPS_LOCATION,
             bool pub_on_change=false, double pub_rate=0.0) :
         topic_(topic), pub_on_change_(pub_on_change), pub_rate_(pub_rate) {
         initROS(n);

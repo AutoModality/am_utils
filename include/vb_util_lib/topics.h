@@ -1,6 +1,8 @@
 #ifndef VB_UTIL_LIB_AM_TOPICS_H
 #define VB_UTIL_LIB_AM_TOPICS_H
 
+#include <string>
+
 namespace am
 {
 
@@ -153,6 +155,40 @@ public:
 	static constexpr char STATUS_LIDAR[] = "/status/lidar";
 	static constexpr char STATUS_SS1[] = "/status/ss1";
 	static constexpr char STATUS_SS2[] = "/status/ss2";
+
+	// visbox CTRL messages
+	static constexpr char CTRL_VX_CMND[] = "/ctrl/vx/cmnd";
+	static constexpr char CTRL_VX_FCU_STATUS[] = "/ctrl/vx/fcu_status";
+	static constexpr char CTRL_VX_FLIGHT_CONTROL[] = "/ctrl/vx/flight_control";
+	static constexpr char CTRL_VX_FLIGHTPLAN[] = "/ctrl/vx/flightplan";
+	static constexpr char CTRL_VX_FLIGHTPAN_STATUS[] = "/ctrl/vx/flightplan/status";
+	static constexpr char CTRL_VX_GLOBAL_POS_NAV_ACTION[] = "/ctrl/vx/global_pos_nav_action";
+	static constexpr char CTRL_VX_GPS_LOCATION[] = "/ctrl/vx/gps_location";
+	static constexpr char CTRL_VX_LOCAL_POS_NAV_ACTION[] = "/ctrl/vx/local_pos_nav_action";
+	static constexpr char CTRL_VX_MISSION[] = "/ctrl/vx/mission";
+	static constexpr char CTRL_VX_MISSION_MESSAGE[] = "/ctrl/vx/mission/message";
+	static constexpr char CTRL_VX_MISSION_STATUS[] = "/ctrl/vx/mission_status";
+	static constexpr char CTRL_VX_PID_PARAM[] = "/ctrl/vx/pid_param";
+	static constexpr char CTRL_VX_PROXIMITY[] = "/ctrl/vx/proximity";
+	static constexpr char CTRL_VX_RTL_ACTION[] = "/ctrl/vx/rtl_action";
+	static constexpr char CTRL_VX_TARGET_CURRENT_ENU[] = "/ctrl/vx/target/currentENU";
+	static constexpr char CTRL_VX_VEHICLE_CURRENTENU[] = "/ctrl/vx/vehicle/currentENU";
+	static constexpr char CTRL_VX_VELOCITY[] = "/ctrl/vx/velocity";
+	static constexpr char CTRL_VX_WAYPOINT_NAV_ACTION [] = "/ctrl/vx/waypoint_nav_action";
+
+	static constexpr char CTRL_FEATURE_STATUS_LIST[] = "/ctrl/feature_status_list";
+	static constexpr char CTRL_FEATURE_STATUS[] = "/ctrl/feature_status";
+	static constexpr char CTRL_FEATURE_STATUS_UPDATE[] = "/ctrl/feature_status_update";
+	static constexpr char CTRL_FEATURE_END_LIST[] =  "/ctrl/feature_end_list";
+
+	static constexpr char CTRL_DEPTH_CMND[] = "/ctrl/depth/cmnd";
+	static constexpr char CTRL_LOG_CONTROL[] = "/ctrl/log_control";
+	static constexpr char CTRL_ROUTE[] = "/ctrl/route";
+	static constexpr char CTRL_VIDEO_CMND[] = "/ctrl/video/cmnd";
+	static constexpr char CTRL_VISION_CMND[] = "/ctrl/vision/cmnd";
+	static constexpr char CTRL_VISION_MARKER_OFFSET[] = "/ctrl/vision/marker_offset";
+
+	static constexpr char REMOTE_CTRL_VX_MISSION[] = "/remote/ctrl/vx/mission";
 
 	static constexpr char LED_BLINK[] = "/blinkm_command";
 	static constexpr char BATTERY_STATE[] = "/dji_sdk/battery_state";
