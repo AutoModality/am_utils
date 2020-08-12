@@ -98,7 +98,7 @@ void Kinematics::setPose(const std::string& source_frame, const ros::Time& updat
 
 	if (source_frame == frame_id_)
 	{
-		setPosition(p.position, debug);
+		setPosition(update_time, p.position, debug);
 		setAttitude(p.orientation);
         ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX SAME FRAME = \n" << p);
 	}
@@ -115,7 +115,7 @@ void Kinematics::setPose(const std::string& source_frame, const ros::Time& updat
 		cur_pt.header.stamp = update_time;
 		// transform point
 		tf2::doTransform(cur_pt, ts_pt, ts);
-		setPosition(ts_pt.pose.position, debug);
+		setPosition(update_time, ts_pt.pose.position, debug);
 		setAttitude(ts_pt.pose.orientation);
 		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX FROM POINT = \n" << cur_pt);
 		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TRANSFORM = \n" << ts);
@@ -164,23 +164,15 @@ bool  Kinematics::getPoseStamped(std::string& target_frame_id, geometry_msgs::Po
     return true;
 }
 
-void Kinematics::setPosition(const geometry_msgs::Point& p, int debug) {
-	checkPosition(p.x, p.y, p.z, debug);
-    position_.x = p.x;
-    position_.y = p.y;
-    position_.z = p.z;
-}
-
-void Kinematics::setPosition(const AM::Point& p, int debug) {
-	checkPosition(p.x, p.y, p.z, debug);
-    position_ = p;
-}
-
-void Kinematics::setPosition(double x, double y, double z, int debug) {
+void Kinematics::setPosition(const ros::Time& update_time, double x, double y, double z, int debug) {
 	checkPosition(x, y, z, debug);
 	position_.x = x;
 	position_.y = y;
 	position_.z = z;
+
+	//SSS Calculate speed
+
+	update_time_ = update_time;
 }
 
 #define MAX_POS_ERR 1.0
@@ -224,6 +216,10 @@ void Kinematics::setOrientation(double w, double x, double y, double z) {
     attitude_.pitch = rpy[1];
     attitude_.yaw = rpy[2];
     attitude_.throttle = 0;
+}
+
+void Kinematics::updateVelocity(double x, double y, double z, double t,
+		int debug) {
 }
 
 void Kinematics::setVelocity(const geometry_msgs::Vector3& linear,
@@ -435,12 +431,11 @@ void Kinematics::sendKinematics() {
 void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
     // LOG_MSG(topic_+"-R", msg, 2); // TODO (dan) bag_logger
     setUpdated(true);
-//	setPose(msg->child_frame_id, msg->header.stamp, msg->pose.pose);
-	setPosition(msg->pose.pose.position);
+	setPosition(msg->header.stamp, msg->pose.pose.position);
 	setAttitude(msg->pose.pose.orientation);
     setLinearVelocity(msg->twist.twist.linear);
-//    update_time_ = msg->header.stamp;
-    update_time_ = ros::Time::now();
+    update_time_ = msg->header.stamp;
+//    update_time_ = ros::Time::now();
 
 //    setOdometry(msg);
 //print(">>>>>>> RECEIVING KINEMATICS: ", true);
@@ -506,11 +501,11 @@ void Kinematics::test() {
 	printf("          Linear velocity x:%f, y:%f, z:%f\n", van.x, van.y, van.z);
 
 	printf("Kinematics: setPosition - x,y,z\n");
-	setPosition(p.pose.position.x, p.pose.position.y, p.pose.position.z);
+	setPosition(ros::Time::now(), p.pose.position.x, p.pose.position.y, p.pose.position.z);
 	print("TEST");
 
 	printf("Kinematics: setPosition - position\n");
-	setPosition(p.pose.position);
+	setPosition(ros::Time::now(), p.pose.position);
 	print("TEST");
 
 	printf("Kinematics: setPose\n");

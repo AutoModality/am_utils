@@ -104,7 +104,7 @@ void ObjectState::calculateTargetENU() {
 	}
 
 	// update the target ENU state
-	target_current_ENU.setPosition(Xt, Yt, target_current_RFU.position().z);
+	target_current_ENU.setPosition(target_current_RFU.getUpdateTime(), Xt, Yt, target_current_RFU.position().z);
 	target_current_ENU.setAttitude(target_current_RFU.getAttitude());
 //	targetCurrentENU.publishTransform();
 //	printf("Xc:%f, Yc:%f, Dc:%f, Xt:%f, Yt:%f, YAW:%f, Ay:%f, Ac:%f, At:%f\n", Xc, Yc, Dc, Xt, Yt, vehicle_current_ENU.attitude.yaw, Ay, Ac, At);

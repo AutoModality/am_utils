@@ -74,13 +74,14 @@ public:
         setPose(h.frame_id, h.stamp, p, debug);
     }
     void setOdometry(const nav_msgs::Odometry::ConstPtr& msg, int debug=-1) {
- //   	setPose(msg->child_frame_id, msg->header.stamp, msg->pose.pose, debug);
     	setPose(msg->child_frame_id, msg->header.stamp, msg->pose.pose, debug);
         setLinearVelocity(msg->twist.twist.linear);
+        setAngularVelocity(msg->twist.twist.angular);
     }
     void setOdometry(nav_msgs::Odometry& msg, int debug=-1) {
     	setPose(msg.child_frame_id, msg.header.stamp, msg.pose.pose, debug);
         setLinearVelocity(msg.twist.twist.linear);
+        setAngularVelocity(msg.twist.twist.angular);
     }
 
     void getPose(geometry_msgs::Pose& p);
@@ -91,10 +92,15 @@ public:
     /*
      * The following setters set the core attributes without regard to the frame of reference.
      * Therefore it assumes that the coordinates are in the same frame as this object.
+     * Does not update the velocity.
      */
-    void setPosition(const geometry_msgs::Point& p, int debug=-1);
-    void setPosition(const AM::Point& p, int debug=-1);
-    void setPosition(double x, double y, double z, int debug=-1);
+    void setPosition(const ros::Time& update_time, const geometry_msgs::Point& p, int debug=-1) {
+    	setPosition(update_time, p.x, p.y, p.z, debug);
+    }
+    void setPosition(const ros::Time& update_time, const AM::Point& p, int debug=-1) {
+    	setPosition(update_time, p.x, p.y, p.z, debug);
+    }
+    void setPosition(const ros::Time& update_time, double x, double y, double z, int debug=-1);
     void checkPosition(double x, double y, double z, int debug=-1);
     void setAltitude(double a) { position_.z = a; }
     const AM::Point& position() const {
@@ -129,6 +135,13 @@ public:
     }
     const Eigen::Vector3d& getLinearVelocity() const {
         return velLinear_;
+    }
+
+    /**
+     * Get the linear velocity with respect to some frame of reference
+     */
+    const Eigen::Vector3d& getLinearVelocity(std::string frame) const {
+        return velLinearFrame_;
     }
 
     bool isPoseInitialized() const {
@@ -216,6 +229,10 @@ public:
 		return update_stale_;
 	}
 
+	void setSpeedFilter(double speedFilter) {
+		speed_filter_ = speedFilter;
+	}
+
 protected:
     ros::NodeHandle *nh_;
 
@@ -241,6 +258,11 @@ private:
     void setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug=-1);
 
     /**
+     * Used to update the velocity given a new position
+     */
+    void updateVelocity(double pos_x, double pos_y, double pos_z, double delta_t, int debug=-1);
+
+    /**
      *  Identifier for the object represented by these kinematics
      */
     std::string object_id_ {"foo"};
@@ -264,6 +286,16 @@ private:
      *  Linear velocity
      */
     Eigen::Vector3d velLinear_;
+
+    /**
+     *  Cached linear velocity in a certain frame of reference
+     */
+    Eigen::Vector3d velLinearFrame_;
+
+    /**
+     * Speed filter constant
+     */
+    double speed_filter_ {1.0};
 
     /**
      *  Angular velocity
