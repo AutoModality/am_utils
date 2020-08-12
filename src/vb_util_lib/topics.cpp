@@ -112,6 +112,7 @@ constexpr char am_topics::CTRL_FEATURE_STATUS_UPDATE[];
 constexpr char am_topics::CTRL_FEATURE_END_LIST[];
 
 constexpr char am_topics::CTRL_DEPTH_CMND[];
+constexpr char am_topics::CTRL_FTP[];
 constexpr char am_topics::CTRL_LOG_CONTROL[];
 constexpr char am_topics::CTRL_ROUTE[];
 constexpr char am_topics::CTRL_VIDEO_CMND[];
