@@ -92,6 +92,8 @@ void Kinematics::initROS(ros::NodeHandle *n) {
         ROS_INFO("Kinematics: rivz enabled");
         rviz_uav_marker_pub_ = n->advertise<visualization_msgs::Marker>("/uav_marker", 1);
     }
+
+    n->param("/Debug/Kinematics/velocity_debug", enable_velocity_debug_, false);
 }
 
 void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug) {
@@ -166,13 +168,46 @@ bool  Kinematics::getPoseStamped(std::string& target_frame_id, geometry_msgs::Po
 
 void Kinematics::setPosition(const ros::Time& update_time, double x, double y, double z, int debug) {
 	checkPosition(x, y, z, debug);
+
+	// Calculate speed
+	double delta_t = update_time.toSec() - update_time_.toSec();
+
+	if (update_cnt_ <= 0 || delta_t <= 0.0)
+	{
+		position_.x = x;
+		position_.y = y;
+		position_.z = z;
+
+		setLinearVelocity(0.0, 0.0, 0.0);
+		return;
+	}
+
+	double B = 1.0 - speed_filter_;
+
+	Eigen::Vector3d vel;
+
+	vel[0] = (x - position_.x) / delta_t;
+	vel[1] = (y - position_.y) / delta_t;
+	vel[2] = (z - position_.z) / delta_t;
+
+	vel = (vel * speed_filter_) + (B * velLinear_);
+	velLinear_ = vel;
+
 	position_.x = x;
 	position_.y = y;
 	position_.z = z;
 
-	//SSS Calculate speed
-
 	update_time_ = update_time;
+
+	if (enable_velocity_debug_)
+	{
+		Eigen::Vector3d vel_debug;
+		getLinearVelocity(drone_ENU, vel_debug);
+		ROS_INFO("Kinematics Velocity standard[%s :  %0.3f %0.3f, %0.3f]   body[%s :  %0.3f %0.3f, %0.3f]",
+				frame_id_.c_str(), velLinear_[0], velLinear_[1], velLinear_[2],
+				drone_ENU, vel_debug[0], vel_debug[1], vel_debug[2]);
+
+	}
 }
 
 #define MAX_POS_ERR 1.0
@@ -234,30 +269,40 @@ void Kinematics::setVelocity(const Eigen::Vector3d& linear,
     setAngularVelocity(angular);
 }
 
-void Kinematics::setAngularVelocity(const Eigen::Vector3d& vel) {
-    velAngular_ = vel;
-}
+bool Kinematics::getLinearVelocity(std::string target_frame_id, Eigen::Vector3d& velocity) {
 
-void Kinematics::setAngularVelocity(const geometry_msgs::Vector3& vel) {
-    velAngular_[0] = vel.x;
-    velAngular_[1] = vel.y;
-    velAngular_[2] = vel.z;
+	geometry_msgs::TransformStamped ts;
+	if (!transformer_.getTransform(target_frame_id, frame_id_, ts, true))
+	{
+		ROS_ERROR("Kinematics::getLinearVelocity : No transform from[%s] to[%s]", frame_id_.c_str(), target_frame_id.c_str());
+		return false;
+	}
+
+	Eigen::Quaterniond rot;
+	rot.x() = ts.transform.rotation.x;
+	rot.y() = ts.transform.rotation.y;
+	rot.z() = ts.transform.rotation.z;
+	rot.w() = ts.transform.rotation.w;
+
+	velocity = rot * velLinear_;
+
+//	ps.pose.position.x = ts.transform.translation.x;
+//	ps.pose.position.y = ts.transform.translation.y;
+//	ps.pose.position.z = ts.transform.translation.z;
+//	ps.pose.orientation.x = ts.transform.rotation.x;
+//	ps.pose.orientation.y = ts.transform.rotation.y;
+//	ps.pose.orientation.z = ts.transform.rotation.z;
+//	ps.pose.orientation.w = ts.transform.rotation.w;
+//	ps.header.stamp = update_time_;
+//	ps.header.frame_id = target_frame_id;
+
+    return true;
 }
 
 void Kinematics::setAngularVelocity(double x, double y, double z) {
 	velAngular_[0] = x;
 	velAngular_[1] = y;
 	velAngular_[2] = z;
-}
-
-void Kinematics::setLinearVelocity(const Eigen::Vector3d& vel) {
-    velLinear_ = vel;
-}
-
-void Kinematics::setLinearVelocity(const geometry_msgs::Vector3& vel) {
-    velLinear_[0] = vel.x;
-    velLinear_[1] = vel.y;
-    velLinear_[2] = vel.z;
 }
 
 void Kinematics::setLinearVelocity(double x, double y, double z) {

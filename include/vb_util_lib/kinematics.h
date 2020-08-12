@@ -121,14 +121,22 @@ public:
     void setVelocity(const geometry_msgs::Vector3& linear, const geometry_msgs::Vector3& angular);
     void setVelocity(const Eigen::Vector3d& linear, const Eigen::Vector3d& angular);
 
-    void setAngularVelocity(const Eigen::Vector3d& vel);
-    void setAngularVelocity(const geometry_msgs::Vector3& vel);
+    void setAngularVelocity(const Eigen::Vector3d& vel) {
+    	setAngularVelocity(vel[0], vel[1], vel[2]);
+    }
+    void setAngularVelocity(const geometry_msgs::Vector3& vel) {
+    	setAngularVelocity(vel.x, vel.y, vel.z);
+    }
     void setAngularVelocity(double x, double y, double z);
     const Eigen::Vector3d& getAngularVelocity() const {
         return velAngular_;
     }
-    void setLinearVelocity(const Eigen::Vector3d& vel);
-    void setLinearVelocity(const geometry_msgs::Vector3& vel);
+    void setLinearVelocity(const Eigen::Vector3d& vel) {
+        setLinearVelocity(vel[0], vel[1], vel[2]);
+    }
+    void setLinearVelocity(const geometry_msgs::Vector3& vel) {
+        setLinearVelocity(vel.x, vel.y, vel.z);
+    }
     void setLinearVelocity(double x, double y, double z);
     double getLinearVelocityMagnitude() {
         return velLinear_.norm();
@@ -140,9 +148,7 @@ public:
     /**
      * Get the linear velocity with respect to some frame of reference
      */
-    const Eigen::Vector3d& getLinearVelocity(std::string frame) const {
-        return velLinearFrame_;
-    }
+    bool getLinearVelocity(std::string target_frame_id, Eigen::Vector3d& velocity);
 
     bool isPoseInitialized() const {
         return update_cnt_ > 0;
@@ -386,6 +392,7 @@ private:
 
     // Debug flag
     bool debug_ {false};
+    bool enable_velocity_debug_ {false};
 
     /**
      * RVIZ debug display
