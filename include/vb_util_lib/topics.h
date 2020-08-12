@@ -182,6 +182,7 @@ public:
 	static constexpr char CTRL_FEATURE_END_LIST[] =  "/ctrl/feature_end_list";
 
 	static constexpr char CTRL_DEPTH_CMND[] = "/ctrl/depth/cmnd";
+	static constexpr char CTRL_FTP[] = "/ctrl/ftp";
 	static constexpr char CTRL_LOG_CONTROL[] = "/ctrl/log_control";
 	static constexpr char CTRL_ROUTE[] = "/ctrl/route";
 	static constexpr char CTRL_VIDEO_CMND[] = "/ctrl/video/cmnd";
