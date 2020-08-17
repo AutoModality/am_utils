@@ -103,7 +103,7 @@ constexpr char am_topics::CTRL_VX_PROXIMITY[];
 constexpr char am_topics::CTRL_VX_RTL_ACTION[];
 constexpr char am_topics::CTRL_VX_TARGET_CURRENT_ENU[];
 constexpr char am_topics::CTRL_VX_VEHICLE_CURRENTENU[];
-constexpr char am_topics::CTRL_VX_VELOCITY[];
+constexpr char am_topics::CTRL_VX_VELOCITY_CMD[];
 constexpr char am_topics::CTRL_VX_WAYPOINT_NAV_ACTION[];
 
 constexpr char am_topics::CTRL_FEATURE_STATUS_LIST[];

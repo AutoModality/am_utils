@@ -173,7 +173,7 @@ public:
 	static constexpr char CTRL_VX_RTL_ACTION[] = "/ctrl/vx/rtl_action";
 	static constexpr char CTRL_VX_TARGET_CURRENT_ENU[] = "/ctrl/vx/target/currentENU";
 	static constexpr char CTRL_VX_VEHICLE_CURRENTENU[] = "/ctrl/vx/vehicle/currentENU";
-	static constexpr char CTRL_VX_VELOCITY[] = "/ctrl/vx/velocity";
+	static constexpr char CTRL_VX_VELOCITY_CMD[] = "/ctrl/vx/velocity_cmd";
 	static constexpr char CTRL_VX_WAYPOINT_NAV_ACTION [] = "/ctrl/vx/waypoint_nav_action";
 
 	static constexpr char CTRL_FEATURE_STATUS_LIST[] = "/ctrl/feature_status_list";
