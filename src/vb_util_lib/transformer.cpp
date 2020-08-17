@@ -90,4 +90,26 @@ void Transformer::rotateOrientation(geometry_msgs::Quaternion& orientation, geom
     }
 }
 
+bool Transformer::rotateVector(const std::string target_frame,
+		const std::string source_frame, Eigen::Vector3d& target_vector,
+		const Eigen::Vector3d& source_vector, bool debug) {
+
+	geometry_msgs::TransformStamped ts;
+	if (!getTransform(target_frame, source_frame, ts, true))
+	{
+		ROS_ERROR("Kinematics::getLinearVelocity : No transform from[%s] to[%s]", source_frame.c_str(), target_frame.c_str());
+		return false;
+	}
+
+	Eigen::Quaterniond rot;
+	rot.x() = ts.transform.rotation.x;
+	rot.y() = ts.transform.rotation.y;
+	rot.z() = ts.transform.rotation.z;
+	rot.w() = ts.transform.rotation.w;
+
+	target_vector = rot * source_vector;
+
+	return true;
+}
+
 } /* namespace am */
