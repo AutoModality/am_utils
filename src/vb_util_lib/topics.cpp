@@ -77,6 +77,9 @@ constexpr char am_topics::SENSOR_SC3_POINTCLOUD[];
 constexpr char am_topics::SENSOR_SC3_VISIBLE_IMAGE[];
 constexpr char am_topics::SENSOR_SC3_VISIBLE_CAMERA_INFO[];
 
+constexpr char am_topics::SENSOR_COLLISION[];
+constexpr char am_topics::SENSOR_COLLISION_VIEWS[];
+
 constexpr char am_topics::SENSOR_DISTANCE_AGL[];
 constexpr char am_topics::SENSOR_DISTANCE_AGL_LW[];
 constexpr char am_topics::SENSOR_DISTANCE_DISTANCES_LW20[];
