@@ -83,6 +83,9 @@ public:
 	static constexpr char SENSOR_SC3_VISIBLE_IMAGE[] = "/sensor/sc3/visible/image";
 	static constexpr char SENSOR_SC3_VISIBLE_CAMERA_INFO[] = "/sensor/sc3/visible/camera_info";
 
+	static constexpr char SENSOR_COLLISION[] = "/sensor/collision";
+	static constexpr char SENSOR_COLLISION_VIEWS[] = "/sensor/collision_views";
+
 	static constexpr char SENSOR_DISTANCE_AGL[] = "/sensor/distance/agl";
 	static constexpr char SENSOR_DISTANCE_AGL_LW[] = "/sensor/distance/agl_lw";
 	static constexpr char SENSOR_DISTANCE_DISTANCES_LW20[] = "/sensor/distance/distances_lw20";
