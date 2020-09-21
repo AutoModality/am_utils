@@ -49,16 +49,19 @@ void LocationSource::print(std::string prefix) {
     	}
 
     	std::cout << prefix+"     Features: ";
-    	if (feature_ids_.size() == 0)
+    	if (features_.size() == 0)
     	{
     		std::cout << "NONE" << std::endl;
     	}
     	else
     	{
     		std::cout << std::endl;
-    		for (std::vector<std::string>::iterator i = feature_ids_.begin(); i != feature_ids_.end(); i++)
+    		for (std::vector<FeatureSource>::iterator i = features_.begin(); i != features_.end(); i++)
     		{
-    			std::cout << prefix+"          feature_id[" << *i << "]" << std::endl;
+    			std::cout << prefix << "          feature_id[" << i->id << "]";
+    			std::cout << "  fixed[" << i->fixed << "]";
+    			std::cout << "  critical[" << i->critical << "]";
+    			std::cout << "  dof[" << i->dof_x << ", " << i->dof_y << ", " << i->dof_z << ", " << i->dof_yaw << "]" << std::endl;
     		}
     	}
     }
