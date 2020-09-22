@@ -3,6 +3,7 @@ Section: misc
 Priority: extra
 Maintainer: info <info@automodality.com>
 Build-Depends: debhelper (>= 9.0.0), 
+    pcl,
     ros-melodic-am-control-toolbox, 
     ros-melodic-am-msgs, 
     ros-melodic-catkin, 
@@ -27,6 +28,7 @@ Standards-Version: 3.9.2
 Package: ros-melodic-am-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, 
+    pcl,
     ros-melodic-am-control-toolbox,
     ros-melodic-am-msgs, 
     ros-melodic-am-platform-scripts,
