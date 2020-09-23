@@ -2,8 +2,6 @@
 #define AM_UTILS_INCLUDE_AM_UTILS_POINT_TYPE_H_
 
 #include <pcl/point_types.h>
-#include <pcl/point_types.h>
-#include <pcl/point_types.h>
 
 namespace pcl {
 
