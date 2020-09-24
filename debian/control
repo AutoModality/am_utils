@@ -2,9 +2,12 @@ Source: ros-melodic-am-utils
 Section: misc
 Priority: extra
 Maintainer: info <info@automodality.com>
-Build-Depends: debhelper (>= 9.0.0), 
+Build-Depends: debhelper (>= 9.0.0),
+	libjsoncpp-dev, 
+    pcl,
     ros-melodic-am-control-toolbox, 
     ros-melodic-am-msgs, 
+    ros-melodic-am-perception-pcl,
     ros-melodic-catkin, 
     ros-melodic-cv-bridge, 
     ros-melodic-geometry-msgs, 
@@ -19,16 +22,20 @@ Build-Depends: debhelper (>= 9.0.0),
     ros-melodic-std-msgs, 
     ros-melodic-tf2, 
     ros-melodic-tf2-ros,
-    ros-melodic-tf2-sensor-msgs, 
+    ros-melodic-tf2-sensor-msgs,
+    ros-melodic-tf2-geometry-msgs, 
     ros-melodic-uuid-msgs,
 
 Homepage: https://github.com/AutoModality/am-utils
 Standards-Version: 3.9.2
 Package: ros-melodic-am-utils
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, 
+Depends: ${shlibs:Depends}, ${misc:Depends},
+	libjsoncpp-dev,  
+    pcl,
     ros-melodic-am-control-toolbox,
-    ros-melodic-am-msgs, 
+    ros-melodic-am-msgs,
+    ros-melodic-am-perception-pcl,
     ros-melodic-am-platform-scripts,
     ros-melodic-cv-bridge, 
     ros-melodic-geometry-msgs, 
@@ -43,6 +50,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
     ros-melodic-std-msgs, 
     ros-melodic-tf2, 
     ros-melodic-tf2-ros,
-    ros-melodic-tf2-sensor-msgs, 
+    ros-melodic-tf2-sensor-msgs,
+    ros-melodic-tf2-geometry-msgs, 
     ros-melodic-uuid-msgs,
 Description: Common code to assist with AutoModality libraries found in separate repositories.
