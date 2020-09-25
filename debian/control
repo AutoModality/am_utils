@@ -4,6 +4,8 @@ Priority: extra
 Maintainer: info <info@automodality.com>
 Build-Depends: debhelper (>= 9.0.0),
 	libjsoncpp-dev, 
+	pcl,
+	ros-melodic-am-perception-pcl, 
     ros-melodic-am-control-toolbox, 
     ros-melodic-am-msgs, 
     ros-melodic-catkin, 
@@ -31,6 +33,8 @@ Package: ros-melodic-am-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
 	libjsoncpp-dev,  
+	pcl,
+	ros-melodic-am-perception-pcl, 
     ros-melodic-am-control-toolbox,
     ros-melodic-am-msgs,
     ros-melodic-am-platform-scripts,
