@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   geometry_msgs
   nav_msgs
-  pcl_conversions
   rosconsole
   roscpp 
   rosbag
@@ -37,7 +36,6 @@ catkin_package(
   genmsg
   geometry_msgs
   nav_msgs
-  pcl_conversions
   rosconsole
   roscpp 
   rosbag
