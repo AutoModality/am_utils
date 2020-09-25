@@ -10,7 +10,6 @@
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 #include <pcl/point_types.h>
 namespace pcl {
-
 struct PointXYZIR
 {
  PCL_ADD_POINT4D;                  // preferred way of adding a XYZ+padding
