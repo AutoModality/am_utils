@@ -34,6 +34,17 @@ enum class AltitudeSource{GPS_ALT=0, GPS_AGL, FCU_LAUNCH, ALTIMETER, ALTIMETER_O
 class LocationSource
 {
 public:
+	/// Structure used to describe how a feature is used for localization purposes
+	struct FeatureSource {
+		std::string id;		// id of the feature
+		bool fixed;			// true if the feature is fixed in parent FoR, i.e. not moving
+		bool critical;		// true if the feature is critical, i.e. error thrown if not being updated
+		bool dof_x;			// true if used for X dof
+		bool dof_y;			// true is used for Y dof
+		bool dof_z;			// true if used for Z dof
+		bool dof_yaw;		// true if used for YAW dof
+	};
+
     LocationSource() {}
     LocationSource(std::string frame_id, std::string x, std::string y, std::string z, std::string yaw);
     virtual ~LocationSource();
@@ -198,8 +209,8 @@ public:
     	return orientation_source_set_;
     }
 
-    std::vector<std::string>& getFeatureIds() {
-		return feature_ids_;
+	std::vector<FeatureSource>& getFeatures() {
+		return features_;
 	}
 
 private:
@@ -217,15 +228,18 @@ private:
     OrientationSource orientation_source_ {OrientationSource::FCU};
     bool orientation_source_set_ {false};
 
-    // Used to receive location source messages
+    /// Used to receive location source messages
     ros::Subscriber location_source_sub_;
+
+    /// Used to receive location source messages
     ros::Subscriber location_source_pub_;
     void locationSourceCB(const brain_box_msgs::LocationSource::ConstPtr& msg);
 
-    // Update the vector of control states with the message just received
+    /// Update the vector of control states with the message just received
     void updateLocationSource(const brain_box_msgs::LocationSource::ConstPtr& msg);
 
-    std::vector<std::string>feature_ids_;
+    /// List of all the features being used for localization purposes
+    std::vector<FeatureSource>features_;
 };
 
 #endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_LOCATION_SOURCE_H_ */
