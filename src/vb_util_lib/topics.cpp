@@ -84,6 +84,8 @@ constexpr char am_topics::SENSOR_DISTANCE_AGL[];
 constexpr char am_topics::SENSOR_DISTANCE_AGL_LW[];
 constexpr char am_topics::SENSOR_DISTANCE_DISTANCES_LW20[];
 
+constexpr char am_topics::SENSOR_PROXIMITY[];
+
 constexpr char am_topics::STATUS_CEIL[];
 constexpr char am_topics::STATUS_CORR[];
 constexpr char am_topics::STATUS_LIDAR[];
