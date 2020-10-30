@@ -314,10 +314,12 @@ void RC_Controls::setPX4StickValue(double input, double& state, double polarity)
 	if (state > 1.0)
 	{
 		state = 1.0;
+		ROS_WARN_THROTTLE(2, "RC: Stick is out of range: -1.0 < %0.2f < 1.0", state);
 	}
 	else if (state < -1.0)
 	{
 		state = -1.0;
+		ROS_WARN_THROTTLE(2, "RC: Stick is out of range: -1.0 < %0.2f < 1.0", state);
 	}
 
 	state *= polarity;
@@ -351,6 +353,11 @@ bool RC_Controls::setPX4ModeSwitch(double mode_switch, RC_MODE& state) {
 			ROS_INFO("RC: CHANGING TO ATT MODE");
 			change_state = true;
 		}
+		else if(mode_switch < MIN_VALUE_  || mode_switch > MAX_VALUE_ )
+		{
+			ROS_WARN_THROTTLE(2, "RC: Mode Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, mode_switch, MAX_VALUE_);
+		}
+		
 		state = RC_MODE::ATT;
 	}
 
@@ -376,6 +383,11 @@ bool RC_Controls::setPX4GearSwitch(double gear_switch, RC_GEAR& state) {
 			ROS_INFO("RC: CHANGING GEAR TO DOWN");
 			change = true;
 		}
+		else if(gear_switch < MIN_VALUE_  || gear_switch > MAX_VALUE_ )
+		{
+			ROS_WARN_THROTTLE(2, "RC: Gear Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, gear_switch, MAX_VALUE_);
+		}
+		
 		state = RC_GEAR::DOWN;
 	}
 
@@ -401,6 +413,10 @@ bool RC_Controls::setPX4ArmSwitch(double arm_switch, bool& state) {
 			ROS_INFO("RC: SET ARM TO FALSE");
 			change = true;
 		}
+		else if(arm_switch < MIN_VALUE_  || arm_switch > MAX_VALUE_ )
+		{
+			ROS_WARN_THROTTLE(2, "RC: Arm Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, arm_switch, MAX_VALUE_);
+		}		
 		state = false;
 	}
 
