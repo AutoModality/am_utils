@@ -94,6 +94,9 @@ void Kinematics::initROS(ros::NodeHandle *n) {
     }
 
     n->param("/Debug/Kinematics/velocity_debug", enable_velocity_debug_, false);
+
+    // Initialize the update time
+    update_time_ = ros::Time::now();
 }
 
 void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug) {
@@ -179,6 +182,9 @@ void Kinematics::setPosition(const ros::Time& update_time, double x, double y, d
 		position_.z = z;
 
 		setLinearVelocity(0.0, 0.0, 0.0);
+
+		update_time_ = update_time;
+
 		return;
 	}
 
