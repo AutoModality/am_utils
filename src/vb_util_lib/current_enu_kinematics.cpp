@@ -8,7 +8,6 @@
 #include <vb_util_lib/current_enu_kinematics.h>
 #include <vb_util_lib/am_geometry.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-// #include <vb_util_lib/bag_logger.h> // TODO (dan) bag_logger
 
 CurrentENUKinematics::CurrentENUKinematics() {
 }
