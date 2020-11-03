@@ -27,14 +27,7 @@ public:
     /**
      * Overrides the normal Kinematics update to also publish the transform
      */
-    void doUpdate() {
-    	Kinematics::doUpdate();
-    	if (publish_transform_)
-    	{
-    		sendENUTransform();
-    	}
-    	publishOD();
-    }
+    void doUpdate(bool start_pub = false);
 
     void sendENUTransform();
 
@@ -76,6 +69,14 @@ private:
 
     am::Transformer transformer_;
     bool transform_init_ {false};
+
+    /**
+     * Timer callback for doing updates
+     */
+    ros::Timer update_timer_;
+    void updateTimerCB(const ros::TimerEvent& te) {
+    	doUpdate(true);
+    }
 
     void updateAGLCB(const std_msgs::Float64ConstPtr& height_agl);
 };

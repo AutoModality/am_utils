@@ -39,11 +39,32 @@ CurrentENUKinematics::CurrentENUKinematics(ros::NodeHandle *n, std::string topic
         {
         	ROS_ERROR("CurrentENUKinematics: parent_frame[%s]", parent_frame_.c_str());
         }
+
+        update_timer_ = n->createTimer(ros::Duration(0.1), &CurrentENUKinematics::updateTimerCB, this);
+        update_timer_.stop();
     }
 }
 
 
 CurrentENUKinematics::~CurrentENUKinematics() {
+}
+
+void CurrentENUKinematics::doUpdate(bool start_pub) {
+	Kinematics::doUpdate();
+	if (publish_transform_)
+	{
+		sendENUTransform();
+	}
+	publishOD();
+
+	if (start_pub)
+	{
+		update_timer_.start();
+	}
+	else
+	{
+		update_timer_.stop();
+	}
 }
 
 void CurrentENUKinematics::sendENUTransform() {
