@@ -237,6 +237,8 @@ void transformXYFrame(geometry_msgs::Vector3& org_vec, double rad_diff, geometry
 // Returns to rotation amount.
 double transformXYFrame(Eigen::Vector3d& org_vec, geometry_msgs::Quaternion& orientation,
                       Eigen::Vector3d& new_vec, bool reverse_rotation=false);
+double transformXYFrame(Eigen::Vector3d& org_vec, Eigen::Quaterniond& orientation,
+                      Eigen::Vector3d& new_vec, bool reverse_rotation=false);
 
 // This method takes an orientation expressed as a quaternion and levels it out by zeroing the roll and pich
 void levelOrientation(const geometry_msgs::Quaternion& org_orientation, geometry_msgs::Quaternion& level_orientation);

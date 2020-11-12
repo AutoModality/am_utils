@@ -245,8 +245,12 @@ void Kinematics::setAttitude(double roll, double pitch, double yaw, double throt
 	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
 }
 
-void Kinematics::setAttitude(const geometry_msgs::Quaternion q) {
+void Kinematics::setAttitude(const geometry_msgs::Quaternion& q) {
 	setOrientation(q.w, q.x, q.y, q.z);
+}
+
+void Kinematics::setAttitude(const Eigen::Quaterniond& q) {
+	setOrientation(q.w(), q.x(), q.y(), q.z());
 }
 
 void Kinematics::setOrientation(double w, double x, double y, double z) {
@@ -256,6 +260,10 @@ void Kinematics::setOrientation(double w, double x, double y, double z) {
     attitude_.pitch = rpy[1];
     attitude_.yaw = rpy[2];
     attitude_.throttle = 0;
+}
+
+void Kinematics::setYaw(double yaw, bool corrected) {
+	//FFF
 }
 
 void Kinematics::updateVelocity(double x, double y, double z, double t,
@@ -697,4 +705,3 @@ void Kinematics::publishMarker() {
     rviz_uav_marker_pub_.publish(marker);
     rviz_point_cnt++;
 }
-

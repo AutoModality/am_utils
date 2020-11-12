@@ -50,6 +50,20 @@
  */
 class Kinematics {
 public:
+	//FFF use this properly in all the sets
+	enum POSE_STATE {
+		X = 0x01,
+		Y = 0x02,
+		Z = 0x04,
+		XYZ = 0x07,
+		ROLL = 0x10,
+		PITCH = 0x20,
+		YAW = 0x40,
+		RPY = 0x70,
+		ALL = 0x77,
+		YAW_CORRECTED = 0x80
+	};
+
     Kinematics();
     Kinematics(ros::NodeHandle *n, std::string topic, std::string frame_id,
                bool pub_on_change=false, double pub_rate=0.0);
@@ -109,7 +123,9 @@ public:
 
     void setAttitude(const VehicleAttitude& va);
     void setAttitude(double roll, double pitch, double yaw, double throttle=0.0);
-    void setAttitude(const geometry_msgs::Quaternion q);
+    void setAttitude(const geometry_msgs::Quaternion& q);
+    void setAttitude(const Eigen::Quaterniond& q);
+    void setYaw(double yaw, bool corrected=true);
     void setOrientation(double w, double x, double y, double z);
     const VehicleAttitude& getAttitude() const {
         return attitude_;
@@ -151,7 +167,14 @@ public:
     bool getLinearVelocity(std::string target_frame_id, Eigen::Vector3d& velocity);
 
     bool isPoseInitialized() const {
-        return update_cnt_ > 0;
+    	return (pose_initialized_ & POSE_STATE::ALL) == POSE_STATE::ALL;
+    }
+    bool isHeadingCorrected() const {
+    	return (pose_initialized_ & POSE_STATE::ALL) != 0;
+    }
+    void resetInitialized() {
+        update_cnt_ = 0;
+        pose_initialized_ = 0;
     }
 
     void setUpdateTime(const ros::Time& updateTime) {
@@ -209,10 +232,6 @@ public:
 
     unsigned long getUpdateCnt() const {
         return update_cnt_;
-    }
-
-    void resetUpdateCnt() {
-        update_cnt_ = 0;
     }
 
     void setLogEnabled(bool logEnabled) {
@@ -331,8 +350,9 @@ private:
     void _init();
 
     /**
-     * Flag to determine if the attributes are initialized
+     * Bit Flag to determine if the attributes are initialized
      */
+    unsigned int pose_initialized_ {0};
     unsigned long update_cnt_ {0};
     unsigned long last_update_cnt_ {0};
 

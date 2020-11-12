@@ -836,7 +836,14 @@ double transformXYFrame(Eigen::Vector3d& org_vec, geometry_msgs::Quaternion& ori
     q.y() = orientation.y;
     q.z() = orientation.z;
     q.w() = orientation.w;
-    Eigen::Vector3d rpy = quaternion_to_RPY(q);
+
+    return transformXYFrame(org_vec, q, new_vec, reverse_rotation);
+}
+
+double transformXYFrame(Eigen::Vector3d& org_vec, Eigen::Quaterniond& orientation,
+                      Eigen::Vector3d& new_vec, bool reverse_rotation) {
+
+    Eigen::Vector3d rpy = quaternion_to_RPY(orientation);
 
     double yaw;
 
