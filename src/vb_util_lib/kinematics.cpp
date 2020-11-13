@@ -171,6 +171,7 @@ bool  Kinematics::getPoseStamped(std::string& target_frame_id, geometry_msgs::Po
 
 void Kinematics::setPosition(const ros::Time& update_time, double x, double y, double z, int debug) {
 	checkPosition(x, y, z, debug);
+	setInitialized(POSE_STATE::XYZ);
 
 	// Calculate speed
 	double delta_t = update_time.toSec() - update_time_.toSec();
@@ -233,11 +234,13 @@ void Kinematics::checkPosition(double x, double y, double z, int debug) {
 }
 
 void Kinematics::setAttitude(const VehicleAttitude& va) {
+	setInitialized(POSE_STATE::RPY);
 	attitude_ = va;
 	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
 }
 
 void Kinematics::setAttitude(double roll, double pitch, double yaw, double throttle) {
+	setInitialized(POSE_STATE::RPY);
 	attitude_.roll = roll;
 	attitude_.pitch = pitch;
 	attitude_.yaw = yaw;
@@ -254,6 +257,7 @@ void Kinematics::setAttitude(const Eigen::Quaterniond& q) {
 }
 
 void Kinematics::setOrientation(double w, double x, double y, double z) {
+	setInitialized(POSE_STATE::RPY);
     orientation_ = Eigen::Quaterniond(w, x, y, z);
     Eigen::Vector3d rpy = AM::quaternion_to_RPY(orientation_);
     attitude_.roll = rpy[0];
@@ -263,7 +267,13 @@ void Kinematics::setOrientation(double w, double x, double y, double z) {
 }
 
 void Kinematics::setYaw(double yaw, bool corrected) {
-	//FFF
+	attitude_.yaw = yaw;
+	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
+	setInitialized(POSE_STATE::YAW);
+	if (corrected)
+	{
+		setInitialized(POSE_STATE::YAW_CORRECTED);
+	}
 }
 
 void Kinematics::updateVelocity(double x, double y, double z, double t,
@@ -346,6 +356,8 @@ void Kinematics::getOdometry(nav_msgs::Odometry& ms) {
 	ms.header.frame_id = frame_id_;
 	ms.child_frame_id = drone_ENU;
 
+	// Set the initialized attributes
+	ms.pose.covariance[0] = pose_initialized_;
 	return;
 }
 
@@ -493,6 +505,9 @@ void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
 	setAttitude(msg->pose.pose.orientation);
     setLinearVelocity(msg->twist.twist.linear);
     update_time_ = msg->header.stamp;
+    // Set the initialization flags
+    pose_initialized_ = msg->pose.covariance[0];
+
 //    update_time_ = ros::Time::now();
 
 //    setOdometry(msg);
