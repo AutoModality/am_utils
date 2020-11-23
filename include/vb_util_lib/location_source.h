@@ -21,13 +21,13 @@
 //using boost::assign::map_list_of;
 //
 
-enum class PositionSource{GPS=0, RTK, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, FEATURE, FUSION, INTEL_VO_POS, INTEL_VO_ODOM, BESPOON, TEST};
+enum class PositionSource{GPS=0, RTK, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, FEATURE, FEATURE_ODOM, FUSION, INTEL_VO_POS, INTEL_VO_ODOM, BESPOON, TEST};
 #define PositionSourceIdx(src) static_cast<int>(src)
 
-enum class OrientationSource{FCU=0, FCU_ODOM, INTEL_VO, INTEL_VO_ODOM, FEATURE};
+enum class OrientationSource{FCU=0, FCU_ODOM, INTEL_VO, INTEL_VO_ODOM, FEATURE, FEATURE_ODOM};
 #define OrientationSourceIdx(src) static_cast<int>(src)
 
-enum class AltitudeSource{GPS_ALT=0, GPS_AGL, FCU_LAUNCH, ALTIMETER, ALTIMETER_ODOM, FEATURE, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, INTEL_VO_POS, INTEL_VO_ODOM};
+enum class AltitudeSource{GPS_ALT=0, GPS_AGL, FCU_LAUNCH, ALTIMETER, ALTIMETER_ODOM, FEATURE, FEATURE_ODOM, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, INTEL_VO_POS, INTEL_VO_ODOM};
 #define AltitudeSourceIdx(src) static_cast<int>(src)
 
 
@@ -106,6 +106,7 @@ public:
             {OrientationSource::FCU_ODOM, "FCU_ODOM"},
             {OrientationSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"},
             {OrientationSource::INTEL_VO, "INTEL_VO"},
+            {OrientationSource::FEATURE_ODOM, "FEATURE_ODOM"},
             {OrientationSource::FEATURE, "FEATURE"}};
 
     std::map<std::string, OrientationSource> string_to_OrientationSource = {
@@ -113,6 +114,7 @@ public:
             {"FCU_ODOM", OrientationSource::FCU_ODOM},
             {"INTEL_VO", OrientationSource::INTEL_VO},
             {"INTEL_VO_ODOM", OrientationSource::INTEL_VO_ODOM},
+            {"FEATURE_ODOM", OrientationSource::FEATURE_ODOM},
             {"FEATURE", OrientationSource::FEATURE}};
 
     std::map<PositionSource, std::string> PositionSource_to_string = {
@@ -122,6 +124,7 @@ public:
             {PositionSource::FCU_VO_POS, "FCU_VO_POS"},
             {PositionSource::FCU_VO_ODOM, "FCU_VO_ODOM"},
             {PositionSource::FEATURE, "FEATURE"},
+            {PositionSource::FEATURE_ODOM, "FEATURE_ODOM"},
             {PositionSource::FUSION, "FUSION"},
             {PositionSource::INTEL_VO_POS, "INTEL_VO_POS"},
     		{PositionSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"}};
@@ -133,6 +136,7 @@ public:
             {"FCU_VO_POS", PositionSource::FCU_VO_POS},
             {"FCU_VO_ODOM", PositionSource::FCU_VO_ODOM},
             {"FEATURE", PositionSource::FEATURE},
+            {"FEATURE_ODOM", PositionSource::FEATURE_ODOM},
             {"FUSION", PositionSource::FUSION},
             {"INTEL_VO_POS", PositionSource::INTEL_VO_POS},
     		{"INTEL_VO_ODOM", PositionSource::INTEL_VO_ODOM}};
@@ -142,6 +146,7 @@ public:
             {AltitudeSource::ALTIMETER_ODOM, "ALTIMETER_ODOM"},
             {AltitudeSource::FCU_LAUNCH, "FCU_LAUNCH"},
             {AltitudeSource::FEATURE, "FEATURE"},
+            {AltitudeSource::FEATURE_ODOM, "FEATURE_ODOM"},
             {AltitudeSource::FCU_VEL_ODOM, "FCU_VEL_ODOM"},
             {AltitudeSource::FCU_VO_POS, "FCU_VO_POS"},
             {AltitudeSource::FCU_VO_ODOM, "FCU_VO_ODOM"},
@@ -155,6 +160,7 @@ public:
             {"ALTIMETER_ODOM", AltitudeSource::ALTIMETER_ODOM},
             {"FCU_LAUNCH", AltitudeSource::FCU_LAUNCH},
             {"FEATURE", AltitudeSource::FEATURE},
+            {"FEATURE_ODOM", AltitudeSource::FEATURE_ODOM},
             {"FCU_VEL_ODOM", AltitudeSource::FCU_VEL_ODOM},
             {"FCU_VO_POS", AltitudeSource::FCU_VO_POS},
             {"FCU_VO_ODOM", AltitudeSource::FCU_VO_ODOM},
