@@ -8,6 +8,7 @@
 #ifndef VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CURRENTENUKINEMATICS_H_
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CURRENTENUKINEMATICS_H_
 
+#include <random>
 #include <vb_util_lib/kinematics.h>
 #include <vb_util_lib/topics.h>
 #include <nav_msgs/Odometry.h>
@@ -61,6 +62,10 @@ private:
     std::string parent_frame_ {Asset_ENU};
 
     AM::Point xfer_offset_ {0.0, 0.0, 0.0};
+
+    std::random_device odom_trans_random_;  //Will be used to obtain a seed for the random number engine
+    std::mt19937  odom_trans_gen_; //Standard mersenne_twister_engine seeded with rd()
+    geometry_msgs::Point odom_trans_error_;
 
     tf2_ros::Buffer tfBuffer;
 

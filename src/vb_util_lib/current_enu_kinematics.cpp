@@ -15,7 +15,7 @@ CurrentENUKinematics::CurrentENUKinematics() {
 CurrentENUKinematics::CurrentENUKinematics(ros::NodeHandle *n, std::string topic,
         bool pub_on_change, double pub_rate) :
             Kinematics(n, topic!="" ? topic : am::am_topics::CTRL_VX_VEHICLE_CURRENTENU,
-            		Asset_ENU, pub_on_change, pub_rate) {
+            		Asset_ENU, pub_on_change, pub_rate), odom_trans_gen_(odom_trans_random_()) {
 
 	//tfListener_ = new tf2_ros::TransformListener(tfBuffer);
 	br = new tf2_ros::TransformBroadcaster();
@@ -41,6 +41,14 @@ CurrentENUKinematics::CurrentENUKinematics(ros::NodeHandle *n, std::string topic
 
         update_timer_ = n->createTimer(ros::Duration(0.1), &CurrentENUKinematics::updateTimerCB, this);
         update_timer_.stop();
+
+        // odom error testing
+        n->param("/locator/odom_trans_error_x", odom_trans_error_.x, 0.0);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_x:" << odom_trans_error_.x);
+        n->param("/locator/odom_trans_error_y", odom_trans_error_.y, 0.0);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_y:" << odom_trans_error_.y);
+        n->param("/locator/odom_trans_error_z", odom_trans_error_.z, 0.0);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_z:" << odom_trans_error_.z);
     }
 }
 
@@ -163,7 +171,23 @@ void CurrentENUKinematics::publishOD() {
 		}
 
         // LOG_MSG(od_pub_topic_, od, 2); // TODO (dan) bag_logger
-        
+
+		// add in random error
+                if(odom_trans_error_.x > 0.0)
+                {
+                  std::uniform_int_distribution<int> trans_error_ud(-odom_trans_error_.x / 2, odom_trans_error_.x / 2);
+                  od.pose.pose.position.x += trans_error_ud(odom_trans_gen_);
+                }
+                if(odom_trans_error_.y > 0.0)
+                {
+                  std::uniform_int_distribution<int> trans_error_ud(-odom_trans_error_.y / 2, odom_trans_error_.y / 2);
+                  od.pose.pose.position.y += trans_error_ud(odom_trans_gen_);
+                }
+                if(odom_trans_error_.z > 0.0)
+                {
+                  std::uniform_int_distribution<int> trans_error_ud(-odom_trans_error_.z / 2, odom_trans_error_.z / 2);
+                  od.pose.pose.position.z += trans_error_ud(odom_trans_gen_);
+                }
 		od_pub_.publish(od);
 	}
 }
