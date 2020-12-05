@@ -175,17 +175,19 @@ void CurrentENUKinematics::publishOD() {
 		// add in random error
                 if(odom_trans_error_.x > 0.0)
                 {
-                  std::uniform_int_distribution<int> trans_error_ud(-odom_trans_error_.x / 2, odom_trans_error_.x / 2);
-                  od.pose.pose.position.x += trans_error_ud(odom_trans_gen_);
+                  std::normal_distribution<double> trans_error_ud{0, odom_trans_error_.x};
+		  double offset = trans_error_ud(odom_trans_gen_);
+                  od.pose.pose.position.x += offset;
+		  ROS_INFO_STREAM_THROTTLE(0.2, "offset: " << offset);
                 }
                 if(odom_trans_error_.y > 0.0)
                 {
-                  std::uniform_int_distribution<int> trans_error_ud(-odom_trans_error_.y / 2, odom_trans_error_.y / 2);
+                  std::normal_distribution<double> trans_error_ud{0, odom_trans_error_.y};
                   od.pose.pose.position.y += trans_error_ud(odom_trans_gen_);
                 }
                 if(odom_trans_error_.z > 0.0)
                 {
-                  std::uniform_int_distribution<int> trans_error_ud(-odom_trans_error_.z / 2, odom_trans_error_.z / 2);
+                  std::normal_distribution<double> trans_error_ud{0, odom_trans_error_.z};
                   od.pose.pose.position.z += trans_error_ud(odom_trans_gen_);
                 }
 		od_pub_.publish(od);
