@@ -63,9 +63,22 @@ private:
 
     AM::Point xfer_offset_ {0.0, 0.0, 0.0};
 
-    std::random_device odom_trans_random_;  //Will be used to obtain a seed for the random number engine
-    std::mt19937  odom_trans_gen_; //Standard mersenne_twister_engine seeded with rd()
-    geometry_msgs::Point odom_trans_error_;
+    // error testing
+    std::random_device odom_random_;  //Will be used to obtain a seed for the random number engine
+    std::mt19937  odom_gen_; //Standard mersenne_twister_engine seeded with rd()
+    geometry_msgs::Point odom_trans_error_m_;
+    double odom_yaw_error_r_;
+    double odom_dropout_prob_;
+    double odom_hyperspace_prob_;
+    int odom_hyperspace_count_;
+    int odom_hyperspace_counter_ {0};
+    geometry_msgs::Point odom_hyperspace_trans_offset_m_;
+    double odom_hyperspace_yaw_offset_r_;
+    std::normal_distribution<double> *odom_trans_error_x_nd_;
+    std::normal_distribution<double> *odom_trans_error_y_nd_;
+    std::normal_distribution<double> *odom_trans_error_z_nd_;
+    std::normal_distribution<double> *odom_trans_error_yaw_nd_;
+    std::uniform_real_distribution<double> odom_prob_ud_;
 
     tf2_ros::Buffer tfBuffer;
 
@@ -84,6 +97,8 @@ private:
     }
 
     void updateAGLCB(const std_msgs::Float64ConstPtr& height_agl);
+
+    void addYaw(geometry_msgs::Quaternion &q, double yaw_add_r);
 };
 
 #endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CURRENTENUKINEMATICS_H_ */
