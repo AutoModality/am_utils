@@ -230,9 +230,12 @@ void CurrentENUKinematics::publishOD() {
                   // if a count is set
                   if(odom_hyperspace_count_ >= 0)
                   {
+                    ROS_INFO_STREAM_THROTTLE(1.0, "CurrentENUKinematics:hyperspace counter: " << odom_hyperspace_counter_);
+
                     // apply the offset just once when the counter matches desired count
                     if(++odom_hyperspace_counter_ == odom_hyperspace_count_)
                     {
+                      ROS_INFO_STREAM("CurrentENUKinematics:hyperspacing on counter: " << odom_hyperspace_counter_);
                       od.pose.pose.position.x += odom_hyperspace_trans_offset_m_.x;
                       od.pose.pose.position.y += odom_hyperspace_trans_offset_m_.y;
                       od.pose.pose.position.z += odom_hyperspace_trans_offset_m_.z;
@@ -242,12 +245,17 @@ void CurrentENUKinematics::publishOD() {
                   // else, add offset if random prob is less than threshold
                   else if(odom_prob_ud_(odom_gen_) < odom_hyperspace_prob_)
                   {
+                    ROS_INFO_STREAM_THROTTLE(1.0, "CurrentENUKinematics:hyperspacing on probability");
                     od.pose.pose.position.x += odom_hyperspace_trans_offset_m_.x;
                     od.pose.pose.position.y += odom_hyperspace_trans_offset_m_.y;
                     od.pose.pose.position.z += odom_hyperspace_trans_offset_m_.z;
                     addYaw(od.pose.pose.orientation, odom_hyperspace_yaw_offset_r_);
                   }
                   od_pub_.publish(od);
+		}
+		else
+		{
+                  ROS_INFO_STREAM_THROTTLE(1.0, "CurrentENUKinematics:dropping message");
 		}
 	}
 }
