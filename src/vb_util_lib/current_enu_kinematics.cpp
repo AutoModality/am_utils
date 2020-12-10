@@ -96,7 +96,8 @@ void CurrentENUKinematics::doUpdate(bool start_pub) {
 	{
 		sendENUTransform();
 	}
-	publishOD();
+// Going to explicitely call this from timer in the locator
+//	publishOD();
 
 	if (start_pub)
 	{
