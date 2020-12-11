@@ -127,17 +127,17 @@ public:
         return position_;
     }
 
-    void setAttitude(const VehicleAttitude& va);
-    void setAttitude(double roll, double pitch, double yaw, double throttle=0.0);
-    void setAttitude(const geometry_msgs::Quaternion& q);
-    void setAttitude(const Eigen::Quaterniond& q);
+    void setAttitude(const VehicleAttitude& va, bool yaw_corrected=true);
+    void setAttitude(double roll, double pitch, double yaw, bool yaw_corrected=true, double throttle=0.0);
+    void setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected=true);
+    void setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected=true);
     void setYaw(double yaw, bool corrected=true);
     bool getYaw(double& yaw) {
     	yaw = attitude_.yaw;
     	// May want to change this to reflect that we want the yaw to be corrected
     	return isInitializedState(POSE_STATE::YAW);
     }
-    void setOrientation(double w, double x, double y, double z);
+    void setOrientation(double w, double x, double y, double z, bool yaw_corrected=true);
     const VehicleAttitude& getAttitude() const {
         return attitude_;
     }

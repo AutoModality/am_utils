@@ -233,14 +233,22 @@ void Kinematics::checkPosition(double x, double y, double z, int debug) {
 	return;
 }
 
-void Kinematics::setAttitude(const VehicleAttitude& va) {
+void Kinematics::setAttitude(const VehicleAttitude& va, bool yaw_corrected) {
 	setInitialized(POSE_STATE::RPY);
+	if (yaw_corrected)
+	{
+		setInitialized(POSE_STATE::YAW_CORRECTED);
+	}
 	attitude_ = va;
 	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
 }
 
-void Kinematics::setAttitude(double roll, double pitch, double yaw, double throttle) {
+void Kinematics::setAttitude(double roll, double pitch, double yaw, bool yaw_corrected, double throttle) {
 	setInitialized(POSE_STATE::RPY);
+	if (yaw_corrected)
+	{
+		setInitialized(POSE_STATE::YAW_CORRECTED);
+	}
 	attitude_.roll = roll;
 	attitude_.pitch = pitch;
 	attitude_.yaw = yaw;
@@ -248,16 +256,20 @@ void Kinematics::setAttitude(double roll, double pitch, double yaw, double throt
 	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
 }
 
-void Kinematics::setAttitude(const geometry_msgs::Quaternion& q) {
-	setOrientation(q.w, q.x, q.y, q.z);
+void Kinematics::setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected) {
+	setOrientation(q.w, q.x, q.y, q.z, yaw_corrected);
 }
 
-void Kinematics::setAttitude(const Eigen::Quaterniond& q) {
-	setOrientation(q.w(), q.x(), q.y(), q.z());
+void Kinematics::setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected) {
+	setOrientation(q.w(), q.x(), q.y(), q.z(), yaw_corrected);
 }
 
-void Kinematics::setOrientation(double w, double x, double y, double z) {
+void Kinematics::setOrientation(double w, double x, double y, double z, bool yaw_corrected) {
 	setInitialized(POSE_STATE::RPY);
+	if (yaw_corrected)
+	{
+		setInitialized(POSE_STATE::YAW_CORRECTED);
+	}
     orientation_ = Eigen::Quaterniond(w, x, y, z);
     Eigen::Vector3d rpy = AM::quaternion_to_RPY(orientation_);
     attitude_.roll = rpy[0];
