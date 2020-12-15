@@ -96,16 +96,18 @@ void Kinematics::initROS(ros::NodeHandle *n) {
     n->param("/Debug/Kinematics/velocity_debug", enable_velocity_debug_, false);
 
     // Initialize the update time
-    update_time_ = ros::Time::now();
+    setUpdateTime(ros::Time::now());
 }
 
-void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug) {
+//void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug) {
+void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, double X, double Y, double Z,
+		double Qw, double Qx, double Qy, double Qz, int debug) {
 
 	if (source_frame == frame_id_)
 	{
-		setPosition(update_time, p.position, debug);
-		setAttitude(p.orientation);
-        ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX SAME FRAME = \n" << p);
+		setPosition(update_time, X, Y, Z, debug);
+		setAttitude(Qx, Qy, Qz, Qw);
+//        ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX SAME FRAME = \n" << p);
 	}
 	else
 	{
@@ -115,23 +117,29 @@ void Kinematics::setPose(const std::string& source_frame, const ros::Time& updat
 			ROS_ERROR("Kinematics::setPose : can't find transform target[%s] source[%s]", source_frame.c_str(), frame_id_.c_str());
 		}
 		geometry_msgs::PoseStamped ts_pt, cur_pt;
-		cur_pt.pose = p;
+		cur_pt.pose.position.x = X;
+		cur_pt.pose.position.y = Y;
+		cur_pt.pose.position.z = Z;
+		cur_pt.pose.orientation.w = Qw;
+		cur_pt.pose.orientation.x = Qx;
+		cur_pt.pose.orientation.y = Qy;
+		cur_pt.pose.orientation.z = Qz;
 		cur_pt.header.frame_id = source_frame;
 		cur_pt.header.stamp = update_time;
 		// transform point
 		tf2::doTransform(cur_pt, ts_pt, ts);
-		setPosition(update_time, ts_pt.pose.position, debug);
-		setAttitude(ts_pt.pose.orientation);
-		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX FROM POINT = \n" << cur_pt);
-		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TRANSFORM = \n" << ts);
-		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TO POINT = \n" << ts_pt);
+		setPosition(update_time, ts_pt.pose.position.x, ts_pt.pose.position.y, ts_pt.pose.position.z, debug);
+		setAttitude(ts_pt.pose.orientation.w, ts_pt.pose.orientation.x, ts_pt.pose.orientation.y, ts_pt.pose.orientation.z);
+//		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX FROM POINT = \n" << cur_pt);
+//		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TRANSFORM = \n" << ts);
+//		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TO POINT = \n" << ts_pt);
 	}
 
 	ROS_DEBUG_COND(debug_ && publisher_, "XXXXXXXX FINAL XYZ[%0.2f  %0.2f  %0.2f]  RPY[%0.2f  %0.2f  %0.2f]",
 			position_.x, position_.y, position_.z,
 			attitude_.roll*(180.0/3.14159), attitude_.pitch*(180.0/3.14159), attitude_.yaw*(180.0/3.14159));
 
-    update_time_ = update_time;
+//    setUpdateTime(update_time);
 }
 
 void  Kinematics::getPose(geometry_msgs::Pose& p) {
@@ -184,7 +192,7 @@ void Kinematics::setPosition(const ros::Time& update_time, double x, double y, d
 
 		setLinearVelocity(0.0, 0.0, 0.0);
 
-		update_time_ = update_time;
+		setUpdateTime(update_time);
 
 		return;
 	}
@@ -204,7 +212,7 @@ void Kinematics::setPosition(const ros::Time& update_time, double x, double y, d
 	position_.y = y;
 	position_.z = z;
 
-	update_time_ = update_time;
+	setUpdateTime(update_time);
 
 	if (enable_velocity_debug_)
 	{
@@ -233,16 +241,16 @@ void Kinematics::checkPosition(double x, double y, double z, int debug) {
 	return;
 }
 
-void Kinematics::setAttitude(const VehicleAttitude& va, bool yaw_corrected) {
-	setInitialized(POSE_STATE::RPY);
-	if (yaw_corrected)
-	{
-		setInitialized(POSE_STATE::YAW_CORRECTED);
-	}
-	attitude_ = va;
-	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
-}
-
+//void Kinematics::setAttitude(const VehicleAttitude& va, bool yaw_corrected) {
+//	setInitialized(POSE_STATE::RPY);
+//	if (yaw_corrected)
+//	{
+//		setInitialized(POSE_STATE::YAW_CORRECTED);
+//	}
+//	attitude_ = va;
+//	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
+//}
+//
 void Kinematics::setAttitude(double roll, double pitch, double yaw, bool yaw_corrected, double throttle) {
 	setInitialized(POSE_STATE::RPY);
 	if (yaw_corrected)
@@ -254,14 +262,6 @@ void Kinematics::setAttitude(double roll, double pitch, double yaw, bool yaw_cor
 	attitude_.yaw = yaw;
 	attitude_.throttle = throttle;
 	AM::RPY_to_Quaternion(orientation_, attitude_.roll, attitude_.pitch, attitude_.yaw);
-}
-
-void Kinematics::setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected) {
-	setOrientation(q.w, q.x, q.y, q.z, yaw_corrected);
-}
-
-void Kinematics::setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected) {
-	setOrientation(q.w(), q.x(), q.y(), q.z(), yaw_corrected);
 }
 
 void Kinematics::setOrientation(double w, double x, double y, double z, bool yaw_corrected) {
@@ -516,7 +516,7 @@ void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
 	setPosition(msg->header.stamp, msg->pose.pose.position);
 	setAttitude(msg->pose.pose.orientation);
     setLinearVelocity(msg->twist.twist.linear);
-    update_time_ = msg->header.stamp;
+    setUpdateTime(msg->header.stamp);
     // Set the initialization flags
     pose_initialized_ = msg->pose.covariance[0];
 
