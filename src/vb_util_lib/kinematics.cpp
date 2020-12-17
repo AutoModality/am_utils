@@ -96,7 +96,7 @@ void Kinematics::initROS(ros::NodeHandle *n) {
     n->param("/Debug/Kinematics/velocity_debug", enable_velocity_debug_, false);
 
     // Initialize the update time
-    setUpdateTime(ros::Time::now());
+    setUpdateTime(ros::Time::now(), 5);
 }
 
 //void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug) {
@@ -192,7 +192,7 @@ void Kinematics::setPosition(const ros::Time& update_time, double x, double y, d
 
 		setLinearVelocity(0.0, 0.0, 0.0);
 
-		setUpdateTime(update_time);
+		setUpdateTime(update_time, 2);
 
 		return;
 	}
@@ -212,7 +212,7 @@ void Kinematics::setPosition(const ros::Time& update_time, double x, double y, d
 	position_.y = y;
 	position_.z = z;
 
-	setUpdateTime(update_time);
+	setUpdateTime(update_time, 3);
 
 	if (enable_velocity_debug_)
 	{
@@ -516,7 +516,7 @@ void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
 	setPosition(msg->header.stamp, msg->pose.pose.position);
 	setAttitude(msg->pose.pose.orientation);
     setLinearVelocity(msg->twist.twist.linear);
-    setUpdateTime(msg->header.stamp);
+    setUpdateTime(msg->header.stamp, 4);
     // Set the initialization flags
     pose_initialized_ = msg->pose.covariance[0];
 

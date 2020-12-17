@@ -129,7 +129,7 @@ public:
     void checkPosition(double x, double y, double z, int debug=-1);
     void setAltitude(const ros::Time& update_time, double a) {
     	position_.z = a;
-    	setUpdateTime(update_time);
+    	setUpdateTime(update_time, 0);
     }
     const AM::Point& position() const {
         return position_;
@@ -137,7 +137,7 @@ public:
 
     void setAttitude(const ros::Time& update_time, double Qw, double Qx, double Qy, double Qz, bool yaw_corrected=true) {
     	setOrientation(Qw, Qx, Qy, Qz, yaw_corrected);
-    	setUpdateTime(update_time);
+    	setUpdateTime(update_time, 1);
     }
 
 //    void setAttitude(const VehicleAttitude& va, bool yaw_corrected=true);
@@ -285,11 +285,12 @@ public:
 protected:
     ros::NodeHandle *nh_;
 
-    void setUpdateTime(const ros::Time& updateTime) {
+    void setUpdateTime(const ros::Time& updateTime, int source) {
     	update_time_cnt_++;
     	if (updateTime.toSec() == update_time_.toSec())
     	{
-    		ROS_WARN("Kinematics::setUpdateTime time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]", update_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
+    		ROS_WARN("Kinematics::setUpdateTime source[%d] time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]",
+    				source, update_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
     	}
         update_time_ = updateTime;
     }
