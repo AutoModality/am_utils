@@ -286,9 +286,10 @@ protected:
     ros::NodeHandle *nh_;
 
     void setUpdateTime(const ros::Time& updateTime) {
+    	update_time_cnt_++;
     	if (updateTime.toSec() == update_time_.toSec())
     	{
-    		ROS_WARN("Kinematics::setUpdateTime new time same as previous time");
+    		ROS_WARN("Kinematics::setUpdateTime time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]", update_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
     	}
         update_time_ = updateTime;
     }
@@ -395,6 +396,7 @@ private:
      * Update time of the Kinematics
      */
     ros::Time update_time_;
+    unsigned long update_time_cnt_ {0};
 
     /**
      * frame id for the kinematics object specified in the constructor when the class is created
