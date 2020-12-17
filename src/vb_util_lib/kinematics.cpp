@@ -516,7 +516,7 @@ void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
 	setPosition(msg->header.stamp, msg->pose.pose.position);
 	setAttitude(msg->pose.pose.orientation);
     setLinearVelocity(msg->twist.twist.linear);
-    setUpdateTime(msg->header.stamp, 4);
+    //setUpdateTime(msg->header.stamp, 4);
     // Set the initialization flags
     pose_initialized_ = msg->pose.covariance[0];
 
