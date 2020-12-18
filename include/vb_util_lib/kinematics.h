@@ -90,6 +90,14 @@ public:
     void setPose(const std_msgs::Header& h, const geometry_msgs::Pose& p, int debug=-1) {
         setPose(h.frame_id, h.stamp, p, debug);
     }
+	void setPose(const ros::Time& update_time, double X, double Y, double Z,
+			double Qw, double Qx, double Qy, double Qz, int debug=-1) {
+		setPose(frame_id_, update_time, X, Y, Z, Qw, Qx, Qy, Qz, debug);
+	}
+
+	void setPose(const std::string& source_frame, const ros::Time& update_time, double X, double Y, double Z,
+			double Qw, double Qx, double Qy, double Qz, int debug=-1);
+
     void setOdometry(const nav_msgs::Odometry::ConstPtr& msg, int debug=-1) {
     	setPose(msg->child_frame_id, msg->header.stamp, msg->pose.pose, debug);
         setLinearVelocity(msg->twist.twist.linear);
@@ -119,18 +127,23 @@ public:
     }
     void setPosition(const ros::Time& update_time, double x, double y, double z, int debug=-1);
     void checkPosition(double x, double y, double z, int debug=-1);
-    void setAltitude(double a) {
+    void setAltitude(const ros::Time& update_time, double a) {
     	position_.z = a;
-
+    	setUpdateTime(update_time, 0);
     }
     const AM::Point& position() const {
         return position_;
     }
 
-    void setAttitude(const VehicleAttitude& va, bool yaw_corrected=true);
-    void setAttitude(double roll, double pitch, double yaw, bool yaw_corrected=true, double throttle=0.0);
-    void setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected=true);
-    void setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected=true);
+    void setAttitude(const ros::Time& update_time, double Qw, double Qx, double Qy, double Qz, bool yaw_corrected=true) {
+    	setOrientation(Qw, Qx, Qy, Qz, yaw_corrected);
+    	setUpdateTime(update_time, 1);
+    }
+
+//    void setAttitude(const VehicleAttitude& va, bool yaw_corrected=true);
+//    void setAttitude(double roll, double pitch, double yaw, bool yaw_corrected=true, double throttle=0.0);
+//    void setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected=true);
+//    void setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected=true);
     void setYaw(double yaw, bool corrected=true);
     bool getYaw(double& yaw) {
     	yaw = attitude_.yaw;
@@ -191,9 +204,6 @@ public:
         pose_initialized_ = 0;
     }
 
-    void setUpdateTime(const ros::Time& updateTime) {
-        update_time_ = updateTime;
-    }
     ros::Time getUpdateTime() const {
         return update_time_;
     }
@@ -275,6 +285,16 @@ public:
 protected:
     ros::NodeHandle *nh_;
 
+    void setUpdateTime(const ros::Time& updateTime, int source) {
+    	update_time_cnt_++;
+    	if (updateTime.toSec() == update_time_.toSec())
+    	{
+    		ROS_WARN("Kinematics::setUpdateTime now[%f] source[%d] time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]",
+    				ros::Time::now().toSec(), source, update_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
+    	}
+        update_time_ = updateTime;
+    }
+
     void setUpdated(bool updated) {
         updated_flag_ = updated;
         if (updated_flag_)
@@ -296,9 +316,30 @@ private:
     // general purpose transformer
     am::Transformer transformer_;
 
-    // This is the core method to set the pose taking into account the frame of the data as compared to the frame
+    // This is the core methods to set the pose taking into account the frame of the data as compared to the frame
     //   of this kinematics object.
-    void setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug=-1);
+    void setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug=-1) {
+    	setPose(source_frame, update_time, p.position.x, p.position.y, p.position.z,
+    			p.orientation.w, p.orientation.x, p.orientation.y, p.orientation.z, debug);
+    }
+
+    /**
+     * Used to set the attitude
+     */
+    void setAttitude(const VehicleAttitude& va, bool yaw_corrected=true, double throttle=0.0) {
+    	setAttitude(va.roll, va.pitch, va.yaw, yaw_corrected, throttle);
+    }
+    void setAttitude(double roll, double pitch, double yaw, bool yaw_corrected=true, double throttle=0.0);
+
+    void setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected=true) {
+    	setOrientation(q.w, q.x, q.y, q.z, yaw_corrected);
+    }
+    void setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected=true) {
+    	setOrientation(q.w(), q.x(), q.y(), q.z(), yaw_corrected);
+    }
+    void setAttitude(double Qw, double Qx, double Qy, double Qz, bool yaw_corrected=true) {
+    	setOrientation(Qw, Qx, Qy, Qz, yaw_corrected);
+    }
 
     /**
      * Used to update the velocity given a new position
@@ -356,6 +397,7 @@ private:
      * Update time of the Kinematics
      */
     ros::Time update_time_;
+    unsigned long update_time_cnt_ {0};
 
     /**
      * frame id for the kinematics object specified in the constructor when the class is created

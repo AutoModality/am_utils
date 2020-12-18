@@ -104,8 +104,11 @@ void ObjectState::calculateTargetENU() {
 	}
 
 	// update the target ENU state
-	target_current_ENU.setPosition(target_current_RFU.getUpdateTime(), Xt, Yt, target_current_RFU.position().z);
-	target_current_ENU.setAttitude(target_current_RFU.getAttitude());
+	target_current_ENU.setPose(target_current_ENU.getFrameId(), target_current_RFU.getUpdateTime(), Xt, Yt, target_current_RFU.position().z,
+			target_current_RFU.getOrientation().w(), target_current_RFU.getOrientation().x(),
+			target_current_RFU.getOrientation().y(), target_current_RFU.getOrientation().z());
+//	target_current_ENU.setPosition(target_current_RFU.getUpdateTime(), Xt, Yt, target_current_RFU.position().z);
+//	target_current_ENU.setAttitude(target_current_RFU.getAttitude());
 //	targetCurrentENU.publishTransform();
 //	printf("Xc:%f, Yc:%f, Dc:%f, Xt:%f, Yt:%f, YAW:%f, Ay:%f, Ac:%f, At:%f\n", Xc, Yc, Dc, Xt, Yt, vehicle_current_ENU.attitude.yaw, Ay, Ac, At);
 //			targetCurrentLocal.position.x,
