@@ -106,7 +106,7 @@ void Kinematics::setPose(const std::string& source_frame, const ros::Time& updat
 	if (source_frame == frame_id_)
 	{
 		setPosition(update_time, X, Y, Z, debug);
-		setAttitude(Qx, Qy, Qz, Qw);
+		setAttitude(Qw, Qx, Qy, Qz);
 //        ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX SAME FRAME = \n" << p);
 	}
 	else
