@@ -290,7 +290,7 @@ protected:
     	if (updateTime.toSec() == update_time_.toSec())
     	{
             duplicate_time_cnt_++;
-    		ROS_WARN_THROTTLE(1,"Kinematics::setUpdateTime duplicated now[%f] source[%d] time_cnt[%lu] dup_time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]",
+    		ROS_WARN_THROTTLE(5,"Kinematics::setUpdateTime duplicated now[%f] source[%d] time_cnt[%lu] dup_time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]",
     				ros::Time::now().toSec(), source, update_time_cnt_, duplicate_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
     	}
         update_time_ = updateTime;
