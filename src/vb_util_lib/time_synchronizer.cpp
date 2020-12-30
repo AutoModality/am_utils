@@ -18,7 +18,7 @@ TimeSynchronizer::TimeSynchronizer():
 	bool debounce;
 	double poll_rate;
 
-	ros::param::param<int>("~gpio_num", gpio_num_, 388);
+	ros::param::param<int>("~gpio_num", gpio_num_, 422);
 	ros::param::param<bool>("~debounce", debounce, false);
 	ros::param::param<double>("~poll_rate", poll_rate, 1.0);
 
