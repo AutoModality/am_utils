@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-#define EARTH_RADIUS 6371000  // meters
+#define EARTH_RADIUS_M 6371000  // meters
 
 double latLonDeg_to_Dist(double lat1, double lon1, double lat2, double lon2);
 
