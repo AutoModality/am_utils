@@ -38,7 +38,7 @@ double latLonDeg_to_Dist(double lat1, double lon1, double lat2, double lon2) {
             sin(delLon/2) * sin(delLon/2));
     double c = 2 * atan2(sqrt(a), sqrt(1-a));
 
-    return EARTH_RADIUS * c;
+    return EARTH_RADIUS_M * c;
 }
 //φ1 lat1
 //var y = Math.sin(λ2-λ1) * Math.cos(φ2);
@@ -66,10 +66,10 @@ double latLonDeg_to_Bearing(double lat1, double lon1, double lat2, double lon2) 
 
 void newGPSCoord(double lat, double lon, double bearing, double distance,
         double *new_lat, double *new_lon) {
-    *new_lat = asin( sin(lat)*cos(distance/EARTH_RADIUS) +
-                        cos(lat)*sin(distance/EARTH_RADIUS)*cos(bearing) );
-    *new_lon = lon + atan2(sin(bearing)*sin(distance/EARTH_RADIUS)*cos(lat),
-                             cos(distance/EARTH_RADIUS)-sin(lat)*sin(*new_lat));
+    *new_lat = asin( sin(lat)*cos(distance/EARTH_RADIUS_M) +
+                        cos(lat)*sin(distance/EARTH_RADIUS_M)*cos(bearing) );
+    *new_lon = lon + atan2(sin(bearing)*sin(distance/EARTH_RADIUS_M)*cos(lat),
+                             cos(distance/EARTH_RADIUS_M)-sin(lat)*sin(*new_lat));
     return;
 }
 
