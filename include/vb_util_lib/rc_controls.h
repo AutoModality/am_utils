@@ -123,6 +123,14 @@ private:
     bool setDJIGearSwitch(double gear_switch, RC_GEAR& state);
     void setDJIStickValue(double input, double& state) { state = input; }
 
+    // Logitech callback functions
+    void logitechRemoteCB(const sensor_msgs::Joy::ConstPtr&  msg);
+    ros::Subscriber logitech_rc_channels_sub_;
+    void setLogitechControls(const sensor_msgs::Joy::ConstPtr&  msg);
+    bool setLogitechModeSwitch(double mode_switch, RC_MODE& state);
+    bool setLogitechGearSwitch(double gear_switch, RC_GEAR& state);
+    void setLogitechStickValue(double input, double& state) { state = input; }
+
     // PX4 callback functions
     void px4RemoteCB(const mavros_msgs::RCIn::ConstPtr&  msg);
     ros::Subscriber px4_rc_channels_sub_;

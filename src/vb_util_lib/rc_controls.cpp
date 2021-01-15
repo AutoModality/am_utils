@@ -156,6 +156,9 @@ void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 	UPPER_VALUE_ = (MAX_VALUE_ - (RANGE_/2));
 	LOWER_VALUE_ = (MIN_VALUE_ + (RANGE_/2));
 
+	logitech_rc_channels_sub_ = n.subscribe<sensor_msgs::Joy>("/joy", 10,
+			&RC_Controls::logitechRemoteCB, this);
+
 	dji_rc_channels_sub_ = n.subscribe<sensor_msgs::Joy>(am_topics::DJI_SDK_RC, 10,
 			&RC_Controls::djiRemoteCB, this);
 
@@ -260,6 +263,53 @@ bool RC_Controls::setDJIGearSwitch(double gear_switch, RC_GEAR& state) {
 
 void RC_Controls::djiRemoteCB(const sensor_msgs::Joy::ConstPtr&  rc_msg) {
 	setDJIControls(rc_msg);
+
+    if (callback_ != NULL)
+    {
+        callback_(this);
+    }
+}
+
+//===================================================
+// Logitech specific RC stuff
+//===================================================
+
+void RC_Controls::setLogitechControls(const sensor_msgs::Joy::ConstPtr& msg) {
+
+	stamp = msg->header.stamp;
+
+	throttle_ = msg->axes[throttle_idx_];
+	yaw_ = msg->axes[yaw_idx_];
+	pitch_ = msg->axes[pitch_idx_];
+	roll_ = msg->axes[roll_idx_];
+	gear_ = 0;
+	mode_ = 0;
+
+	setLogitechStickValue(yaw_, yaw);
+	setLogitechStickValue(pitch_, pitch);
+	setLogitechStickValue(roll_, roll);
+	setLogitechStickValue(throttle_, throttle);
+
+    printf("XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f]\n",
+          roll_, pitch_, yaw_, throttle_, gear_, mode_);
+}
+
+bool RC_Controls::setLogitechModeSwitch(double mode_switch, RC_MODE& state) {
+	bool change_state = false;
+	state = RC_MODE::POS;
+
+	return change_state;
+}
+
+bool RC_Controls::setLogitechGearSwitch(double gear_switch, RC_GEAR& state) {
+	bool change = false;
+	state = RC_GEAR::DOWN;
+
+	return change;
+}
+
+void RC_Controls::logitechRemoteCB(const sensor_msgs::Joy::ConstPtr&  rc_msg) {
+	setLogitechControls(rc_msg);
 
     if (callback_ != NULL)
     {
