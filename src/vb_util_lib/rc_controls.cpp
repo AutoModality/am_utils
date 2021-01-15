@@ -290,7 +290,7 @@ void RC_Controls::setLogitechControls(const sensor_msgs::Joy::ConstPtr& msg) {
 	setLogitechStickValue(roll_, roll);
 	setLogitechStickValue(throttle_, throttle);
 
-    printf("XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f]\n",
+    ROS_INFO_THROTTLE(1.0, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f]\n",
           roll_, pitch_, yaw_, throttle_, gear_, mode_);
 }
 

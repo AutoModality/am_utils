@@ -79,8 +79,8 @@ class rc_mapper
     #define  LOGITECH_RC_ARM 0
 
     #define  LOGITECH_RC_THROTTLE_SIGN 1
-    #define  LOGITECH_RC_YAW_SIGN -1
-    #define  LOGITECH_RC_ROLL_SIGN -1
+    #define  LOGITECH_RC_YAW_SIGN 1
+    #define  LOGITECH_RC_ROLL_SIGN 1
     #define  LOGITECH_RC_PITCH_SIGN 1
 
     #define  LOGITECH_RC_MAX_VALUE 1
