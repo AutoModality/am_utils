@@ -218,9 +218,9 @@ void Kinematics::setPosition(const ros::Time& update_time, double x, double y, d
 	{
 		Eigen::Vector3d vel_debug;
 		getLinearVelocity(drone_ENU, vel_debug);
-		ROS_INFO("Kinematics Velocity standard[%s :  %0.3f %0.3f, %0.3f]   body[%s :  %0.3f %0.3f, %0.3f]",
-				frame_id_.c_str(), velLinear_[0], velLinear_[1], velLinear_[2],
-				drone_ENU, vel_debug[0], vel_debug[1], vel_debug[2]);
+//		ROS_INFO("Kinematics Velocity standard[%s :  %0.3f %0.3f, %0.3f]   body[%s :  %0.3f %0.3f, %0.3f]",
+//				frame_id_.c_str(), velLinear_[0], velLinear_[1], velLinear_[2],
+//				drone_ENU, vel_debug[0], vel_debug[1], vel_debug[2]);
 	}
 }
 
