@@ -18,13 +18,14 @@ rc_mapper::rc_mapper(ros::NodeHandle n)
     m_RCTypeNames[eRCT_PX4].assign("PX4");
     m_RCTypeNames[eRCT_DJI].assign("DJI");
     m_RCTypeNames[eRCT_ACSL].assign("ACSL");
+    m_RCTypeNames[eRCT_LOGITECH].assign("LOGITECH");
     m_RCTypeNames[eRCT_Unknown].assign("Unknown");
 
     //default settings
     m_RCType.assign(m_RCTypeNames[m_SetRC].c_str());
     SetFromDefaults();
 
-    //set parameters form the input parameters (if present)
+    //set parameters from the input parameters (if present)
     SetFromParameters();
 }
 
@@ -188,6 +189,23 @@ void rc_mapper::SetFromParameters(void)
         m_Handle.param("/RC/pitch_sign", m_Signs[ePitchSign], ACSL_RC_PITCH_SIGN);
         m_Handle.param("/RC/minvalue", m_MinValue, ACSL_RC_MIN_VALUE);
         m_Handle.param("/RC/maxvalue", m_MaxValue, ACSL_RC_MAX_VALUE);
+        break;
+    }
+    case eRCT_LOGITECH:
+    {
+        m_Handle.param("/RC/throttle", m_Channels[eRCThrottle], LOGITECH_RC_THROTTLE);
+        m_Handle.param("/RC/yaw", m_Channels[eRCYaw], LOGITECH_RC_YAW);
+        m_Handle.param("/RC/roll", m_Channels[eRCRoll], LOGITECH_RC_ROLL);
+        m_Handle.param("/RC/pitch", m_Channels[eRCPitch], LOGITECH_RC_PITCH);
+        m_Handle.param("/RC/gear", m_Channels[eRCGear], LOGITECH_RC_GEAR);
+        m_Handle.param("/RC/mode", m_Channels[eRCMode], LOGITECH_RC_MODE);
+        m_Handle.param("/RC/arm", m_Channels[eRCArm], LOGITECH_RC_ARM);
+        m_Handle.param("/RC/throttle_sign", m_Signs[eThrottleSign], LOGITECH_RC_THROTTLE_SIGN);
+        m_Handle.param("/RC/yaw_sign", m_Signs[eYawSign], LOGITECH_RC_YAW_SIGN);
+        m_Handle.param("/RC/roll_sign", m_Signs[eRollSign], LOGITECH_RC_ROLL_SIGN);
+        m_Handle.param("/RC/pitch_sign", m_Signs[ePitchSign], LOGITECH_RC_PITCH_SIGN);
+        m_Handle.param("/RC/minvalue", m_MinValue, LOGITECH_RC_MIN_VALUE);
+        m_Handle.param("/RC/maxvalue", m_MaxValue, LOGITECH_RC_MAX_VALUE);
         break;
     }
     }

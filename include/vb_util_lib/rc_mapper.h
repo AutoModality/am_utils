@@ -69,6 +69,23 @@ class rc_mapper
     #define  ACSL_RC_MAX_VALUE 2020 
     #define  ACSL_RC_MIN_VALUE 1020 
 
+    // LOGITECH
+    #define  LOGITECH_RC_THROTTLE 1
+    #define  LOGITECH_RC_YAW 0
+    #define  LOGITECH_RC_ROLL 2
+    #define  LOGITECH_RC_PITCH 3
+    #define  LOGITECH_RC_GEAR 0
+    #define  LOGITECH_RC_MODE 0
+    #define  LOGITECH_RC_ARM 0
+
+    #define  LOGITECH_RC_THROTTLE_SIGN 1
+    #define  LOGITECH_RC_YAW_SIGN 1
+    #define  LOGITECH_RC_ROLL_SIGN 1
+    #define  LOGITECH_RC_PITCH_SIGN 1
+
+    #define  LOGITECH_RC_MAX_VALUE 1
+    #define  LOGITECH_RC_MIN_VALUE -1
+
     // Default
     #define DEFAULT_MIN_VALUE 1020 
     #define DEFAULT_MAX_VALUE 2020 
@@ -99,6 +116,7 @@ class rc_mapper
         eRCT_PX4 = 0,
         eRCT_DJI,
         eRCT_ACSL,
+        eRCT_LOGITECH,
         eRCT_Unknown,
         eEndOfRCTypes
     };
