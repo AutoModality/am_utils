@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf2
   tf2_ros	
+  pcl_conversions
   )
 
 find_package(OpenCV REQUIRED)
@@ -44,6 +45,7 @@ catkin_package(
   std_msgs
   tf2
   tf2_ros	
+  pcl_conversions
 )
 
 # TODO: why is the explicit eigen3 include 
@@ -61,12 +63,14 @@ add_library(am_utils
   src/am_utils/am_onlinestatistics.cpp 
   src/am_utils/am_operator_utils.cpp
   src/am_utils/am_statistics.cpp 
+  src/am_utils/dust_filter.cpp
   src/am_utils/cansocket.cpp 
   src/am_utils/fcu_mode_type.cpp
   src/am_utils/flightplan_type.cpp
   src/am_utils/latency_wrapper.cpp 
   src/am_utils/message_util.cpp
   src/am_utils/mission_cmd_type.cpp
+  src/am_utils/am_pcl_utils.cpp
   src/am_utils/operator_msg_type.cpp
   src/vb_util_lib/control_util.cpp
   src/vb_util_lib/object_state.cpp 
