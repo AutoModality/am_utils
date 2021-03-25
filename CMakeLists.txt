@@ -107,6 +107,7 @@ add_library(am_utils
   src/vb_util_lib/transformer.cpp 
   src/vb_util_lib/rotate.cpp 
   src/vb_util_lib/imu_class.cpp
+  src/vb_util_lib/pose_queue.cpp
   src/vb_util_lib/am_heartbeat.cpp
   src/vb_util_lib/vb_main.cpp
   src/vb_util_lib/bag_logger.cpp

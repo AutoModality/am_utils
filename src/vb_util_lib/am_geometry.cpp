@@ -304,6 +304,25 @@ void rotateVector(geometry_msgs::Quaternion& q, double x, double y, double z, Ei
 
 
 void test() {
+	{
+		printf("******* am_geometry TEST *******\n\n");
+
+		double x = 1.0;
+		double y = 2.0;
+		double z = 3.0;
+		// Make a -90 quaternion
+		geometry_msgs::Quaternion q;
+		q.x = 0.0;
+		q.y = 0.0;
+		q.z = -0.707;
+		q.w = 0.707;
+//		AM::RPY_to_Quaternion()
+		Eigen::Vector3d out_vec;
+		AM::rotateVector(q, x, y, z, out_vec);
+		printf("TEST: rotateVector -90 degrees quaternion from[%0.2f, %0.2f, %0.2f] to[%0.2f, %0.2f, %0.2f]\n\n",
+				x, y, z, out_vec[0], out_vec[1], out_vec[2]);
+	}
+
     AM::Point p1, p2, p3, p4;
 
     p1.x = 2.0;
