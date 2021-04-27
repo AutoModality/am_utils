@@ -33,18 +33,18 @@ void DustFilter::getParams()
   nh_.param<float>(name_space_ + "/range_threshold_m", range_threshold_m_, DEFAULT_RANGE_THRESHHOLD_M);
   nh_.param<int>(name_space_ + "/min_neighbors", min_neighbors_, DEFAULT_MIN_NEIGHBORS);
   nh_.param<float>(name_space_ + "/max_range_m", max_range_m_, DEFAULT_MAX_RANGE_M);
-  nh_.param<float>(name_space_ + "/inside_min_x_m", inside_min_x_m_, 0);
-  nh_.param<float>(name_space_ + "/inside_max_x_m", inside_max_x_m_, 0);
-  nh_.param<float>(name_space_ + "/inside_min_y_m", inside_min_y_m_, 0);
-  nh_.param<float>(name_space_ + "/inside_max_y_m", inside_max_y_m_, 0);
-  nh_.param<float>(name_space_ + "/inside_min_z_m", inside_min_z_m_, 0);
-  nh_.param<float>(name_space_ + "/inside_max_z_m", inside_max_z_m_, 0);
-  nh_.param<float>(name_space_ + "/outside_min_x_m", outside_min_x_m_, std::numeric_limits<double>::min());
-  nh_.param<float>(name_space_ + "/outside_max_x_m", outside_max_x_m_, std::numeric_limits<double>::max());
-  nh_.param<float>(name_space_ + "/outside_min_y_m", outside_min_y_m_, std::numeric_limits<double>::min());
-  nh_.param<float>(name_space_ + "/outside_max_y_m", outside_max_y_m_, std::numeric_limits<double>::max());
-  nh_.param<float>(name_space_ + "/outside_min_z_m", outside_min_z_m_, std::numeric_limits<double>::min());
-  nh_.param<float>(name_space_ + "/outside_max_z_m", outside_max_z_m_, std::numeric_limits<double>::max());
+  nh_.param<float>(name_space_ + "/inside_min_x_m", inside_min_x_m_, -0.5);
+  nh_.param<float>(name_space_ + "/inside_max_x_m", inside_max_x_m_, 0.5);
+  nh_.param<float>(name_space_ + "/inside_min_y_m", inside_min_y_m_, -0.5);
+  nh_.param<float>(name_space_ + "/inside_max_y_m", inside_max_y_m_, 0.5);
+  nh_.param<float>(name_space_ + "/inside_min_z_m", inside_min_z_m_, -0.5);
+  nh_.param<float>(name_space_ + "/inside_max_z_m", inside_max_z_m_, 0.5);
+  nh_.param<float>(name_space_ + "/outside_min_x_m", outside_min_x_m_, std::numeric_limits<float>::lowest());
+  nh_.param<float>(name_space_ + "/outside_max_x_m", outside_max_x_m_, std::numeric_limits<float>::max());
+  nh_.param<float>(name_space_ + "/outside_min_y_m", outside_min_y_m_, std::numeric_limits<float>::lowest());
+  nh_.param<float>(name_space_ + "/outside_max_y_m", outside_max_y_m_, std::numeric_limits<float>::max());
+  nh_.param<float>(name_space_ + "/outside_min_z_m", outside_min_z_m_, std::numeric_limits<float>::lowest());
+  nh_.param<float>(name_space_ + "/outside_max_z_m", outside_max_z_m_, std::numeric_limits<float>::max());
 
 
   if (first_run)
