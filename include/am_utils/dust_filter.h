@@ -34,8 +34,6 @@ private:
   float outside_min_z_m_;
   float outside_max_z_m_;
 
-  bool isSetToNaN(pcl::PointXYZIR &point);
-  void setNaN(pcl::PointXYZIR &point);
   void printInsideParams();
   void printOutsideParams();
 

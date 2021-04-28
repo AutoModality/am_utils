@@ -31,5 +31,25 @@ pcl::PointCloud<pcl::PointXYZIR>::ConstPtr AMPCLUtils::convertToPointXYZIR(
   return pcl;
 }
 
+bool AMPCLUtils::isSetToNaN(pcl::PointXYZIR &point)
+{
+  if (std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z) ||
+      std::isnan(point.intensity) || std::isnan(point.intensity))
+  {
+    setNaN(point);
+    return true;
+  }
+  return false;
+}
+
+void AMPCLUtils::setNaN(pcl::PointXYZIR &point)
+{
+  point.x = std::nanf("");
+  point.y = std::nanf("");
+  point.z = std::nanf("");
+  point.intensity = std::nanf("");
+  point.range = std::nanf("");
+}
+
 } // namespace
 

@@ -3,6 +3,7 @@
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl_ros/point_cloud.h>
 
+#include <am_utils/am_pcl_utils.h>
 #include <am_utils/dust_filter.h>
 #include <am_utils/point_types.h>
 #include <vb_util_lib/frame_names.h>
@@ -91,7 +92,7 @@ int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl, bool skip_dust_fi
       pcl::PointXYZIR &point = pcl.points[index];
 
       // if already nan, continue
-      if(isSetToNaN(point))
+      if(AMPCLUtils::isSetToNaN(point))
       {
         nan_mask[index] = true;
         continue;
@@ -175,7 +176,7 @@ int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl, bool skip_dust_fi
       pcl::PointXYZIR &point = pcl.points[index];
       if(nan_mask[index])
       {
-        setNaN(point);
+        AMPCLUtils::setNaN(point);
         points_removed++;
         is_dense = false;
       }
@@ -190,26 +191,6 @@ int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl, bool skip_dust_fi
   }
 
   return points_removed;
-}
-
-bool DustFilter::isSetToNaN(pcl::PointXYZIR &point)
-{
-  if (std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z) ||
-      std::isnan(point.intensity) || std::isnan(point.intensity))
-  {
-    setNaN(point);
-    return true;
-  }
-  return false;
-}
-
-void DustFilter::setNaN(pcl::PointXYZIR &point)
-{
-  point.x = std::nanf("");
-  point.y = std::nanf("");
-  point.z = std::nanf("");
-  point.intensity = std::nanf("");
-  point.range = std::nanf("");
 }
 
 void DustFilter::setInsideFilter(float min_x_m_, float max_x_m_, float min_y_m_, float max_y_m_, float min_z_m_, float max_z_m_)
