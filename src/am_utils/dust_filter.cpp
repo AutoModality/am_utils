@@ -33,10 +33,10 @@ void DustFilter::getParams()
   nh_.param<float>(name_space_ + "/range_threshold_m", range_threshold_m_, DEFAULT_RANGE_THRESHHOLD_M);
   nh_.param<int>(name_space_ + "/min_neighbors", min_neighbors_, DEFAULT_MIN_NEIGHBORS);
   nh_.param<float>(name_space_ + "/max_range_m", max_range_m_, DEFAULT_MAX_RANGE_M);
-  nh_.param<float>(name_space_ + "/inside_min_x_m", inside_min_x_m_, -0.5);
-  nh_.param<float>(name_space_ + "/inside_max_x_m", inside_max_x_m_, 0.5);
-  nh_.param<float>(name_space_ + "/inside_min_y_m", inside_min_y_m_, -0.5);
-  nh_.param<float>(name_space_ + "/inside_max_y_m", inside_max_y_m_, 0.5);
+  nh_.param<float>(name_space_ + "/inside_min_x_m", inside_min_x_m_, -0.7);
+  nh_.param<float>(name_space_ + "/inside_max_x_m", inside_max_x_m_, 0.7);
+  nh_.param<float>(name_space_ + "/inside_min_y_m", inside_min_y_m_, -0.7);
+  nh_.param<float>(name_space_ + "/inside_max_y_m", inside_max_y_m_, 0.7);
   nh_.param<float>(name_space_ + "/inside_min_z_m", inside_min_z_m_, -0.5);
   nh_.param<float>(name_space_ + "/inside_max_z_m", inside_max_z_m_, 0.5);
   nh_.param<float>(name_space_ + "/outside_min_x_m", outside_min_x_m_, std::numeric_limits<float>::lowest());
@@ -59,7 +59,7 @@ void DustFilter::getParams()
 
 void DustFilter::printInsideParams()
 {
-  ROS_INFO_STREAM(name_space_ + "/inside_max_x_m = " << inside_max_x_m_);
+  ROS_INFO_STREAM(name_space_ + "/inside_min_x_m = " << inside_min_x_m_);
   ROS_INFO_STREAM(name_space_ + "/inside_max_x_m = " << inside_max_x_m_);
   ROS_INFO_STREAM(name_space_ + "/inside_min_y_m = " << inside_min_y_m_);
   ROS_INFO_STREAM(name_space_ + "/inside_max_y_m = " << inside_max_y_m_);
@@ -77,9 +77,9 @@ void DustFilter::printOutsideParams()
   ROS_INFO_STREAM(name_space_ + "/outside_max_z_m = " << outside_max_z_m_);
 }
 
-int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl)
+int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl, bool skip_dust_filter)
 {
-  bool nan_mask[pcl.width * pcl.width];
+  bool nan_mask[pcl.width * pcl.height];
 
   bool is_dense = pcl.is_dense;
   for (uint32_t width = 0; width < pcl.width; width++)
@@ -87,6 +87,7 @@ int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl)
     for (uint32_t height = 0; height < pcl.height; height++)
     {
       int index = width * pcl.height + height;
+      nan_mask[index] = false;
       pcl::PointXYZIR &point = pcl.points[index];
 
       // if already nan, continue
@@ -97,7 +98,6 @@ int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl)
       }
 
       // if beyond the max range, don't filter dust
-      bool skip_dust_filter = false;
       if(point.range > max_range_m_)
       {
         skip_dust_filter = true;
