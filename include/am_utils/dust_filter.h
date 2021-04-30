@@ -34,8 +34,6 @@ private:
   float outside_min_z_m_;
   float outside_max_z_m_;
 
-  bool isSetToNaN(pcl::PointXYZIR &point);
-  void setNaN(pcl::PointXYZIR &point);
   void printInsideParams();
   void printOutsideParams();
 
@@ -43,7 +41,7 @@ public:
   DustFilter(ros::NodeHandle &nh, std::string name_space);
   ~DustFilter();
 
-  int process(pcl::PointCloud<pcl::PointXYZIR> &pc);
+  int process(pcl::PointCloud<pcl::PointXYZIR> &pc, bool skip_dust_filter = false);
   void getParams();
   void setInsideFilter(float min_x_m_, float max_x_m_, float min_y_m_, float max_y_m_, float min_z_m_, float max_z_m_);
   void setOutsideFilter(float min_x_m_, float max_x_m_, float min_y_m_, float max_y_m_, float min_z_m_, float max_z_m_);

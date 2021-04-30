@@ -14,6 +14,8 @@ public:
   static pcl::PointCloud<pcl::PointXYZIR>::ConstPtr convertToPointXYZIR(
       const sensor_msgs::PointCloud2::ConstPtr pc2,
       pcl::PointCloud<pcl::PointXYZIR>::Ptr &pcl);
+  static bool isSetToNaN(pcl::PointXYZIR &point);
+  static void setNaN(pcl::PointXYZIR &point);
 };
 
 }
