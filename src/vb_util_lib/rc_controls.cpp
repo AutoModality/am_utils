@@ -168,6 +168,24 @@ void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 	stamp = ros::Time::now();
 }
 
+bool RC_Controls::setEngagedState() {
+	if (throttle > ENGAGED_THRESHOLD && pitch > ENGAGED_THRESHOLD)
+	{
+		if (yaw > ENGAGED_THRESHOLD && roll < -ENGAGED_THRESHOLD)
+		{
+			ROS_INFO(">>>>>>>> RC_CONTROL SPECIAL FUNCTION ENGAGED <<<<<<<<<<");
+			user_function_engaged = true;
+		}
+		else if (yaw < -ENGAGED_THRESHOLD && roll > ENGAGED_THRESHOLD)
+		{
+			ROS_INFO("<<<<<<<<<< RC_CONTROL SPECIAL FUNCTION DISENGAGED >>>>>>>>>>");
+			user_function_engaged = false;
+		}
+	}
+
+	return user_function_engaged;
+}
+
 //===================================================
 // DJI specific RC stuff
 //===================================================
@@ -198,6 +216,9 @@ void RC_Controls::setDJIControls(const sensor_msgs::Joy::ConstPtr& msg) {
 
 	setDJIModeSwitch(mode_, mode);
 	setDJIGearSwitch(gear_, gear);
+
+	setEngagedState();
+
 //    printf("XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f]\n",
 //          roll_, pitch_, yaw_, throttle_, gear_, mode_);
 }
@@ -290,8 +311,10 @@ void RC_Controls::setLogitechControls(const sensor_msgs::Joy::ConstPtr& msg) {
 	setLogitechStickValue(roll_, roll);
 	setLogitechStickValue(throttle_, throttle);
 
-    ROS_INFO_THROTTLE(1.0, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f]\n",
-          roll_, pitch_, yaw_, throttle_, gear_, mode_);
+	setEngagedState();
+
+    ROS_INFO_THROTTLE(1.0, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f], engaged[%d]\n",
+          roll_, pitch_, yaw_, throttle_, gear_, mode_, user_function_engaged);
 }
 
 bool RC_Controls::setLogitechModeSwitch(double mode_switch, RC_MODE& state) {
@@ -347,6 +370,9 @@ void RC_Controls::setPX4Controls(const mavros_msgs::RCIn::ConstPtr&  msg) {
 	setPX4ModeSwitch(mode_, mode);
 	setPX4GearSwitch(gear_, gear);
 	setPX4ArmSwitch(armed_, armed_switch);
+
+	setEngagedState();
+
      //ROS_INFO_THROTTLE(2, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%d], mode[%d] armed[%d]\n",
      //      roll, pitch, yaw, throttle, static_cast<int>(gear), static_cast<int>(mode), armed_switch);
 }
