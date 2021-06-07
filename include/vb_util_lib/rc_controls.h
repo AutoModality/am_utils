@@ -17,6 +17,8 @@
 
 #define MAX_DJI_CONTROL 10000.0
 
+#define ENGAGED_THRESHOLD 0.95
+
 enum class RC_MODE 
 {
     ATT = 0, 
@@ -61,6 +63,10 @@ public:
     RC_GEAR gear {RC_GEAR::UNKNOWN};
 
     bool armed_switch {false};
+
+    // This is a special mode we can engage and disengage with the congtroler sticks
+    //both up and in engage and both up and out disengage
+    bool user_function_engaged {false};
 
     // All stick values are between -1.0 and 1.0
     double throttle {0.0};
@@ -139,6 +145,9 @@ private:
     bool setPX4GearSwitch(double gear_switch, RC_GEAR& state);
     bool setPX4ArmSwitch(double arm_switch, bool& state);
     void setPX4StickValue(double input, double& state, double polarity);
+
+    // Routine to set the engaged state of the controller
+    bool setEngagedState();
 };
 
 #endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_RC_CONTROLS_H_ */
