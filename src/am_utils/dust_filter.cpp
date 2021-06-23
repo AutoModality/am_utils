@@ -20,7 +20,7 @@ DustFilter::DustFilter(ros::NodeHandle &nh, std::string name_space) : nh_(nh), n
 {
   getParams();
 
-  debug_pcl_pub_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZIR>>("/debug/dust_filter/pcl", 10);
+  debug_pcl_pub_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZIR>>("/debug/" + name_space_ + "/dust_filter/pcl", 10);
 }
 
 DustFilter::~DustFilter()
