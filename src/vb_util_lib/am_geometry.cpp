@@ -26,6 +26,21 @@ double wrap_pi(double bearing)
   return bearing;
 }
 
+double wrap_2pi(double bearing)
+{
+  while (bearing >= 2 * _PI_R)
+    {
+      bearing -= _TWOPI_R;
+    }
+
+  while (bearing <= 0)
+    {
+      bearing += _TWOPI_R;
+    }
+
+  return bearing;
+}
+
 double pointDistance(geometry_msgs::Point& p1, geometry_msgs::Point& p2) {
     double xd = p2.x - p1.x;
     double yd = p2.y - p1.y;
