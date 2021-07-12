@@ -50,6 +50,9 @@ struct PointStamp {
 // This takes any angle and makes sure that it is between -PI and +PI
 double wrap_pi(double bearing);
 
+// This takes any angle and makes sure that it is between 0 and 2 * PI
+double wrap_2pi(double bearing);
+
 //==================================
 // Distances and arc lengths
 //==================================
