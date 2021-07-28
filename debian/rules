@@ -47,8 +47,8 @@ override_dh_shlibdeps:
 	# In case we're installing to a non-standard location, look for a setup.sh
 	# in the install tree that was dropped by catkin, and source it.  It will
 	# set things like CMAKE_PREFIX_PATH, PKG_CONFIG_PATH, and PYTHONPATH.
-	if [ -f "/opt/ros/melodic/setup.sh" ]; then . "/opt/ros/melodic/setup.sh"; fi && \
 	# ignore dependency checking since opencv4 comes with Nvidia NX 
+	if [ -f "/opt/ros/melodic/setup.sh" ]; then . "/opt/ros/melodic/setup.sh"; fi && \
 	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info -l$(CURDIR)/debian/ros-melodic-am-utils//opt/ros/melodic/lib/
 
 override_dh_auto_install:
