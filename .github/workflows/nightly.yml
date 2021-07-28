@@ -1,15 +1,14 @@
 name: Nightly
-on:
-  schedule:
-    - cron: '00 10 * * *'
+on: 
+  push:
+    branches-ignore:
+      - master
 jobs:
-  build:
-    runs-on: ubuntu-18.04
+  package:
+    runs-on: [x64, self-hosted,linux,build]
     steps:
+      - uses: AutoModality/action-clean@v1.1.0
       - uses: actions/checkout@v2
-      - name: Package
-        id: package
-        uses: AutoModality/action-package-debian-ros@v5-ros
-        with:
-          release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
+      - name: Deploy
+        run: amros dev docker run -dm --command="amros dev build deb"
 
