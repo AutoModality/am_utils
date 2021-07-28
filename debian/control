@@ -4,6 +4,7 @@ Priority: extra
 Maintainer: info <info@automodality.com>
 Build-Depends: debhelper (>= 9.0.0),
 	libjsoncpp-dev, 
+	opencv,
 	pcl,
 	ros-melodic-am-perception-pcl, 
     ros-melodic-am-control-toolbox, 
@@ -33,12 +34,13 @@ Package: ros-melodic-am-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
 	libjsoncpp-dev,  
+	opencv,
 	pcl,
 	ros-melodic-am-perception-pcl, 
     ros-melodic-am-control-toolbox,
     ros-melodic-am-msgs,
     ros-melodic-am-platform-scripts,
-    ros-melodic-cv-bridge, 
+    ros-melodic-am-vision-opencv, 
     ros-melodic-geometry-msgs, 
     ros-melodic-image-transport,
     ros-melodic-mavros-msgs, 

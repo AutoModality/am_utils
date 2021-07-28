@@ -13,28 +13,8 @@ jobs:
     steps:
       - uses: AutoModality/action-clean@v1.1.0
       - uses: actions/checkout@v2
-      - uses: rlespinasse/github-slug-action@3.1.0 # for GITHUB_REF_SLUG
-      - name: Package
-        id: package
-        uses: AutoModality/action-package-debian-ros@v5-amros
-        with:
-          branch: ${{ env.GITHUB_REF_SLUG }}
-          build-number: ${{ github.run_number }}
-          release-repo-entitlement: ${{ secrets.CLOUDSMITH_READ_RELEASE_ENTITLEMENT }}
-      - name: The generated package
-        run: echo "The artifact is ${{ steps.package.outputs.artifact-path }}"
       - name: Deploy
-        id: deploy
-        uses: AutoModality/action-cloudsmith@0.2.0
-        with:
-          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
-          command: 'push'
-          format: 'deb'
-          owner: 'automodality'
-          repo: 'dev'
-          distro: 'ubuntu'
-          release: 'bionic'
-          file: '${{ steps.package.outputs.artifact-path }}'
+        run: amros dev docker run -dm --command="deploy-amros developer 0.0.${{ github.run_number }} dev ${{ secrets.CLOUDSMITH_API_KEY }}"
   draft-pr:
     runs-on: ubuntu-18.04
     needs: package
@@ -45,12 +25,3 @@ jobs:
         with:
           pr_draft: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-  # code-format:
-  #   runs-on: ubuntu-18.04
-  #   needs: package
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Format Code
-  #       uses: AutoModality/action-ros-clang-format@master
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
