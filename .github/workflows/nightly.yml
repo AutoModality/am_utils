@@ -6,7 +6,7 @@ on:
     branches-ignore:
       - master
 jobs:
-  package:
+  build:
     runs-on: [x64, self-hosted,linux,build]
     steps:
       - uses: AutoModality/action-clean@v1.1.0
