@@ -1,5 +1,7 @@
 name: Nightly
 on: 
+  schedule:
+    - cron: '05 05 * * *'
   push:
     branches-ignore:
       - master
