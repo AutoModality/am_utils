@@ -198,7 +198,7 @@ public:
 	static constexpr char LED_BLINK[] = "/blinkm_command";
 	static constexpr char BATTERY_STATE[] = "/dji_osdk_ros/battery_state";
 
-  	static constexpr char STATION_STATUS[] = "/station/status";
+  	static constexpr char STATION_STATUS[] = "/am_station/status";
   	static constexpr char SUPER_STATE[] = "/vstate/summary";
   /** Report the overall System/Mission State 
    *  https://automodality.atlassian.net/wiki/spaces/AMROS/pages/929234949/AMROS+System+States
