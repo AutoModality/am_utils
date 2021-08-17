@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_conversions
   )
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV EXACT 3.3.1 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 find_package(PkgConfig REQUIRED)
