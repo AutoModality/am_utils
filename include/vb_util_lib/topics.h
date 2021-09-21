@@ -192,6 +192,7 @@ public:
 	static constexpr char CTRL_VIDEO_CMND[] = "/ctrl/video/cmnd";
 	static constexpr char CTRL_VISION_CMND[] = "/ctrl/vision/cmnd";
 	static constexpr char CTRL_VISION_MARKER_OFFSET[] = "/ctrl/vision/marker_offset";
+	static constexpr char CTRL_FLIGHTPLAN_ACTIVITY_CONTROL[] = "/flight_controller/flightplan_activity_control";
 
 	static constexpr char REMOTE_CTRL_VX_MISSION[] = "/remote/ctrl/vx/mission";
 
