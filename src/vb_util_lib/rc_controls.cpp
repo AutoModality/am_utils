@@ -373,8 +373,8 @@ void RC_Controls::setPX4Controls(const mavros_msgs::RCIn::ConstPtr&  msg) {
 
 	setEngagedState();
 
-     //ROS_INFO_THROTTLE(2, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%d], mode[%d] armed[%d]\n",
-     //      roll, pitch, yaw, throttle, static_cast<int>(gear), static_cast<int>(mode), armed_switch);
+     ROS_INFO_THROTTLE(2, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%d], mode[%d] armed[%d]\n",
+           roll, pitch, yaw, throttle, static_cast<int>(gear), static_cast<int>(mode), armed_switch);
 }
 
 void RC_Controls::setPX4StickValue(double input, double& state, double polarity) {
