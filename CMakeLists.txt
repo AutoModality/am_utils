@@ -1,130 +1,67 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(am_utils)
 
-add_compile_options(-std=c++11)
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
 
-find_package(catkin REQUIRED COMPONENTS
-  brain_box_msgs
-  control_toolbox 
-  image_transport 
-  genmsg
-  geometry_msgs
-  nav_msgs
-  rosconsole
-  roscpp 
-  rosbag
-  rostime
-  sensor_msgs
-  std_msgs
-  tf2
-  tf2_ros	
-  pcl_conversions
-  )
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-find_package(OpenCV EXACT 3.3.1 REQUIRED)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
-
-find_package(PkgConfig REQUIRED)
+find_package(brain_box_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rosbag2 REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(pcl_conversions REQUIRED)
 pkg_check_modules(jsoncpp REQUIRED jsoncpp)
 
-catkin_package(
-  INCLUDE_DIRS include include/am_utils include/vb_util_lib ${jsoncpp_INCLUDE_DIRS}
-  LIBRARIES am_utils jsoncpp
-  CATKIN_DEPENDS
-  brain_box_msgs
-  control_toolbox 
-  image_transport 
-  genmsg
-  geometry_msgs
-  nav_msgs
-  rosconsole
-  roscpp 
-  rosbag
-  rostime
-  sensor_msgs
-  std_msgs
-  tf2
-  tf2_ros	
-  pcl_conversions
-)
-
-# TODO: why is the explicit eigen3 include 
 include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${Eigen3_INCLUDE_DIRS}
-  ${jsoncpp_INCLUDE_DIRS}
-  /usr/include/eigen3
-)
+	include
+	${jsoncpp_INCLUDE_DIRS}
+  	/usr/include/eigen3
+  	)
 
-add_library(am_utils
-  src/am_utils/am_bag_utils.cpp
-  src/am_utils/am_network_utils.cpp
-  src/am_utils/am_onlinestatistics.cpp 
-  src/am_utils/am_operator_utils.cpp
-  src/am_utils/am_statistics.cpp 
-  src/am_utils/dust_filter.cpp
-  src/am_utils/cansocket.cpp 
-  src/am_utils/fcu_mode_type.cpp
-  src/am_utils/flightplan_type.cpp
-  src/am_utils/latency_wrapper.cpp 
-  src/am_utils/message_util.cpp
-  src/am_utils/mission_cmd_type.cpp
-  src/am_utils/am_pcl_utils.cpp
-  src/am_utils/operator_msg_type.cpp
-  src/vb_util_lib/control_util.cpp
-  src/vb_util_lib/object_state.cpp 
-  src/vb_util_lib/kinematics.cpp 
-  src/vb_util_lib/kinematics_list.cpp
-  src/vb_util_lib/current_enu_kinematics.cpp 
-  src/vb_util_lib/am_param.cpp 
-  src/vb_util_lib/gis_entity.cpp 
-  src/vb_util_lib/gis_util.cpp
-  #src/vb_util_lib/jsoncpp.cpp
-  src/vb_util_lib/json_utils.cpp 
-  src/vb_util_lib/gs_json_utils.cpp 
-  src/vb_util_lib/am_util.cpp 
-  src/vb_util_lib/key_value_stamped.cpp 
-  src/vb_util_lib/param_update.cpp
-  src/vb_util_lib/gps_util.cpp 
-  src/vb_util_lib/location_source.cpp
-  src/vb_util_lib/am_geometry.cpp 
-  src/vb_util_lib/topics.cpp
-  src/vb_util_lib/task_trigger.cpp 
-  src/vb_util_lib/time_util.cpp 
-  src/vb_util_lib/ftp_request.cpp 
-  src/vb_util_lib/ftp_response.cpp 
-  src/vb_util_lib/file_spec.cpp 
-  src/vb_util_lib/message.cpp
-  src/vb_util_lib/msg_head.cpp 
-  src/vb_util_lib/msg_data.cpp 
-  src/vb_util_lib/dji_challenge_util.cpp 
-  src/vb_util_lib/am_histogram.cpp
-  src/vb_util_lib/row_marker.cpp 
-  src/vb_util_lib/rc_controls.cpp
-  src/vb_util_lib/rc_mapper.cpp 
-  src/vb_util_lib/i2c.cpp 
-  src/vb_util_lib/circ_list.cpp 
-  src/vb_util_lib/time_synchronizer.cpp
-  src/vb_util_lib/GeometryPoseExtractor.cpp 
-  src/vb_util_lib/trajectory_data.cpp 
-  src/vb_util_lib/transformer.cpp 
-  src/vb_util_lib/rotate.cpp 
-  src/vb_util_lib/imu_class.cpp
-  src/vb_util_lib/am_heartbeat.cpp
-  src/vb_util_lib/vb_main.cpp
-  src/vb_util_lib/bag_logger.cpp
-  src/vb_util_lib/csv_logger.cpp)
 
-target_link_libraries(am_utils ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} jsoncpp)
 
-add_dependencies(am_utils ${catkin_EXPORTED_TARGETS})
 
-install(TARGETS am_utils
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  )
+add_library(am_utils src/am_utils/am_statistics.cpp)
+ament_target_dependencies(am_utils geometry_msgs brain_box_msgs)
 
-install(DIRECTORY include/am_utils include/vb_util_lib
-  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})
 
-  
+
+
+ament_export_include_directories(include)
+ament_export_libraries(am_utils)
+
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # uncomment the line when a copyright and license is not present in all source files
+  #set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # uncomment the line when this package is not in a git repo
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()

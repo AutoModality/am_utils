@@ -8,11 +8,12 @@
 #ifndef AM_UTILS_INCLUDE_AM_UTILS_AM_STATISTICS_H_
 #define AM_UTILS_INCLUDE_AM_UTILS_AM_STATISTICS_H_
 
-#include <ros/ros.h>
-#include <geometry_msgs/Vector3Stamped.h>
+#include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/vector3_stamped.hpp>
 #include <iostream>
 #include <string>
-#include <brain_box_msgs/Latency.h>
+#include <brain_box_msgs/msg/latency.hpp>
+#include <builtin_interfaces/msg/time.hpp>
 
 namespace am
 {
@@ -25,9 +26,9 @@ public:
 
     void reset();
 
-    void setVector(geometry_msgs::Vector3Stamped& vec);
-    void setVector(geometry_msgs::Vector3Stamped& vec, ros::Time t);
-    void setLatency(brain_box_msgs::Latency& latency);
+    void setVector(geometry_msgs::msg::Vector3Stamped& vec);
+    void setVector(geometry_msgs::msg::Vector3Stamped& vec, builtin_interfaces::msg::Time t);
+    void setLatency(brain_box_msgs::msg::Latency& latency);
 
     void addData(double data_point);
 
@@ -35,11 +36,11 @@ public:
 
     void print(std::string prefix);
 
-    double minimum;
-    double maximum;
-    double average;
-    double current;
-    unsigned long cnt;
+    double minimum {0.0};
+    double maximum {0.0};
+    double average {0.0};
+    double current {0.0};
+    unsigned long cnt {0};
 };
 
 } /* namespace am */

@@ -1,26 +1,31 @@
-<package format="2">
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>am_utils</name>
-  <version>2021.07.07142038</version>
-  <description>The am utils package</description>
-  <maintainer email="info@automodality.com">info</maintainer>
-  <license>BSD</license>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="ajanani85@gmail.com">alireza</maintainer>
+  <license>TODO: License declaration</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  
+  <depend>brain_box_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>image_transport </depend>
+  <depend>rosbag2 </depend>
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+  <depend>pcl_conversions</depend>
+  
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
-   <depend>brain_box_msgs</depend>
-   <depend>control_toolbox</depend>
-   <depend>image_transport </depend>
-   <depend>genmsg</depend>
-   <depend>geometry_msgs</depend>
-   <depend>nav_msgs</depend>
-   <depend>rosconsole</depend>
-   <depend>roscpp</depend>
-   <depend>rosbag</depend>
-   <depend>rostime</depend>
-   <depend>sensor_msgs</depend>
-   <depend>std_msgs</depend>
-   <depend>tf2</depend>
-   <depend>tf2_ros</depend>   
-   <depend>pcl_conversions</depend>   
- 
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

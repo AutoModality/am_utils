@@ -25,13 +25,13 @@ void Statistics::reset() {
     cnt = 0;
 }
 
-void Statistics::setVector(geometry_msgs::Vector3Stamped& vec) {
+void Statistics::setVector(geometry_msgs::msg::Vector3Stamped& vec) {
     vec.vector.x = minimum;
     vec.vector.y = maximum;
     vec.vector.z = average;
 }
 
-void Statistics::setVector(geometry_msgs::Vector3Stamped& vec, ros::Time t) {
+void Statistics::setVector(geometry_msgs::msg::Vector3Stamped& vec, builtin_interfaces::msg::Time t) {
     setVector(vec);
     vec.header.stamp = t;
 }
@@ -60,7 +60,7 @@ std::ostream& Statistics::operator <<(std::ostream& os) {
     return os;
 }
 
-void Statistics::setLatency(brain_box_msgs::Latency& latency) {
+void Statistics::setLatency(brain_box_msgs::msg::Latency& latency) {
     latency.cur_delay = current;
     latency.avg_delay = average;
     latency.max_delay = maximum;
