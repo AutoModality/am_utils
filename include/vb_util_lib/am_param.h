@@ -15,15 +15,15 @@
 #include <sys/time.h>
 #include <string.h>
 #include <iostream>
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 class AMParam {
 public:
 	AMParam();
 	virtual ~AMParam();
 
-	static double getParam(std::string prefix, double default_val = 0.0);
-	static void setParam(std::string prefix, double param);
+	static double getParam(rclcpp::Node::SharedPtr node, std::string prefix, double default_val = 0.0);
+	static void setParam(rclcpp::Node::SharedPtr node, std::string prefix, double param);
 };
 
 #endif /* AM_PARAM_H_ */

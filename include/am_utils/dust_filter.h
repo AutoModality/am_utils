@@ -1,20 +1,16 @@
 #ifndef AM_UTILS_INCLUDE_AM_UTILS_DUST_FILTER_H_
 #define AM_UTILS_INCLUDE_AM_UTILS_DUST_FILTER_H_
 
-#include <pcl_ros/point_cloud.h>
-
+#include <rclcpp/rclcpp.hpp>
 #include <am_utils/point_types.h>
 
 namespace am
 {
 
-class DustFilter
+class DustFilter : public rclcpp::Node
 {
 private:
-
-  ros::NodeHandle nh_;
-
-  ros::Publisher debug_pcl_pub_;
+  rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZIR>>::SharedPtr debug_pcl_pub_;
 
   float range_threshold_m_;
   float max_range_m_;
@@ -37,8 +33,10 @@ private:
   void printInsideParams();
   void printOutsideParams();
 
+
+
 public:
-  DustFilter(ros::NodeHandle &nh, std::string name_space);
+  DustFilter(const std::string &node_name, std::string name_space);
   ~DustFilter();
 
   int process(pcl::PointCloud<pcl::PointXYZIR> &pc, bool skip_dust_filter = false);

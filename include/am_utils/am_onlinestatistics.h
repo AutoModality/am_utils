@@ -6,7 +6,7 @@
 #include <math.h>       /* pow */
 #include <vector>
 #include <list>
-#include <brain_box_msgs/DelayStats.h>
+#include <brain_box_msgs/msg/delay_stats.hpp>
 
 namespace am {
 
@@ -17,7 +17,7 @@ public:
   void addData( double val );
   void setSize( size_t N );
   void insertion_sort(std::vector<double>& ary);
-  void setDelayStats( brain_box_msgs::DelayStats &msg );
+  void setDelayStats( brain_box_msgs::msg::DelayStats &msg );
   inline double getMean() const {return mean_;}
   inline double getVariance() const {return var_;}
   inline double getMin() const {return ary_.front();}
@@ -28,12 +28,12 @@ public:
   friend std::ostream& operator<<(std::ostream& os, OnlineStatistics &stats);
   
 private:
-  size_t N;
+  size_t N {0};
   std::vector<double> ary_;
   boost::circular_buffer<double> cb_;
-  double mean_; //  mean, median
-  double m2n_;        // sum of squares of differences from current mean
-  double var_, skew_, kurt_; //  variance, skewness, and kurtosis
+  double mean_ {0.0}; //  mean, median
+  double m2n_ {0.0};        // sum of squares of differences from current mean
+  double var_ {0.0}, skew_ {0.0}, kurt_ {0.0}; //  variance, skewness, and kurtosis
 };
 
 

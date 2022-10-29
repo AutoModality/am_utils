@@ -9,12 +9,12 @@
 #define BRAIN_BOX_SRC_AM_SP_CONTROL_UTIL_H_
 
 #include "math.h"
-#include "geometry_msgs/Quaternion.h"
-#include "geometry_msgs/Point.h"
-#include "tf/transform_datatypes.h"
-#include "tf/LinearMath/Matrix3x3.h"
+#include "geometry_msgs/msg/quaternion.hpp"
+#include "geometry_msgs/msg/point.hpp"
+#include "tf2/transform_datatypes.h"
+#include "tf2/LinearMath/Matrix3x3.h"
 
-#include "brain_box_msgs/SPStatus.h"
+#include "brain_box_msgs/msg/sp_status.hpp"
 
 /*
 ** Representation of vehicle state
@@ -97,7 +97,7 @@ enum class FLIGHT_MODE {LANDED=0, LAUNCHING, LOITER, TRACKING_TARGET, LANDING, T
 // FCU control modes
 enum FCUControlMode:int {NONE=0, ATTITUDE, POSITION, VELOCITY};
 
-VehicleAttitude quaternionMsg2Att(geometry_msgs::Quaternion);
+VehicleAttitude quaternionMsg2Att(geometry_msgs::msg::Quaternion);
 
 void testQuats();
 

@@ -4,8 +4,8 @@
 #include <map>
 #include <string>
 #include <iterator>
-#include <ros/ros.h>
-#include <std_msgs/Header.h>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/header.hpp>
 
 class CircularList
 {
@@ -21,12 +21,12 @@ public:
 		obj_list_cnt_ =obj_list_cnt_ < num_objects_ ? obj_list_cnt_ + 1 : num_objects_;
 		obj_list_end_ =obj_list_end_ < (num_objects_- 1) ? obj_list_end_+1 : 0;
 	}
-	void addObject(const std_msgs::Header &cs);
-    std_msgs::Header& getObjectAt(unsigned int idx) {
+	void addObject(const std_msgs::msg::Header &cs);
+    std_msgs::msg::Header& getObjectAt(unsigned int idx) {
         return obj_list_[getObjectListIndex(idx)];
     }
 
-    void getObjectTimeIdx(ros::Time time, unsigned int& start_idx, unsigned int& number);
+    void getObjectTimeIdx(rclcpp::Time time, unsigned int& start_idx, unsigned int& number);
 
     void clearObjList() {
         obj_list_end_ = 0;
@@ -42,7 +42,7 @@ private:
     // List of body_FLU odometry locations implemented as a circular array
 	//#define NUM_OBJECTS 8
 	int num_objects_;
-    std_msgs::Header *obj_list_;
+    std_msgs::msg::Header *obj_list_;
     unsigned int obj_list_end_ {0};
     unsigned int obj_list_cnt_ {0};
     unsigned int getObjectListIndex(unsigned int idx);

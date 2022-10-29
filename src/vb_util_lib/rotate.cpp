@@ -6,7 +6,6 @@
  */
 
 #include <vb_util_lib/rotate.h>
-#include <tf/tf.h>
 
 namespace am
 {
@@ -90,8 +89,8 @@ namespace am
   {
     //getting the imu converted:
     double roll, pitch, yaw;
-    tf::Quaternion q(x, y, z, w);
-    tf::Matrix3x3 m(q);
+    tf2::Quaternion q(x, y, z, w);
+    tf2::Matrix3x3 m(q);
     m.getRPY(roll, pitch, yaw);
     ROLL = getEuler(roll);
     PITCH = getEuler(pitch);
@@ -99,12 +98,12 @@ namespace am
     //ROS_INFO(GREEN "%f, %f, %f" COLOR_RESET, ROLL.angle, PITCH.angle, YAW.angle);
     setRotationMatrixComponents();
   }
-  Rotate::Rotate(geometry_msgs::Quaternion &q)
+  Rotate::Rotate(geometry_msgs::msg::Quaternion &q)
   {
     //getting the imu converted:
     double roll, pitch, yaw;
-    tf::Quaternion tfq(q.x, q.y, q.z, q.w);
-    tf::Matrix3x3 m(tfq);
+    tf2::Quaternion tfq(q.x, q.y, q.z, q.w);
+    tf2::Matrix3x3 m(tfq);
     m.getRPY(roll, pitch, yaw);
     ROLL = getEuler(roll);
     PITCH = getEuler(pitch);
@@ -112,11 +111,11 @@ namespace am
     //ROS_INFO(GREEN "%f, %f, %f" COLOR_RESET, ROLL.angle, PITCH.angle, YAW.angle);
     setRotationMatrixComponents();
   }
-  Rotate::Rotate(tf::Quaternion &q)
+  Rotate::Rotate(tf2::Quaternion &q)
   {
     //getting the imu converted:
     double roll, pitch, yaw;
-    tf::Matrix3x3 m(q);
+    tf2::Matrix3x3 m(q);
     m.getRPY(roll, pitch, yaw);
     ROLL = getEuler(roll);
     PITCH = getEuler(pitch);
@@ -319,37 +318,37 @@ namespace am
   void Rotate::getRPY(double x, double y, double z, double w, double &roll, double &pitch, double &yaw)
   {
     //getting the imu converted:
-    tf::Quaternion q(x, y, z, w);
-    tf::Matrix3x3 m(q);
+    tf2::Quaternion q(x, y, z, w);
+    tf2::Matrix3x3 m(q);
     m.getRPY(roll, pitch, yaw);
   }
 
   //Static method to convert quaternion to rpy
-  void Rotate::getRPY(const geometry_msgs::Quaternion &q, double &roll, double &pitch, double &yaw)
+  void Rotate::getRPY(const geometry_msgs::msg::Quaternion &q, double &roll, double &pitch, double &yaw)
   {
     //getting the imu converted:
-    tf::Quaternion tfq(q.x, q.y, q.z, q.w);
-    tf::Matrix3x3 m(tfq);
+    tf2::Quaternion tfq(q.x, q.y, q.z, q.w);
+    tf2::Matrix3x3 m(tfq);
     m.getRPY(roll, pitch, yaw);
   }
   //Static method to convert quaternion to rpy
-  void Rotate::getRPY(tf::Quaternion &q, double &roll, double &pitch, double &yaw)
+  void Rotate::getRPY(tf2::Quaternion &q, double &roll, double &pitch, double &yaw)
   {
-    tf::Matrix3x3 m(q);
+    tf2::Matrix3x3 m(q);
     m.getRPY(roll, pitch, yaw);
   }
 
-  geometry_msgs::Vector3 Rotate::getRPY(const geometry_msgs::Pose &pose)
+  geometry_msgs::msg::Vector3 Rotate::getRPY(const geometry_msgs::msg::Pose &pose)
   {
   	tf2::Quaternion tf2_q;
   	tf2::fromMsg(pose.orientation, tf2_q);
-  	geometry_msgs::Vector3 rpy;
+  	geometry_msgs::msg::Vector3 rpy;
 
   	tf2::Matrix3x3(tf2_q).getRPY(rpy.x, rpy.y, rpy.z);
   	return rpy;
   }
 
-  void Rotate::rotate(double &x, double &y, double &z, geometry_msgs::Quaternion &q_rot)
+  void Rotate::rotate(double &x, double &y, double &z, geometry_msgs::msg::Quaternion &q_rot)
   {
 	  double old_x = x;
 	  double old_y = y;
@@ -361,7 +360,7 @@ namespace am
 
   }
 
-  void Rotate::rotate(double &x, double &y, double &z, const geometry_msgs::Quaternion &q_rot)
+  void Rotate::rotate(double &x, double &y, double &z, const geometry_msgs::msg::Quaternion &q_rot)
   {
   	double old_x = x;
   	double old_y = y;
@@ -373,15 +372,15 @@ namespace am
 
   }
 
-  void Rotate::rotate(geometry_msgs::Point32 &p, const geometry_msgs::Quaternion &q_rot)
+  void Rotate::rotate(geometry_msgs::msg::Point32 &p, const geometry_msgs::msg::Quaternion &q_rot)
   {
-	  geometry_msgs::Point32 old_p = p;
+	  geometry_msgs::msg::Point32 old_p = p;
 	  p.x = q_rot.w*q_rot.w*old_p.x + 2*q_rot.y*q_rot.w*old_p.z - 2*q_rot.z*q_rot.w*old_p.y + q_rot.x*q_rot.x*old_p.x + 2*q_rot.y*q_rot.x*old_p.y + 2*q_rot.z*q_rot.x*old_p.z - q_rot.z*q_rot.z*old_p.x - q_rot.y*q_rot.y*old_p.x;
 	  p.y = 2*q_rot.x*q_rot.y*old_p.x + q_rot.y*q_rot.y*old_p.y + 2*q_rot.z*q_rot.y*old_p.z + 2*q_rot.w*q_rot.z*old_p.x - q_rot.z*q_rot.z*old_p.y + q_rot.w*q_rot.w*old_p.y - 2*q_rot.x*q_rot.w*old_p.z - q_rot.x*q_rot.x*old_p.y;
 	  p.z = 2*q_rot.x*q_rot.z*old_p.x + 2*q_rot.y*q_rot.z*old_p.y + q_rot.z*q_rot.z*old_p.z - 2*q_rot.w*q_rot.y*old_p.x - q_rot.y*q_rot.y*old_p.z + 2*q_rot.w*q_rot.x*old_p.y - q_rot.x*q_rot.x*old_p.z + q_rot.w*q_rot.w*old_p.z;
 
   }
-  double Rotate::getYaw(const geometry_msgs::Quaternion &q)
+  double Rotate::getYaw(const geometry_msgs::msg::Quaternion &q)
   {
 	  double roll = 0.0, pitch = 0.0, yaw =0.0;
 
@@ -390,30 +389,30 @@ namespace am
 	  return yaw;
 
   }
-  tf::Quaternion Rotate::toQuaternion(double r, double p, double y)
+  tf2::Quaternion Rotate::toQuaternion(double r, double p, double y)
   {
-	  tf::Quaternion q;
+	  tf2::Quaternion q;
 	  q.setRPY(r,p,y);
 	  return q;
   }
 
   //Static method to convert from rpy to quaternion message
-  geometry_msgs::Quaternion Rotate::toQuaternionMsg(double r, double p, double y)
+  geometry_msgs::msg::Quaternion Rotate::toQuaternionMsg(double r, double p, double y)
   {
-	  tf::Quaternion q = Rotate::toQuaternion(r,p,y);
-	  geometry_msgs::Quaternion q_msg;
-	  quaternionTFToMsg(q, q_msg);
+	  tf2::Quaternion q = Rotate::toQuaternion(r,p,y);
+	  geometry_msgs::msg::Quaternion q_msg;
+	  //quaternionTFToMsg(q, q_msg);
 
 	  /*std::cout << r << ", " <<  p << ", " << y << std::endl;
 	  std::cout << q_msg.x << ", " <<  q_msg.y << ", " << q_msg.z << ", " << q_msg.w << std::endl;*/
 	  return q_msg;
   }
-  tf::Quaternion Rotate::toQuaternion(const std::array<double,3> rpy)
+  tf2::Quaternion Rotate::toQuaternion(const std::array<double,3> rpy)
   {
 	  return am::Rotate::toQuaternion((double)rpy[0], (double)rpy[1], (double)rpy[2]);
   }
 
-  geometry_msgs::Quaternion Rotate::toQuaternionMsg(const std::array<double,3> rpy)
+  geometry_msgs::msg::Quaternion Rotate::toQuaternionMsg(const std::array<double,3> rpy)
   {
 	  return am::Rotate::toQuaternionMsg((double)rpy[0], (double)rpy[1], (double)rpy[2]);
 
@@ -427,13 +426,13 @@ namespace am
   {
 	  return ang * 180.0 / M_PI;
   }
-  void Rotate::toRadian(geometry_msgs::Point &rpy)
+  void Rotate::toRadian(geometry_msgs::msg::Point &rpy)
   {
 	  rpy.x = Rotate::toRadian(rpy.x);
 	  rpy.y = Rotate::toRadian(rpy.y);
 	  rpy.z = Rotate::toRadian(rpy.z);
   }
-  void Rotate::toDegree(geometry_msgs::Point &rpy)
+  void Rotate::toDegree(geometry_msgs::msg::Point &rpy)
   {
 	  rpy.x = Rotate::toDegree(rpy.x);
 	  rpy.y = Rotate::toDegree(rpy.y);
@@ -443,7 +442,7 @@ namespace am
   /*
    * @brief transforms a point with the passed transformed stamped
    */
-  void Rotate::transform(geometry_msgs::Point32 &p, const geometry_msgs::TransformStamped &tranform)
+  void Rotate::transform(geometry_msgs::msg::Point32 &p, const geometry_msgs::msg::TransformStamped &tranform)
   {
 	  rotate(p, tranform.transform.rotation);
 	  p.x += tranform.transform.translation.x;
@@ -454,7 +453,7 @@ namespace am
   /*
    * @brief inverse transform
    */
-  void Rotate::reverse(geometry_msgs::Quaternion &q)
+  void Rotate::reverse(geometry_msgs::msg::Quaternion &q)
   {
 	  double roll, pitch, yaw;
 	  getRPY(q, roll, pitch, yaw);
@@ -484,13 +483,13 @@ namespace am
     return angle;
   }
 
-  void Rotate::transform(const geometry_msgs::Pose &src, geometry_msgs::Pose &des)
+  void Rotate::transform(const geometry_msgs::msg::Pose &src, geometry_msgs::msg::Pose &des)
   {
   	des.position.x = des.position.x - src.position.x;
   	des.position.y = des.position.y - src.position.y;
   	des.position.z = des.position.z - src.position.z;
 
-  	geometry_msgs::Vector3 rpy = Rotate::getRPY(src);
+  	geometry_msgs::msg::Vector3 rpy = Rotate::getRPY(src);
   	rpy.x *= -1;
   	rpy.y *= -1;
   	rpy.z *= -1;

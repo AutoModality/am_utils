@@ -21,7 +21,7 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 #define CAN_TIMEOUT 1000
 

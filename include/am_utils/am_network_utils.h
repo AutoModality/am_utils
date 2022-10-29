@@ -9,6 +9,7 @@
 #define BRAIN_BOX_MSGS_SRC_AM_NETWORK_UTILS_H_
 
 #include <sys/socket.h>
+#include <unistd.h>
 
 namespace brain_box {
 

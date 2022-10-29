@@ -18,7 +18,7 @@ AM_Histogram::AM_Histogram(int bucket_num, int min_height, int max_height, unsig
 
     allocHistogram();
     clearHistogram();
-    last_print_time_ = ros::Time::now();
+    last_print_time_ = rclcpp::Clock().now();
 }
 
 AM_Histogram::~AM_Histogram() {
@@ -29,12 +29,12 @@ AM_Histogram::~AM_Histogram() {
 }
 
 void AM_Histogram::print(std::string prefix, double delay) {
-    ros::Duration db =  ros::Time::now() - last_print_time_;
-    if (db.toSec() < delay)
+    rclcpp::Duration db =  rclcpp::Clock().now() - last_print_time_;
+    if (db.seconds() < delay)
     {
         return;
     }
-    last_print_time_ = ros::Time::now();
+    last_print_time_ = rclcpp::Clock().now();
     printf("%s ", prefix.c_str());
     for (int i = 0; i <= bucket_num_; i++) {
         printf("%0.2f:%d:%d:%d;%0.2f ", HEIGHT(&histogram_[i]), histogram_[i].num, histogram_[i].filter_num, histogram_[i].weighted_num,

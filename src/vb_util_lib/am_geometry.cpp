@@ -41,7 +41,8 @@ double wrap_2pi(double bearing)
   return bearing;
 }
 
-double pointDistance(geometry_msgs::Point& p1, geometry_msgs::Point& p2) {
+double pointDistance(geometry_msgs::msg::Point& p1, geometry_msgs::msg::Point& p2)
+{
     double xd = p2.x - p1.x;
     double yd = p2.y - p1.y;
     double zd = p2.z - p1.z;
@@ -99,7 +100,7 @@ void RPY_to_Quaternion(Eigen::Quaterniond& q, double roll, double pitch, double 
     return;
 }
 
-void RPY_to_Quaternion(geometry_msgs::Quaternion& q, double roll, double pitch, double yaw, bool isDegree) {
+void RPY_to_Quaternion(geometry_msgs::msg::Quaternion& q, double roll, double pitch, double yaw, bool isDegree) {
     Eigen::Quaterniond qt;
     RPY_to_Quaternion(qt, roll, pitch, yaw, isDegree);
 
@@ -121,7 +122,7 @@ double angleBetweenVector(Eigen::Vector3d &v1, Eigen::Vector3d &v2) {
 	return angle;
 }
 
-Eigen::Vector3d quaternion_to_RPY(const geometry_msgs::Quaternion& q) {
+Eigen::Vector3d quaternion_to_RPY(const geometry_msgs::msg::Quaternion& q) {
     Eigen::Quaterniond qe;
 
     qe.x() = q.x;
@@ -208,7 +209,7 @@ void rotateYaw(Eigen::Quaterniond& org_q, double delta_yaw, Eigen::Quaterniond& 
     return;
 }
 
-void rotateYaw(geometry_msgs::Quaternion& org_q, double delta_yaw, geometry_msgs::Quaternion& new_q) {
+void rotateYaw(geometry_msgs::msg::Quaternion& org_q, double delta_yaw, geometry_msgs::msg::Quaternion& new_q) {
     // Get RPY
     Eigen::Vector3d rpy = quaternion_to_RPY(org_q);
     rpy[2] = wrap_pi(rpy[2] + delta_yaw);
@@ -308,7 +309,7 @@ void rotateVector(Eigen::Quaterniond& q, double x, double y, double z, Eigen::Ve
 	rotateVector(q, in_vec, out_vec);
 }
 
-void rotateVector(geometry_msgs::Quaternion& q, double x, double y, double z, Eigen::Vector3d& out_vec) {
+void rotateVector(geometry_msgs::msg::Quaternion& q, double x, double y, double z, Eigen::Vector3d& out_vec) {
 	Eigen::Quaterniond q1;
 	q1.x() = q.x;
 	q1.y() = q.y;
@@ -701,8 +702,8 @@ bool pointOnLine(Eigen::Vector3d& X, Eigen::Vector3d& A, Eigen::Vector3d& B, Eig
     return true;
 }
 
-bool pointOnLine(geometry_msgs::Point& point, geometry_msgs::Point& lp1,
-                 geometry_msgs::Point& lp2, geometry_msgs::Point& pt) {
+bool pointOnLine(geometry_msgs::msg::Point& point, geometry_msgs::msg::Point& lp1,
+                 geometry_msgs::msg::Point& lp2, geometry_msgs::msg::Point& pt) {
     Eigen::Vector3d X, A, B, P;
     Point2Eigen(lp1, A);
     Point2Eigen(lp2, B);
@@ -793,8 +794,8 @@ bool pointOnLineSegment(Eigen::Vector3d& X, Eigen::Vector3d& A, Eigen::Vector3d&
     return on_segment;
 }
 
-bool pointOnLineSegment(geometry_msgs::Point& point, geometry_msgs::Point& lp1,
-                 geometry_msgs::Point& lp2, geometry_msgs::Point& pt) {
+bool pointOnLineSegment(geometry_msgs::msg::Point& point, geometry_msgs::msg::Point& lp1,
+                 geometry_msgs::msg::Point& lp2, geometry_msgs::msg::Point& pt) {
     Eigen::Vector3d X, A, B, P;
     Point2Eigen(lp1, A);
     Point2Eigen(lp2, B);
@@ -834,7 +835,7 @@ void transformXYFrame(Eigen::Vector3d& org_vec, double diff_R, Eigen::Vector3d& 
     new_vec[1] = length * sin(new_ang);
 }
 
-void transformXYFrame(geometry_msgs::Vector3& org_vec, double diff_R, geometry_msgs::Vector3& new_vec) {
+void transformXYFrame(geometry_msgs::msg::Vector3& org_vec, double diff_R, geometry_msgs::msg::Vector3& new_vec) {
     // get the angle of the existing vector in the existing frame
     double length = sqrt((org_vec.x * org_vec.x) + (org_vec.y * org_vec.y));
     double org_ang = atan2(org_vec.y, org_vec.x);
@@ -844,7 +845,7 @@ void transformXYFrame(geometry_msgs::Vector3& org_vec, double diff_R, geometry_m
     new_vec.y = length * sin(new_ang);
 }
 
-double transformXYFrame(Eigen::Vector3d& org_vec, geometry_msgs::Quaternion& orientation,
+double transformXYFrame(Eigen::Vector3d& org_vec, geometry_msgs::msg::Quaternion& orientation,
                       Eigen::Vector3d& new_vec, bool reverse_rotation) {
     Eigen::Quaterniond q;
     q.x() = orientation.x;
@@ -877,7 +878,7 @@ double transformXYFrame(Eigen::Vector3d& org_vec, Eigen::Quaterniond& orientatio
     return yaw;
 }
 
-void levelOrientation(const geometry_msgs::Quaternion& org_orientation, geometry_msgs::Quaternion& level_orientation) {
+void levelOrientation(const geometry_msgs::msg::Quaternion& org_orientation, geometry_msgs::msg::Quaternion& level_orientation) {
     Eigen::Quaterniond q;
     q.x() = org_orientation.x;
     q.y() = org_orientation.y;

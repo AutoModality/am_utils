@@ -67,7 +67,7 @@ int CanSocket::init(std::string ifname)
 
 	addr.can_ifindex = ifr.ifr_ifindex;
 
-	ROS_INFO_STREAM(ifr.ifr_name << " at index " << ifr.ifr_ifindex);
+	std::cout << ifr.ifr_name << " at index " << ifr.ifr_ifindex << std::endl;
 	
 	if(bind(s_, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 	{
@@ -92,18 +92,19 @@ int CanSocket::writeCAN(struct can_frame &frame)
 	}
 	else
 	{
-		ROS_INFO("Failed to get access the CAN bus for write.");
+		std::cout << "Failed to get access the CAN bus for write." << std::endl;
 
 		return -1;
 	}
 
-	ROS_DEBUG_STREAM("Wrote " <<  nbytes << " to CAN bus.");
-	ROS_DEBUG_STREAM("frame.can_id: " <<  frame.can_id);
-	ROS_DEBUG_STREAM("frame.can_dlc: " <<  (int)frame.can_dlc);
+	std::cout << "Wrote " <<  nbytes << " to CAN bus." << std::endl;
+	std::cout << "frame.can_id: " <<  frame.can_id << std::endl;
+	std::cout << "frame.can_dlc: " <<  (int)frame.can_dlc << std::endl;
 	for (int i = 0; i < frame.can_dlc; i++)
 	{
-		ROS_DEBUG_STREAM("frame.data[" << i << "]: " <<  (int)frame.data[i]);
+		std::cout << "frame.data[" << i << "]: " <<  (int)frame.data[i] << std::endl;
 	}
+	return 0;
 }
 
 int CanSocket::readCAN(struct can_frame *frame)
@@ -117,9 +118,9 @@ int CanSocket::readCAN(struct can_frame *frame)
 		// paranoid check ...
 		if (nbytes < (int)sizeof(struct can_frame))
 		{
-			ROS_INFO("nbytes: %d.", nbytes);
-			ROS_INFO("sizeof(struct can_frame): %d.", (int)sizeof(struct can_frame));
-			ROS_INFO("Read CAN: incomplete CAN frame.");
+			printf("nbytes: %d.\n", nbytes);
+			printf("sizeof(struct can_frame): %d. \n", (int)sizeof(struct can_frame));
+			printf("Read CAN: incomplete CAN frame. \n");
 			
 			releaseCANKey();
 			
@@ -130,17 +131,17 @@ int CanSocket::readCAN(struct can_frame *frame)
 	}
 	else
 	{
-		ROS_INFO("Failed to get access the CAN bus for read.");
+		printf("Failed to get access the CAN bus for read. \n");
 
 		return -1;
 	}
 
-	ROS_DEBUG_STREAM("Read " <<  nbytes << " from CAN bus.");
-	ROS_DEBUG_STREAM("frame->can_id: " <<  frame->can_id);
-	ROS_DEBUG_STREAM("frame->can_dlc: " <<  (int)frame->can_dlc);
+	std::cout << "Read " <<  nbytes << " from CAN bus." << std::endl;
+	std::cout << "frame->can_id: " <<  frame->can_id << std::endl;
+	std::cout << "frame->can_dlc: " <<  (int)frame->can_dlc << std::endl;
 	for (int i = 0; i < frame->can_dlc; i++)
 	{
-		ROS_DEBUG_STREAM("frame->data[" << i << "]: " <<  (int)frame->data[i]);
+		std::cout << "frame->data[" << i << "]: " <<  (int)frame->data[i] << std::endl;
 	}
 
 	return nbytes;
@@ -156,19 +157,21 @@ int CanSocket::writeCAN(struct canfd_frame &frame)
 	}
 	else
 	{
-		ROS_INFO("Failed to get access the CAN bus for write.");
+		printf("Failed to get access the CAN bus for write.\n");
 
 		return -1;
 	}
 
-	ROS_DEBUG_STREAM("Wrote " <<  nbytes << " to CAN bus.");
-	ROS_DEBUG_STREAM("frame.can_id: " <<  frame.can_id);
-	ROS_DEBUG_STREAM("frame.len: " <<  (int)frame.len);
-	ROS_DEBUG_STREAM("frame.flags: " <<  (int)frame.flags);
+	std::cout << "Wrote " <<  nbytes << " to CAN bus." << std::endl;
+	std::cout << "frame.can_id: " <<  frame.can_id << std::endl;
+	std::cout << "frame.len: " <<  (int)frame.len << std::endl;
+	std::cout << "frame.flags: " <<  (int)frame.flags << std::endl;
 	for (int i = 0; i < frame.len; i++)
 	{
-		ROS_DEBUG_STREAM("frame.data[" << i << "]: " <<  (int)frame.data[i]);
+		std::cout <<  "frame.data[" << i << "]: " <<  (int)frame.data[i] << std::endl;
 	}
+
+	return 0;
 }
 
 int CanSocket::readCAN(struct canfd_frame *frame)
@@ -191,7 +194,7 @@ int CanSocket::readCAN(struct canfd_frame *frame)
 		// paranoid check ...
 		if (nbytes < (int)sizeof(struct canfd_frame))
 		{
-			ROS_INFO("Read CAN: incomplete CAN frame.");
+			printf("Read CAN: incomplete CAN frame.\n");
 			return -1;
 		}
 
@@ -199,18 +202,18 @@ int CanSocket::readCAN(struct canfd_frame *frame)
 	}
 	else
 	{
-		ROS_INFO("Failed to get access the CAN bus for read.");
+		printf("Failed to get access the CAN bus for read.\n");
 
 		return -1;
 	}
 
-	ROS_DEBUG_STREAM("Read " <<  nbytes << " from CAN bus.");
-	ROS_DEBUG_STREAM("frame->can_id: 0x" << std::hex << frame->can_id);
-	ROS_DEBUG_STREAM("frame->len: " <<  (int)frame->len);
-	ROS_DEBUG_STREAM("frame->flags: 0x" << std::hex << (int)frame->flags);
+	std::cout << "Read " <<  nbytes << " from CAN bus." << std::endl;
+	std::cout << "frame->can_id: 0x" << std::hex << frame->can_id << std::endl;
+	std::cout << "frame->len: " <<  (int)frame->len << std::endl;
+	std::cout << "frame->flags: 0x" << std::hex << (int)frame->flags << std::endl;
 	for (int i = 0; i < frame->len; i++)
 	{
-		ROS_DEBUG_STREAM("frame->data[" << i << "]: 0x" << std::hex << (int)frame->data[i]);
+		std::cout << "frame->data[" << i << "]: 0x" << std::hex << (int)frame->data[i] << std::endl;
 	}
 
 	return nbytes;

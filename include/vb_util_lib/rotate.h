@@ -3,9 +3,9 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <tf/tf.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Point32.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <geometry_msgs/msg/quaternion.hpp>
+#include <geometry_msgs/msg/point32.hpp>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
@@ -33,8 +33,8 @@ namespace am
   public:
     Rotate(double roll, double pitch, double yaw);
     Rotate(double x, double y, double z, double w);
-    Rotate(geometry_msgs::Quaternion &q);
-    Rotate(tf::Quaternion &q);
+    Rotate(geometry_msgs::msg::Quaternion &q);
+    Rotate(tf2::Quaternion &q);
     Rotate();
 
     static EULER getEuler(double ang);
@@ -70,59 +70,59 @@ namespace am
     //STATIC METHOD TO ROTATE AROUND AN AXIS
     static void rotate(double &x, double &y, double &z, float roll, float pitch, float yaw);
 
-    static void rotate(double &x, double &y, double &z, geometry_msgs::Quaternion &q_rot);
+    static void rotate(double &x, double &y, double &z, geometry_msgs::msg::Quaternion &q_rot);
 
-    static void rotate(double &x, double &y, double &z, const geometry_msgs::Quaternion &q_rot);
+    static void rotate(double &x, double &y, double &z, const geometry_msgs::msg::Quaternion &q_rot);
 
-    static void rotate(geometry_msgs::Point32 &p, const geometry_msgs::Quaternion &q_rot);
+    static void rotate(geometry_msgs::msg::Point32 &p, const geometry_msgs::msg::Quaternion &q_rot);
 
 
     /*
      * @brief transforms a point with the passed transformed stamped
      */
-    static void transform(geometry_msgs::Point32 &p_in, const geometry_msgs::TransformStamped &tranform);
+    static void transform(geometry_msgs::msg::Point32 &p_in, const geometry_msgs::msg::TransformStamped &tranform);
 
     /*
      * @brief transforms a pose with another pose
      */
-    static void transform(const geometry_msgs::Pose &src, geometry_msgs::Pose &des);
+    static void transform(const geometry_msgs::msg::Pose &src, geometry_msgs::msg::Pose &des);
 
     /*
      * @brief inverse transform
      */
-    static void reverse(geometry_msgs::Quaternion &q);
+    static void reverse(geometry_msgs::msg::Quaternion &q);
 
     //Static method to convert quaternion by component to rpy by component
     static void getRPY(double x, double y, double z, double w, double &roll, double &pitch, double &yaw);
 
     //Static method to convert quaternion to rpy
-    static void getRPY(const geometry_msgs::Quaternion &q, double &roll, double &pitch, double &yaw);
+    static void getRPY(const geometry_msgs::msg::Quaternion &q, double &roll, double &pitch, double &yaw);
 
     //Static method to convert quaternion to rpy
-    static void getRPY(tf::Quaternion &q, double &roll, double &pitch, double &yaw);
+    static void getRPY(tf2::Quaternion &q, double &roll, double &pitch, double &yaw);
 
     //Static method to convert pose to rpy in geometry_msgs::Vector3
-    static geometry_msgs::Vector3 getRPY(const geometry_msgs::Pose &pose);
+    static geometry_msgs::msg::Vector3 getRPY(const geometry_msgs::msg::Pose &pose);
 
     //Static method to get Yaw from geometry_msgs Quaternion
-    static double getYaw(const geometry_msgs::Quaternion &q);
+    static double getYaw(const geometry_msgs::msg::Quaternion &q);
 
     //Static method to convert from rpy to quaternion
-    static tf::Quaternion toQuaternion(const std::array<double,3> rpy);
+    static tf2::Quaternion toQuaternion(const std::array<double,3> rpy);
 
     //Static method to convert from rpy to quaternion message
-    static geometry_msgs::Quaternion toQuaternionMsg(const std::array<double,3> rpy);
+    static geometry_msgs::msg::Quaternion toQuaternionMsg(const std::array<double,3> rpy);
 
     //Static method to convert from rpy to quaternion
-    static tf::Quaternion toQuaternion(double r, double p, double y);
+    static tf2::Quaternion toQuaternion(double r, double p, double y);
 
     //Static method to convert from rpy to quaternion message
-    static geometry_msgs::Quaternion toQuaternionMsg(double r, double p, double y);
+    static geometry_msgs::msg::Quaternion toQuaternionMsg(double r, double p, double y);
 
     static double toRadian(double ang);
     static double toDegree(double ang);
-    static void toRadian(geometry_msgs::Point &rpy);
-    static void toDegree(geometry_msgs::Point &rpy);
+    static void toRadian(geometry_msgs::msg::Point &rpy);
+    static void toDegree(geometry_msgs::msg::Point &rpy);
 
     /*
      * @brief assure that the angle is between -M_PI and M_PI

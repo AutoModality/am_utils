@@ -8,12 +8,7 @@
 #ifndef VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_AM_HISTOGRAM_H_
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_AM_HISTOGRAM_H_
 
-#include <ros/ros.h>
-//#include <boost/bind.hpp>
-//#include <Eigen/StdVector>
-//#include <cv_bridge/cv_bridge.h>
-//#include <sensor_msgs/Image.h>
-//#include <sensor_msgs/image_encodings.h>
+#include <rclcpp/rclcpp.hpp>
 
 class AM_Histogram {
 public:
@@ -47,7 +42,7 @@ public:
     }
 
 private:
-    ros::Time last_print_time_;
+    rclcpp::Time last_print_time_;
 
     /**
      * Historgram stuff for the height calculation

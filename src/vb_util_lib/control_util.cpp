@@ -7,6 +7,7 @@
 
 
 #include <vb_util_lib/control_util.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 const char* axisLabel[] = {"X", "Y", "Z"};
 const char* paramLabel[] = {"P", "I", "D"};
@@ -36,35 +37,36 @@ const char* paramLabel[] = {"P", "I", "D"};
 //	return sqrt((xd*xd) + (yd*yd) + (zd*zd));
 //}
 
-VehicleAttitude quaternionMsg2Att(const geometry_msgs::Quaternion q) {
-    tf::Quaternion quat;
-    tf::quaternionMsgToTF(q, quat);
+VehicleAttitude quaternionMsg2Att(const geometry_msgs::msg::Quaternion q) {
+    tf2::Quaternion quat;
+    //tf2::quaternionMsgToTF(q, quat);
+    tf2::fromMsg(q, quat);
     VehicleAttitude va {0.0,0.0,0.0,0.0};
-    tf::Matrix3x3(quat).getRPY(va.roll, va.pitch, va.yaw);
+    tf2::Matrix3x3(quat).getRPY(va.roll, va.pitch, va.yaw);
     return va;
 }
 
 void testQuats() {
     double pi = 3.14159;
-    tf::Quaternion qp, qn;
-    tf::Quaternion quat1;
-    tf::Quaternion quat2;
-    tf::Quaternion quat2_inv;
-    tf::Quaternion quat_90;
-    tf::Quaternion quat_90_inv;
-    tf::Quaternion quat_90m;
-    tf::Quaternion quat_90m_inv;
-    tf::Quaternion quat;
-    tf::Quaternion quat_inv;
+    tf2::Quaternion qp, qn;
+    tf2::Quaternion quat1;
+    tf2::Quaternion quat2;
+    tf2::Quaternion quat2_inv;
+    tf2::Quaternion quat_90;
+    tf2::Quaternion quat_90_inv;
+    tf2::Quaternion quat_90m;
+    tf2::Quaternion quat_90m_inv;
+    tf2::Quaternion quat;
+    tf2::Quaternion quat_inv;
     double roll, pitch, yaw;
-    tf::Vector3 axis;
+    tf2::Vector3 axis;
 
     printf("XXXXXXXXXXXXXXXXXXXXX\n");
     qp.setValue(1.0, 2.0, 3.0, 0.0);
     printf("XXXX point to rotate quat[%0.4f, %0.4f, %0.4f %0.4f]\n",
             qp.getW(), qp.getX(), qp.getY(), qp.getZ());
 
-    axis = tf::Vector3(0.0, 0.0, 1.0);
+    axis = tf2::Vector3(0.0, 0.0, 1.0);
     quat1.setRotation(axis, pi);
     printf("XXXX yaw 180 degrees quat[%0.4f, %0.4f, %0.4f %0.4f]\n",
             quat1.getW(), quat1.getX(), quat1.getY(), quat1.getZ());
@@ -145,7 +147,7 @@ void testQuats() {
 
     // Test of rotating quaternions
     // First define a quaternion with -90 pitch
-    tf::Quaternion quat_vec;
+    tf2::Quaternion quat_vec;
     quat_vec.setRPY(0.0, -pi / 2.0, 0.0);
     printf("XXXX -90 pitch to be rotated[%0.4f, %0.4f, %0.4f %0.4f]\n",
             quat_vec.getW(), quat_vec.getX(), quat_vec.getY(), quat_vec.getZ());
@@ -155,7 +157,7 @@ void testQuats() {
             quat.getW(), quat.getX(), quat.getY(), quat.getZ());
     // Now rotate the quaternion vector by the 90 degree pitch quaternion
     // They should cancel out
-    tf::Quaternion quat_rot = quat * quat_vec;
+    tf2::Quaternion quat_rot = quat * quat_vec;
 //    quat_rot *= quat_vec;
     printf("XXXX -90 pitch rotated by +90 pitch [%0.4f, %0.4f, %0.4f %0.4f]\n",
             quat_rot.getW(), quat_rot.getX(), quat_rot.getY(), quat_rot.getZ());

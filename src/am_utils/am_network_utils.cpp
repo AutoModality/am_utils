@@ -11,7 +11,7 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <am_utils/am_network_utils.h>
 
@@ -44,12 +44,12 @@ void AMNetworkUtils::printSource(struct sockaddr_storage their_addr, socklen_t a
                                  get_in_addr((struct sockaddr *)&their_addr),
                                  s, sizeof s);
 
-	ROS_DEBUG_STREAM("got " << bytesReceived << " byte packet from " <<  addr);
+	std::cout << "got " << bytesReceived << " byte packet from " <<  addr << std::endl;
  }
 
 int AMNetworkUtils::openIncomingSocket(const char *name, const char *port)
 {
-	ROS_DEBUG_STREAM("opening " << name << " incoming socket on port " << port << " ...");
+	std::cout << "opening " << name << " incoming socket on port " << port << " ..." << std::endl;
 
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof hints);
@@ -60,8 +60,8 @@ int AMNetworkUtils::openIncomingSocket(const char *name, const char *port)
 	struct addrinfo *servinfo;
 	int rv;
 	if ((rv = getaddrinfo(NULL, port, &hints, &servinfo)) != 0) {
-		ROS_DEBUG_STREAM("getaddrinfo:"  <<  gai_strerror(rv));
-    	ROS_DEBUG("failed");
+		std::cout << "getaddrinfo:"  <<  gai_strerror(rv) << std::endl;
+    	std::cout << "failed" << std::endl;
 		return -1;
 	}
 
@@ -85,7 +85,7 @@ int AMNetworkUtils::openIncomingSocket(const char *name, const char *port)
 		{
 			perror("fcntl");
 			close(sockfd);
-	    	ROS_DEBUG("failed");
+	    	std::cout << "failed" << std::endl;
 			return -1;
 		}
 		break;
@@ -93,20 +93,20 @@ int AMNetworkUtils::openIncomingSocket(const char *name, const char *port)
 
 	if (p == NULL)
 	{
-    	ROS_DEBUG("failed to find socket");
-    	ROS_DEBUG("failed");
+		std::cout << "failed to find socket" << std::endl;
+		std::cout << "failed" << std::endl;
 		return -1;
 	}
 
 	freeaddrinfo(servinfo);
 
-	ROS_DEBUG("success");
+	std::cout << "success" << std::endl;
 	return sockfd;
 }
 
 int AMNetworkUtils::openOutgoingSocket(const char *name, const char *hostname, const char *port, struct addrinfo &addr)
 {
-	ROS_DEBUG_STREAM("opening " << name << " socket " << hostname << " on port " << port << " ...");
+	std::cout << "opening " << name << " socket " << hostname << " on port " << port << " ..." << std::endl;
 
     struct addrinfo hints;
     memset(&hints, 0, sizeof hints);
@@ -116,8 +116,8 @@ int AMNetworkUtils::openOutgoingSocket(const char *name, const char *hostname, c
     struct addrinfo *servinfo;
     int rv;
     if ((rv = getaddrinfo(hostname, port, &hints, &servinfo)) != 0) {
-    	ROS_DEBUG_STREAM("getaddrinfo:"  <<  gai_strerror(rv));
-		ROS_DEBUG("failed");
+    	std::cout << "getaddrinfo:"  <<  gai_strerror(rv) << std::endl;
+    	std::cout << "failed" << std::endl;
         return -1;
     }
 
@@ -135,8 +135,8 @@ int AMNetworkUtils::openOutgoingSocket(const char *name, const char *hostname, c
     }
 
     if (p == NULL) {
-    	ROS_DEBUG("failed to find socket");
-    	ROS_DEBUG("failed");
+    	std::cout << "failed to find socket" << std::endl;
+    	std::cout << "failed" << std::endl;
         return -1;
     }
 
@@ -147,7 +147,7 @@ int AMNetworkUtils::openOutgoingSocket(const char *name, const char *hostname, c
 
     freeaddrinfo(servinfo); // all done with this structure
 
-	ROS_DEBUG("success");
+    std::cout << "success" << std::endl;
     return sockfd;
 }
 
@@ -157,7 +157,7 @@ void AMNetworkUtils::getMacAddress(std::string channel, std::string &macAddress)
 	// TODO: deal with failures (what if there is no ethernet?)
 	char rv[20];
 	std::string filename = "/sys/class/net/" + channel + "/address";
-	ROS_INFO_STREAM("mac address filename: " << filename);
+	std::cout << "mac address filename: " << filename << std::endl;
 	FILE *fp = fopen(filename.c_str(), "r");
 	fscanf(fp, "%s", rv);
 	fclose(fp);

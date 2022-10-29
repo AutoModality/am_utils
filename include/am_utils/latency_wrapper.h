@@ -12,19 +12,19 @@
 
 #include <functional>
 
-#include <ros/ros.h>
-
-#include <brain_box_msgs/Latency.h>
-#include <brain_box_msgs/LatencyHeader.h>
-#include <brain_box_msgs/Latency_Image.h>
-#include <brain_box_msgs/Latency_PointCloud.h>
-#include <brain_box_msgs/Latency_LaserScan.h>
-#include <brain_box_msgs/Latency_PointCloud2.h>
-#include <brain_box_msgs/Latency_PoseStamped.h>
-#include <brain_box_msgs/Latency_PoseWithCovarianceStamped.h>
-#include <brain_box_msgs/Latency_TwistStamped.h>
-#include <brain_box_msgs/Latency_TwistWithCovarianceStamped.h>
-#include <brain_box_msgs/Latency_Odometry.h>
+#include <rclcpp/rclcpp.hpp>
+#include <brain_box_msgs/msg/latency.h>
+#include <brain_box_msgs/msg/latency_header.h>
+#include <brain_box_msgs/msg/latency_image.h>
+#include <brain_box_msgs/msg/latency_point_cloud.h>
+#include <brain_box_msgs/msg/latency_laser_scan.h>
+#include <brain_box_msgs/msg/latency_point_cloud2.h>
+#include <brain_box_msgs/msg/latency_pose_stamped.h>
+#include <brain_box_msgs/msg/latency_pose_with_covariance_stamped.hpp>
+#include <brain_box_msgs/msg/latency_twist_stamped.hpp>
+#include <brain_box_msgs/msg/latency_twist_with_covariance_stamped.hpp>
+#include <brain_box_msgs/msg/latency_odometry.hpp>
+#include <sensor_msgs/msg/image.h>
 
 #include <am_utils/am_statistics.h>
 
@@ -33,15 +33,15 @@
 namespace am
 {
 // List of the various function calback types supported
-typedef std::function<void(const geometry_msgs::PoseStamped&)> PoseStamped_Func;
-typedef std::function<void(const geometry_msgs::PoseWithCovarianceStamped&)> PoseWithCovarianceStamped_Func;
-typedef std::function<void(const geometry_msgs::TwistStamped&)> TwistStamped_Func;
-typedef std::function<void(const geometry_msgs::TwistWithCovarianceStamped&)> TwistWithCovarianceStamped_Func;
-typedef std::function<void(const nav_msgs::Odometry&)> Odometry_Func;
-typedef std::function<void(const sensor_msgs::Image&)> Image_Func;
-typedef std::function<void(const sensor_msgs::LaserScan&)> LaserScan_Func;
-typedef std::function<void(const sensor_msgs::PointCloud&)> PointCloud_Func;
-typedef std::function<void(const sensor_msgs::PointCloud2&)> PointCloud2_Func;
+typedef std::function<void(const geometry_msgs::msg::PoseStamped&)> PoseStamped_Func;
+typedef std::function<void(const geometry_msgs::msg::PoseWithCovarianceStamped&)> PoseWithCovarianceStamped_Func;
+typedef std::function<void(const geometry_msgs::msg::TwistStamped&)> TwistStamped_Func;
+typedef std::function<void(const geometry_msgs::msg::TwistWithCovarianceStamped&)> TwistWithCovarianceStamped_Func;
+typedef std::function<void(const nav_msgs::msg::Odometry&)> Odometry_Func;
+typedef std::function<void(const sensor_msgs::msg::Image&)> Image_Func;
+typedef std::function<void(const sensor_msgs::msg::LaserScan&)> LaserScan_Func;
+typedef std::function<void(const sensor_msgs::msg::PointCloud&)> PointCloud_Func;
+typedef std::function<void(const sensor_msgs::msg::PointCloud2&)> PointCloud2_Func;
 
 
 class LatencyWrapper
@@ -66,7 +66,7 @@ public:
     // ===== PoseStamped
     void subscribe(std::string topic, PoseStamped_Func callback);
     PoseStamped_Func pose_stamped_cb_ {NULL};
-    void poseStamped_CB(const brain_box_msgs::Latency_PoseStamped::ConstPtr& msg);
+    void poseStamped_CB(const brain_box_msgs::msg::Latency_PoseStamped::SharedPtr& msg);
 
     // ===== PoseWithCovarianceStamped
     void subscribe(std::string topic, PoseWithCovarianceStamped_Func callback);

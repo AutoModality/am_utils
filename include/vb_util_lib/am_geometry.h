@@ -9,13 +9,14 @@
 #define AM_GEOMETRY_H_
 
 #include <math.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Point.h>
-#include <tf/transform_datatypes.h>
-#include <tf/LinearMath/Matrix3x3.h>
+#include <geometry_msgs/msg/quaternion.hpp>
+#include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
+#include <tf2/transform_datatypes.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 
-#include <Eigen/Geometry>
-#include <Eigen/StdVector>
+#include <eigen3/Eigen/Geometry>
+#include <eigen3/Eigen/StdVector>
 
 #define _PI_R 3.14159
 #define _TWOPI_R (2*_PI_R)
@@ -58,7 +59,7 @@ double wrap_2pi(double bearing);
 //==================================
 
 // This calculates the distance between two points
-double pointDistance(geometry_msgs::Point& p1, geometry_msgs::Point& p2);
+double pointDistance(geometry_msgs::msg::Point& p1, geometry_msgs::msg::Point& p2);
 double pointDistance(AM::Point& p1, AM::Point& p2);
 
 double arcLength(double x1, double y1, double x2, double y2, double ang);
@@ -93,7 +94,7 @@ double arcLength(double x1, double y1, double x2, double y2, double ang);
  * @return void
  */
 void RPY_to_Quaternion(Eigen::Quaterniond& q, double roll, double pitch, double yaw, bool isDegree = false);
-void RPY_to_Quaternion(geometry_msgs::Quaternion& q, double roll, double pitch, double yaw, bool isDegree = false);
+void RPY_to_Quaternion(geometry_msgs::msg::Quaternion& q, double roll, double pitch, double yaw, bool isDegree = false);
 
 /**
  * @brief Calculates the orientation quaternion from one point to another. Not yet implemented.
@@ -106,7 +107,7 @@ void points_to_Quaternion(Eigen::Quaterniond& q, Eigen::Vector3d& p1, Eigen::Vec
 
 /// takes a quaternion and converts it to RPY
 Eigen::Vector3d quaternion_to_RPY(const Eigen::Quaterniond& q);
-Eigen::Vector3d quaternion_to_RPY(const geometry_msgs::Quaternion& q);
+Eigen::Vector3d quaternion_to_RPY(const geometry_msgs::msg::Quaternion& q);
 
 /**
  * @brief Calculates the angle between two orientation vectors.
@@ -131,7 +132,7 @@ void enuOrientation_to_BodyXYZ(Eigen::Quaterniond& enu_orientation, double dista
 
 // Takes a quaternion and rotates the Yaw by the given amount given in radians
 void rotateYaw(Eigen::Quaterniond& org_q, double delta_yaw, Eigen::Quaterniond& new_q);
-void rotateYaw(geometry_msgs::Quaternion& org_q, double delta_yaw, geometry_msgs::Quaternion& new_q);
+void rotateYaw(geometry_msgs::msg::Quaternion& org_q, double delta_yaw, geometry_msgs::msg::Quaternion& new_q);
 
 // Obsoleting
 //Eigen::Vector3d quaternion_to_RPY2(Eigen::Quaterniond& q);
@@ -175,8 +176,8 @@ void vectorAlongVector(Eigen::Vector3d& vector, Eigen::Vector3d& lp1,
 // In addition it returns true if "point" is on the line segment defined by lp1-lp2
 bool pointOnLine(Eigen::Vector3d& point, Eigen::Vector3d& lp1,
                  Eigen::Vector3d& lp2, Eigen::Vector3d& pt);
-bool pointOnLine(geometry_msgs::Point& point, geometry_msgs::Point& lp1,
-                 geometry_msgs::Point& lp2, geometry_msgs::Point& pt);
+bool pointOnLine(geometry_msgs::msg::Point& point, geometry_msgs::msg::Point& lp1,
+                 geometry_msgs::msg::Point& lp2, geometry_msgs::msg::Point& pt);
 
 // Given a line segment defined by points lp1 and lp2 find the "point" on that line segment such that
 //   the line from pt to "point" is perpendicular to lp1-lp2.
@@ -184,8 +185,8 @@ bool pointOnLine(geometry_msgs::Point& point, geometry_msgs::Point& lp1,
 // If false then the point returned is one of the line segment endpoints lp1 or lp2.
 bool pointOnLineSegment(Eigen::Vector3d& point, Eigen::Vector3d& lp1,
                         Eigen::Vector3d& lp2, Eigen::Vector3d& pt);
-bool pointOnLineSegment(geometry_msgs::Point& point, geometry_msgs::Point& lp1,
-                        geometry_msgs::Point& lp2, geometry_msgs::Point& pt);
+bool pointOnLineSegment(geometry_msgs::msg::Point& point, geometry_msgs::msg::Point& lp1,
+                        geometry_msgs::msg::Point& lp2, geometry_msgs::msg::Point& pt);
 
 
 // Given a line defined by 'p1' and 'p2' and a 3rd point 'p3' calculate a point 'p4'
@@ -217,7 +218,7 @@ void latLon_to_XY(double lat_from, double lon_from, double lat_to, double lon_to
 //   if you have the drones orientation in that frame.
 void rotateVector(Eigen::Quaterniond& q, Eigen::Vector3d& in_vec, Eigen::Vector3d& out_vec);
 void rotateVector(Eigen::Quaterniond& q, double x, double y, double z, Eigen::Vector3d& out_vec);
-void rotateVector(geometry_msgs::Quaternion& q, double x, double y, double z, Eigen::Vector3d& out_vec);
+void rotateVector(geometry_msgs::msg::Quaternion& q, double x, double y, double z, Eigen::Vector3d& out_vec);
 
 // Given a 2D coordinate defined by 'x_org, y_org', calculate a new coordinate 'x_new, y_new' that is rotated
 //   by theta radians
@@ -228,7 +229,7 @@ void rotatePoint(double x_org, double y_org, double& x_new, double& y_new, doubl
 //   return the vector coordinates 'new_vec' in the different frame.
 // Note that this produces the same results as the rotatePoint method.
 void transformXYFrame(Eigen::Vector3d& org_vec, double rad_diff, Eigen::Vector3d& new_vec);
-void transformXYFrame(geometry_msgs::Vector3& org_vec, double rad_diff, geometry_msgs::Vector3& new_vec);
+void transformXYFrame(geometry_msgs::msg::Vector3& org_vec, double rad_diff, geometry_msgs::msg::Vector3& new_vec);
 
 // Same as transformXYFrame with rad_diff parameter, but it takes the given orientation and extract the yaw before doing the above transform
 // Note that the orientation is assumed to be the org_vec frame of reference with respect to new_vec frame of reference,
@@ -238,13 +239,13 @@ void transformXYFrame(geometry_msgs::Vector3& org_vec, double rad_diff, geometry
 //   ENU frame. In oder to use this method to rotate the velocity vector so it lines up with the heading of the vehicle you would
 //   pass in the orientation and the velocity vector AND set reverse_rotation to true.
 // Returns to rotation amount.
-double transformXYFrame(Eigen::Vector3d& org_vec, geometry_msgs::Quaternion& orientation,
+double transformXYFrame(Eigen::Vector3d& org_vec, geometry_msgs::msg::Quaternion& orientation,
                       Eigen::Vector3d& new_vec, bool reverse_rotation=false);
 double transformXYFrame(Eigen::Vector3d& org_vec, Eigen::Quaterniond& orientation,
                       Eigen::Vector3d& new_vec, bool reverse_rotation=false);
 
 // This method takes an orientation expressed as a quaternion and levels it out by zeroing the roll and pich
-void levelOrientation(const geometry_msgs::Quaternion& org_orientation, geometry_msgs::Quaternion& level_orientation);
+void levelOrientation(const geometry_msgs::msg::Quaternion& org_orientation, geometry_msgs::msg::Quaternion& level_orientation);
 void levelOrientation(const Eigen::Quaterniond& org_orientation, Eigen::Quaterniond& level_orientation);
 
 //==================================

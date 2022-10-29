@@ -16,25 +16,26 @@ AMParam::~AMParam() {
 	// TODO Auto-generated destructor stub
 }
 
-double AMParam::getParam(std::string prefix, double default_val)
+double AMParam::getParam(rclcpp::Node::SharedPtr node, std::string prefix, double default_val)
 {
-	double param = default_val;
-	if (ros::param::get(prefix, param))
+	double param = 0.0;
+
+	if (!node->get_parameter_or(prefix, param, default_val))
 	{
-		ROS_DEBUG("%s = %f", prefix.c_str(), param);
+		RCLCPP_DEBUG(node->get_logger(), "%s = %f", prefix.c_str(), param);
 	}
 	else
 	{
-		ROS_WARN(" NO PARAMETER: %s, defaulting to %f", prefix.c_str(), param);
+		RCLCPP_DEBUG(node->get_logger(), " NO PARAMETER: %s, defaulting to %f", prefix.c_str(), param);
 	}
 
 	return param;
 }
 
-void AMParam::setParam(std::string prefix, double param)
+void AMParam::setParam(rclcpp::Node::SharedPtr node, std::string prefix, double param)
 {
-	ros::param::set(prefix, param);
-	ROS_DEBUG("%s = %f", prefix.c_str(), param);
+	node->declare_parameter(prefix, param);
+	RCLCPP_DEBUG(node->get_logger(), "%s = %f", prefix.c_str(), param);
 }
 
 

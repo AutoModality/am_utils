@@ -1,14 +1,14 @@
-#include <ros/ros.h>
-
+#include <rclcpp/rclcpp.hpp>
 #include <am_utils/am_pcl_utils.h>
-#include <sensor_msgs/point_cloud2_iterator.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <pcl_conversions/pcl_conversions.h>
+#include <sensor_msgs/point_cloud2_iterator.hpp>
 
 namespace am
 {
 
 pcl::PointCloud<pcl::PointXYZIR>::ConstPtr AMPCLUtils::convertToPointXYZIR(
-    const sensor_msgs::PointCloud2::ConstPtr pc2, pcl::PointCloud<pcl::PointXYZIR>::Ptr &pcl)
+    const sensor_msgs::msg::PointCloud2::SharedPtr pc2, pcl::PointCloud<pcl::PointXYZIR>::Ptr &pcl)
 {
   pcl->header = pcl_conversions::toPCL(pc2->header);
   pcl->resize(pc2->height * pc2->width);

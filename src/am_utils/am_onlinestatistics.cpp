@@ -64,7 +64,7 @@ void OnlineStatistics::setSize( size_t N )
   ary_.clear();
 }
   
-void OnlineStatistics::setDelayStats( brain_box_msgs::DelayStats &msg )
+void OnlineStatistics::setDelayStats( brain_box_msgs::msg::DelayStats &msg )
 {
   msg.count = cb_.size();
   msg.mean_delay = getMean();
