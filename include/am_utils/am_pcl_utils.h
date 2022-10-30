@@ -11,10 +11,19 @@ class AMPCLUtils
 {
 
 public:
-  static pcl::PointCloud<pcl::PointXYZIR>::ConstPtr convertToPointXYZIR(
-      const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+  static pcl::PointCloud<pcl::PointXYZIR>::ConstPtr convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
       pcl::PointCloud<pcl::PointXYZIR>::Ptr &pcl);
+
+  static pcl::PointCloud<pcl::PointXYZ>::ConstPtr convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+        pcl::PointCloud<pcl::PointXYZ>::Ptr &pcl);
+
+  static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+        pcl::PointCloud<pcl::PointXYZIR> &pcl);
+  static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+         pcl::PointCloud<pcl::PointXYZ> &pcl);
+
   static bool isSetToNaN(pcl::PointXYZIR &point);
+
   static void setNaN(pcl::PointXYZIR &point);
 };
 

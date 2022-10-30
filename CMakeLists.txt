@@ -80,6 +80,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/gis_entity.cpp
 					 src/vb_util_lib/gis_util.cpp
 					 src/vb_util_lib/gps_location.cpp
+					 src/vb_util_lib/imu_class.cpp
 					 #src/vb_util_lib/bag_logger.cpp
 					 )
 ament_target_dependencies(am_utils geometry_msgs brain_box_msgs PCL)

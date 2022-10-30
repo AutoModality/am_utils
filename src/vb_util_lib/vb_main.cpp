@@ -7,7 +7,7 @@
 
 
 #include <vb_util_lib/vb_main.h>
-#include <brain_box_msgs/Heartbeat.h>
+#include <brain_box_msgs/msg/heartbeat.hpp>
 #include <termios.h>
 #include <vb_util_lib/super_status.h>
 #include <string>
