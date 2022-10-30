@@ -8,10 +8,11 @@
 #ifndef VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_SRC_GPS_LOCATION_H_
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_SRC_GPS_LOCATION_H_
 
-#include <sensor_msgs/NavSatFix.h>
-#include <brain_box_msgs/GPSLocation.h>
+#include <sensor_msgs/msg/nav_sat_fix.hpp>
+#include <brain_box_msgs/msg/gps_location.hpp>
 #include <vb_util_lib/topics.h>
 //3.3#include <dji_sdk/GlobalPosition.h>
+#include <rclcpp/rclcpp.hpp>
 
 using namespace am;
 
@@ -22,40 +23,41 @@ using namespace am;
  * doUpdate method after changing any of the attributes so that it will get published
  * to the appropriate topic.
  */
+using namespace std::chrono_literals;
+
+using std::placeholders::_1;
 
 class GPSLocation {
 public:
-    GPSLocation() {};
-    GPSLocation(ros::NodeHandle *n, std::string topic=am::am_topics::CTRL_VX_GPS_LOCATION,
-            bool pub_on_change=false, double pub_rate=0.0) :
+    GPSLocation();
+    GPSLocation(rclcpp::Node::SharedPtr node, std::string topic=am::am_topics::CTRL_VX_GPS_LOCATION,
+            bool pub_on_change=false, double pub_rate=0.0) : node_(node),
         topic_(topic), pub_on_change_(pub_on_change), pub_rate_(pub_rate) {
-        initROS(n);
+        initROS(node_);
     }
-	virtual ~GPSLocation() {};
+	virtual ~GPSLocation();
 
-    void initROS(ros::NodeHandle *n) {
+    void initROS(rclcpp::Node::SharedPtr node) {
         if (pub_on_change_ || pub_rate_ > 0.0)
         {
             publisher_ = true;
-            pub_nh_ = n->advertise<brain_box_msgs::GPSLocation>(topic_.c_str(), 1000);
+            pub_nh_ = node_->create_publisher<brain_box_msgs::msg::GPSLocation>(topic_.c_str(), 1000);
         }
         else
         {
             publisher_ = false;
-            sub_nh_ = n->subscribe(topic_.c_str(), 1000,
-                    &GPSLocation::updateCB, this);
+            sub_nh_ = node_->create_subscription<brain_box_msgs::msg::GPSLocation>(topic_, 1000, std::bind(&GPSLocation::updateCB, this, _1));
         }
 
         if (pub_rate_ > 0)
         {
-            pub_timer_ = n->createTimer(ros::Duration(pub_rate_), &GPSLocation::publishTimerCB, this);
-            pub_timer_.start();
+        	//pub_rate_
+        	pub_timer_ = node_->create_wall_timer(500ms, std::bind(&GPSLocation::publishTimerCB, this));
         }
 
 //3.3        dji_sub_nh_ = n->subscribe((am_topics::DJI_SDK_GLOBAL_POSITION, 1000,
 //                &GPSLocation::djiUpdateCB, this);
-        dji_sub_nh_ = n->subscribe(am_topics::DJI_SDK_GPS_POSITION, 1000,
-                &GPSLocation::djiUpdateCB, this);
+        dji_sub_nh_ = node_->create_subscription<sensor_msgs::msg::NavSatFix>(am_topics::DJI_SDK_GPS_POSITION, 1000, std::bind(&GPSLocation::djiUpdateCB, this, _1));
 
         ros_init_ = true;
     }
@@ -89,11 +91,11 @@ public:
 		longitude_ = longitude;
 	}
 
-	const sensor_msgs::NavSatStatus& getStatus() const {
+	const sensor_msgs::msg::NavSatStatus& getStatus() const {
 		return status_;
 	}
 
-	void setStatus(const sensor_msgs::NavSatStatus& status) {
+	void setStatus(const sensor_msgs::msg::NavSatStatus& status) {
 		status_ = status;
 	}
 
@@ -113,7 +115,7 @@ public:
         this->health_ = health;
     }
 
-    void setGPSLocation(const brain_box_msgs::GPSLocation& msg) {
+    void setGPSLocation(const brain_box_msgs::msg::GPSLocation& msg) {
         latitude_ = msg.latitude;
         longitude_ = msg.longitude;
         altitude_ = msg.altitude;
@@ -121,7 +123,7 @@ public:
         health_ = msg.health;
     }
 
-    void setGPSLocation(const sensor_msgs::NavSatFix::ConstPtr& msg) {
+    void setGPSLocation(const sensor_msgs::msg::NavSatFix::SharedPtr& msg) {
         latitude_ = msg->latitude;
         longitude_ = msg->longitude;
         altitude_ = msg->altitude;
@@ -143,15 +145,15 @@ public:
         {
             return;
         }
-        brain_box_msgs::GPSLocation ms;
+        brain_box_msgs::msg::GPSLocation ms;
         ms.latitude = latitude_;
         ms.longitude = longitude_;
         ms.altitude = altitude_;
         ms.height = height_;
         ms.health = health_;
-        ms.header.stamp = ros::Time::now();
+        ms.header.stamp = node_->get_clock()->now();
 
-        pub_nh_.publish(ms);
+        pub_nh_->publish(ms);
     }
 
     /**
@@ -186,7 +188,12 @@ public:
         return;
     }
 
+    void updateLocation(const sensor_msgs::msg::NavSatFix::SharedPtr& msg);
+
 private:
+
+    rclcpp::Node::SharedPtr node_;
+
     /**
      * Latitude in degrees
      */
@@ -208,7 +215,7 @@ private:
 	 */
 	unsigned int health_ {0};
 
-	sensor_msgs::NavSatStatus status_;
+	sensor_msgs::msg::NavSatStatus status_;
 
 	// The following support the wrapper function
 
@@ -243,22 +250,22 @@ private:
     std::function<void(GPSLocation*)> callback_ {NULL};
 
     bool ros_init_ {false};
-    ros::Publisher pub_nh_;
-    ros::Subscriber sub_nh_;
-    ros::Subscriber dji_sub_nh_;
-    ros::Timer pub_timer_;
+    rclcpp::Publisher<brain_box_msgs::msg::GPSLocation>::SharedPtr pub_nh_;
+    rclcpp::Subscription<brain_box_msgs::msg::GPSLocation>::SharedPtr sub_nh_;
+    rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr dji_sub_nh_;
+    rclcpp::TimerBase::SharedPtr pub_timer_;
 
     /**
      * Timer callback for publishing stats messages
      */
-    void publishTimerCB(const ros::TimerEvent& te) {
+    void publishTimerCB() {
         sendGPSLocation();
     }
 
     /**
      * Callback to handle updates to DJI GPS location
      */
-    void djiUpdateCB(const sensor_msgs::NavSatFix::ConstPtr& msg) {
+    void djiUpdateCB(const sensor_msgs::msg::NavSatFix::SharedPtr msg) {
         updated_ = true;
         setGPSLocation(msg);
         if (callback_ != NULL)
@@ -271,7 +278,7 @@ private:
     /**
      * Callback to handle updates to GPS location
      */
-    void updateCB(const brain_box_msgs::GPSLocation::ConstPtr& msg) {
+    void updateCB(const brain_box_msgs::msg::GPSLocation::SharedPtr msg) {
         updated_ = true;
         setGPSLocation(*msg);
         if (callback_ != NULL)

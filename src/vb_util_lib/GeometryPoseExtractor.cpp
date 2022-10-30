@@ -5,20 +5,17 @@
  *      Author: Alireza Janani
  *
  */
-#include<ros/ros.h>
-#include<geometry_msgs/PoseStamped.h>
-#include<geometry_msgs/PoseWithCovarianceStamped.h>
-#include<nav_msgs/Odometry.h>
+
 #include<string>
 #include<vector>
 #include<vb_util_lib/GeometryPoseExtractor.h>
 
 
-GeometryPoseExtractor::GeometryPoseExtractor(std::vector<geometry_msgs::PoseStamped> &msgs)
+GeometryPoseExtractor::GeometryPoseExtractor(std::vector<geometry_msgs::msg::PoseStamped> &msgs)
 {
   poses = msgs;
 }
-GeometryPoseExtractor::GeometryPoseExtractor(std::vector<geometry_msgs::PoseWithCovarianceStamped> &msgs)
+GeometryPoseExtractor::GeometryPoseExtractor(std::vector<geometry_msgs::msg::PoseWithCovarianceStamped> &msgs)
 {
   poses.resize(msgs.size());
   int idx = -1;
@@ -29,7 +26,7 @@ GeometryPoseExtractor::GeometryPoseExtractor(std::vector<geometry_msgs::PoseWith
     poses[idx].pose = msg.pose.pose;
   }
 }
-GeometryPoseExtractor::GeometryPoseExtractor(std::vector<nav_msgs::Odometry> &msgs)
+GeometryPoseExtractor::GeometryPoseExtractor(std::vector<nav_msgs::msg::Odometry> &msgs)
 {
   poses.resize(msgs.size());
   int idx = -1;
@@ -40,7 +37,7 @@ GeometryPoseExtractor::GeometryPoseExtractor(std::vector<nav_msgs::Odometry> &ms
     poses[idx].pose = msg.pose.pose;
   }
 }
-std::vector<geometry_msgs::PoseStamped> &GeometryPoseExtractor::getPoses()
+std::vector<geometry_msgs::msg::PoseStamped> &GeometryPoseExtractor::getPoses()
 {
   return poses;
 }

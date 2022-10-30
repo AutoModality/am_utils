@@ -6,11 +6,13 @@
  */
 
 #include <vb_util_lib/gis_entity.h>
+#include <iostream>
+
 
 GISEntity::GISEntity() {
 }
 
-GISEntity::GISEntity(brain_box_msgs::GISEntity* msg) {
+GISEntity::GISEntity(brain_box_msgs::msg::GISEntity* msg) {
     parseGISEntityMsg(msg);
 }
 
@@ -19,29 +21,29 @@ GISEntity::~GISEntity() {
 }
 
 GISCoordinate GISEntity::locationCoordMsg_to_GISCoordinate(
-		brain_box_msgs::LocationCoord* msg) {
+		brain_box_msgs::msg::LocationCoord* msg) {
 	GISCoordinate c;
 	c.error = msg->error;
 	c.uuid = msg->id;
 
 	switch (msg->frame)
 	{
-	case brain_box_msgs::LocationCoord::WGS_FRAME:
-		c.coord.gps.latitude = msg->coord[brain_box_msgs::LocationCoord::LATITUDE];
-		c.coord.gps.longitude = msg->coord[brain_box_msgs::LocationCoord::LONGITUDE];
-		c.coord.gps.altitude = msg->coord[brain_box_msgs::LocationCoord::ALT_ABS];
+	case brain_box_msgs::msg::LocationCoord::WGS_FRAME:
+		c.coord.gps.latitude = msg->coord[brain_box_msgs::msg::LocationCoord::LATITUDE];
+		c.coord.gps.longitude = msg->coord[brain_box_msgs::msg::LocationCoord::LONGITUDE];
+		c.coord.gps.altitude = msg->coord[brain_box_msgs::msg::LocationCoord::ALT_ABS];
 		c.type = CoordType::GPS_COORD;
 	break;
-	case brain_box_msgs::LocationCoord::FRU_FRAME:
-		c.coord.fru.front = msg->coord[brain_box_msgs::LocationCoord::FRONT];
-		c.coord.fru.right = msg->coord[brain_box_msgs::LocationCoord::RIGHT];
-		c.coord.fru.up = msg->coord[brain_box_msgs::LocationCoord::UP];
+	case brain_box_msgs::msg::LocationCoord::FRU_FRAME:
+		c.coord.fru.front = msg->coord[brain_box_msgs::msg::LocationCoord::FRONT];
+		c.coord.fru.right = msg->coord[brain_box_msgs::msg::LocationCoord::RIGHT];
+		c.coord.fru.up = msg->coord[brain_box_msgs::msg::LocationCoord::UP];
 		c.type = CoordType::FRU_COORD;
 	break;
-	case brain_box_msgs::LocationCoord::ENU_FRAME:
-		c.coord.enu.east = msg->coord[brain_box_msgs::LocationCoord::EAST];
-		c.coord.enu.north = msg->coord[brain_box_msgs::LocationCoord::NORTH];
-		c.coord.enu.up = msg->coord[brain_box_msgs::LocationCoord::UP];
+	case brain_box_msgs::msg::LocationCoord::ENU_FRAME:
+		c.coord.enu.east = msg->coord[brain_box_msgs::msg::LocationCoord::EAST];
+		c.coord.enu.north = msg->coord[brain_box_msgs::msg::LocationCoord::NORTH];
+		c.coord.enu.up = msg->coord[brain_box_msgs::msg::LocationCoord::UP];
 		c.type = CoordType::ENU_COORD;
 	break;
 	}
@@ -49,51 +51,51 @@ GISCoordinate GISEntity::locationCoordMsg_to_GISCoordinate(
 	return c;
 }
 
-brain_box_msgs::LocationCoord GISEntity::gisCoordinate_to_LocationCoordMsg(
+brain_box_msgs::msg::LocationCoord GISEntity::gisCoordinate_to_LocationCoordMsg(
 		GISCoordinate* c) {
-	brain_box_msgs::LocationCoord msg;
+	brain_box_msgs::msg::LocationCoord msg;
 	msg.error = c->error;
 	msg.id = c->uuid;
 
 	switch (c->type)
 	{
 	case CoordType::GPS_COORD:
-		msg.coord[brain_box_msgs::LocationCoord::LATITUDE] = c->coord.gps.latitude;
-		msg.coord[brain_box_msgs::LocationCoord::LONGITUDE] = c->coord.gps.longitude;
-		msg.coord[brain_box_msgs::LocationCoord::ALT_ABS] = c->coord.gps.altitude;
-		msg.frame = brain_box_msgs::LocationCoord::WGS_FRAME;
+		msg.coord[brain_box_msgs::msg::LocationCoord::LATITUDE] = c->coord.gps.latitude;
+		msg.coord[brain_box_msgs::msg::LocationCoord::LONGITUDE] = c->coord.gps.longitude;
+		msg.coord[brain_box_msgs::msg::LocationCoord::ALT_ABS] = c->coord.gps.altitude;
+		msg.frame = brain_box_msgs::msg::LocationCoord::WGS_FRAME;
 		break;
 	case CoordType::FRU_COORD:
-		msg.coord[brain_box_msgs::LocationCoord::FRONT] = c->coord.fru.front;
-		msg.coord[brain_box_msgs::LocationCoord::RIGHT] = c->coord.fru.right;
-		msg.coord[brain_box_msgs::LocationCoord::UP] = c->coord.fru.up;
-		msg.frame = brain_box_msgs::LocationCoord::FRU_FRAME;
+		msg.coord[brain_box_msgs::msg::LocationCoord::FRONT] = c->coord.fru.front;
+		msg.coord[brain_box_msgs::msg::LocationCoord::RIGHT] = c->coord.fru.right;
+		msg.coord[brain_box_msgs::msg::LocationCoord::UP] = c->coord.fru.up;
+		msg.frame = brain_box_msgs::msg::LocationCoord::FRU_FRAME;
 		break;
 	case CoordType::ENU_COORD:
-		msg.coord[brain_box_msgs::LocationCoord::EAST] = c->coord.enu.east;
-		msg.coord[brain_box_msgs::LocationCoord::NORTH] = c->coord.enu.north;
-		msg.coord[brain_box_msgs::LocationCoord::UP] = c->coord.enu.up;
-		msg.frame = brain_box_msgs::LocationCoord::ENU_FRAME;
+		msg.coord[brain_box_msgs::msg::LocationCoord::EAST] = c->coord.enu.east;
+		msg.coord[brain_box_msgs::msg::LocationCoord::NORTH] = c->coord.enu.north;
+		msg.coord[brain_box_msgs::msg::LocationCoord::UP] = c->coord.enu.up;
+		msg.frame = brain_box_msgs::msg::LocationCoord::ENU_FRAME;
 		break;
 	}
 
 	return msg;
 }
 
-void GISEntity::getGISEntityMsg(brain_box_msgs::GISEntity* msg) {
+void GISEntity::getGISEntityMsg(brain_box_msgs::msg::GISEntity* msg) {
 	msg->id = uuid_;
 
 	switch (type_)
 	{
 	case GISEntityType::area:
-		msg->type = brain_box_msgs::GISEntity::AREA;
+		msg->type = brain_box_msgs::msg::GISEntity::AREA;
 		break;
 	case GISEntityType::line:
-		msg->type = brain_box_msgs::GISEntity::LINE;
+		msg->type = brain_box_msgs::msg::GISEntity::LINE;
 		break;
 	case GISEntityType::point:
 	default:
-		msg->type = brain_box_msgs::GISEntity::POINT;
+		msg->type = brain_box_msgs::msg::GISEntity::POINT;
 		break;
 	}
 
@@ -112,20 +114,20 @@ bool GISEntity::loadGISCoordinate(Json::Value& fp, GISCoordinate* fc) {
     std::string t = fp.get("type", "GPS").asString();
     if (!(t=="GPS" || t=="ENU" || t=="FRU"))
     {
-        ROS_ERROR("Invalid coordinate type %s", t.c_str());
+        std::cerr << "Invalid coordinate type " << t << std::endl;
     }
     fc->type = string_to_CoordType[t];
 
     if (fc->error <= 0.0)
     {
-        ROS_WARN("Warning: error region <= 0 : [%f]", fc->error);
+        printf("Warning: error region <= 0 : [%f]\n", fc->error);
     }
 
     Json::Value c = fp["coord"];
 
     if (c.size() != 3)
     {
-        ROS_ERROR("Missing or invalid number of coordinates [coord]");
+    	std::cerr << "Missing or invalid number of coordinates [coord]" << std::endl;
         return false;
     }
 
@@ -162,7 +164,7 @@ bool GISEntity::loadJSON(Json::Value& fp) {
 	std::string ty = fp.get("type", "point").asString();
 	if (!(ty=="point" || ty=="line" || ty=="area"))
 	{
-		ROS_ERROR("Invalid GISEntity type : %s", ty.c_str());
+		std::cerr << "Invalid GISEntity type : " << ty << std::endl;
 		return false;
 	}
 
@@ -181,24 +183,24 @@ bool GISEntity::loadJSON(Json::Value& fp) {
 	}
 	if (coords_.size() == 0 || (type_ == GISEntityType::point && coords_.size() != 1))
 	{
-        ROS_ERROR("Missing or invalid number of coordinates");
+        perror("Missing or invalid number of coordinates");
         return false;
 	}
 
 	return true;
 }
 
-void GISEntity::parseGISEntityMsg(brain_box_msgs::GISEntity* msg) {
+void GISEntity::parseGISEntityMsg(brain_box_msgs::msg::GISEntity* msg) {
 	uuid_ = msg->id;
 	switch (msg->type)
 	{
-	case brain_box_msgs::GISEntity::AREA:
+	case brain_box_msgs::msg::GISEntity::AREA:
 		type_ = GISEntityType::area;
 		break;
-	case brain_box_msgs::GISEntity::LINE:
+	case brain_box_msgs::msg::GISEntity::LINE:
 		type_ = GISEntityType::line;
 		break;
-	case brain_box_msgs::GISEntity::POINT:
+	case brain_box_msgs::msg::GISEntity::POINT:
 	default:
 		type_ = GISEntityType::point;
 		break;

@@ -8,6 +8,7 @@
 #include <geometry_msgs/msg/point32.hpp>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <am_utils/point_types.h>
 
 namespace am
 {
@@ -76,6 +77,7 @@ namespace am
 
     static void rotate(geometry_msgs::msg::Point32 &p, const geometry_msgs::msg::Quaternion &q_rot);
 
+    static void rotate(pcl::PointXYZIR &p, const geometry_msgs::msg::Quaternion &q_rot);
 
     /*
      * @brief transforms a point with the passed transformed stamped
@@ -106,6 +108,8 @@ namespace am
 
     //Static method to get Yaw from geometry_msgs Quaternion
     static double getYaw(const geometry_msgs::msg::Quaternion &q);
+
+    static double getYaw(tf2::Quaternion &q);
 
     //Static method to convert from rpy to quaternion
     static tf2::Quaternion toQuaternion(const std::array<double,3> rpy);

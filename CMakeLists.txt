@@ -65,12 +65,21 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/am_geometry.cpp
 					 src/vb_util_lib/topics.cpp
 					 src/vb_util_lib/rotate.cpp
-					 src/vb_util_lib/csv_logger.cpp
 					 src/vb_util_lib/am_heartbeat.cpp
 					 src/vb_util_lib/am_histogram.cpp
 					 src/vb_util_lib/am_param.cpp
 					 src/vb_util_lib/am_util.cpp
 					 src/vb_util_lib/circ_list.cpp
+					 src/vb_util_lib/control_util.cpp
+					 src/vb_util_lib/csv_logger.cpp
+					 src/vb_util_lib/transformer.cpp
+					 src/vb_util_lib/file_spec.cpp
+					 src/vb_util_lib/ftp_request.cpp
+					 src/vb_util_lib/ftp_response.cpp
+					 src/vb_util_lib/GeometryPoseExtractor.cpp
+					 src/vb_util_lib/gis_entity.cpp
+					 src/vb_util_lib/gis_util.cpp
+					 src/vb_util_lib/gps_location.cpp
 					 #src/vb_util_lib/bag_logger.cpp
 					 )
 ament_target_dependencies(am_utils geometry_msgs brain_box_msgs PCL)

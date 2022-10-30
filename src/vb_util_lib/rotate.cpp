@@ -380,6 +380,16 @@ namespace am
 	  p.z = 2*q_rot.x*q_rot.z*old_p.x + 2*q_rot.y*q_rot.z*old_p.y + q_rot.z*q_rot.z*old_p.z - 2*q_rot.w*q_rot.y*old_p.x - q_rot.y*q_rot.y*old_p.z + 2*q_rot.w*q_rot.x*old_p.y - q_rot.x*q_rot.x*old_p.z + q_rot.w*q_rot.w*old_p.z;
 
   }
+
+  void Rotate::rotate(pcl::PointXYZIR &p, const geometry_msgs::msg::Quaternion &q_rot)
+  {
+	  pcl::PointXYZIR old_p = p;
+	  p.x = q_rot.w*q_rot.w*old_p.x + 2*q_rot.y*q_rot.w*old_p.z - 2*q_rot.z*q_rot.w*old_p.y + q_rot.x*q_rot.x*old_p.x + 2*q_rot.y*q_rot.x*old_p.y + 2*q_rot.z*q_rot.x*old_p.z - q_rot.z*q_rot.z*old_p.x - q_rot.y*q_rot.y*old_p.x;
+	  p.y = 2*q_rot.x*q_rot.y*old_p.x + q_rot.y*q_rot.y*old_p.y + 2*q_rot.z*q_rot.y*old_p.z + 2*q_rot.w*q_rot.z*old_p.x - q_rot.z*q_rot.z*old_p.y + q_rot.w*q_rot.w*old_p.y - 2*q_rot.x*q_rot.w*old_p.z - q_rot.x*q_rot.x*old_p.y;
+	  p.z = 2*q_rot.x*q_rot.z*old_p.x + 2*q_rot.y*q_rot.z*old_p.y + q_rot.z*q_rot.z*old_p.z - 2*q_rot.w*q_rot.y*old_p.x - q_rot.y*q_rot.y*old_p.z + 2*q_rot.w*q_rot.x*old_p.y - q_rot.x*q_rot.x*old_p.z + q_rot.w*q_rot.w*old_p.z;
+
+  }
+
   double Rotate::getYaw(const geometry_msgs::msg::Quaternion &q)
   {
 	  double roll = 0.0, pitch = 0.0, yaw =0.0;
@@ -389,6 +399,15 @@ namespace am
 	  return yaw;
 
   }
+
+  double Rotate::getYaw(tf2::Quaternion &q)
+  {
+	  tf2::Matrix3x3 m(q);
+	  double roll = 0.0, pitch = 0.0, yaw = 0.0;
+	  m.getRPY(roll, pitch, yaw);
+	  return yaw;
+  }
+
   tf2::Quaternion Rotate::toQuaternion(double r, double p, double y)
   {
 	  tf2::Quaternion q;

@@ -9,7 +9,7 @@
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VISBOX_UTIL_LIB_GIS_UTIL_H_
 
 #include <stdio.h>
-#include <uuid_msgs/UniqueID.h>
+#include <unique_identifier_msgs/msg/uuid.hpp>
 #include <string>
 #include <map>
 
