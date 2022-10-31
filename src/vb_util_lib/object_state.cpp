@@ -5,9 +5,12 @@
  *      Author: ubuntu
  */
 
-#include "vb_util_lib/object_state.h"
+#include <vb_util_lib/object_state.h>
 
-ObjectState::ObjectState(ros::NodeHandle *n) {
+ObjectState::ObjectState(rclcpp::Node::SharedPtr n):
+vehicle_current_ENU(n),vehicle_command_ENU(n),vehicle_setpoint_ENU(n),
+target_current_ENU(n), target_setpoint_ENU(n), target_list_RFU(n), target_current_RFU(n)
+{
 	// TODO Auto-generated constructor stub
 	initROS(n);
 }
@@ -16,8 +19,8 @@ ObjectState::~ObjectState() {
 	// TODO Auto-generated destructor stub
 }
 
-geometry_msgs::Pose ObjectState::getTargetCurrentENUWRTOrigin() {
-	geometry_msgs::Pose p;
+geometry_msgs::msg::Pose ObjectState::getTargetCurrentENUWRTOrigin() {
+	geometry_msgs::msg::Pose p;
 	target_current_ENU.getPose(p);
 	p.position.x -= target_origin_ENU.position.x;
 	p.position.y -= target_origin_ENU.position.y;
@@ -33,7 +36,7 @@ void ObjectState::setTargetOrigin() {
 /*
  * Initialize all the necessary ROS handles and publish/subscribe to topics
  */
-void ObjectState::initROS(ros::NodeHandle *n)
+void ObjectState::initROS(rclcpp::Node::SharedPtr n)
 {
 	rosNode = n;
 
@@ -44,37 +47,38 @@ void ObjectState::initROS(ros::NodeHandle *n)
 	/*
 	 * Advertise topics to be published
 	 */
-	currentAttPub = rosNode->advertise<geometry_msgs::PoseStamped>("/brain_box/attitude/current", 1000);
-	setpointPub = rosNode->advertise<geometry_msgs::PoseStamped>("/brain_box/setpoint/current", 1000);
-	commandAttPub = rosNode->advertise<geometry_msgs::PoseStamped>("/brain_box/attitude/command", 1000);
+	currentAttPub = rosNode->create_publisher<geometry_msgs::msg::PoseStamped>("/brain_box/attitude/current", 1000);
+	setpointPub = rosNode->create_publisher<geometry_msgs::msg::PoseStamped>("/brain_box/setpoint/current", 1000);
+	commandAttPub = rosNode->create_publisher<geometry_msgs::msg::PoseStamped>("/brain_box/attitude/command", 1000);
 
-	ROS_INFO("^^^ ROS ON OBJECT STATE INITIALIZED ^^^");
+	RCLCPP_INFO(rosNode->get_logger(), "^^^ ROS ON OBJECT STATE INITIALIZED ^^^");
 
 	return;
 }
 
-void ObjectState::publishRPY(ros::Publisher topic, ros::Time t, double roll, double pitch,
+void ObjectState::publishRPY(rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr topic, rclcpp::Time t
+		, double roll, double pitch,
 		double yaw, double throttle) {
-	geometry_msgs::PoseStamped pose;
+	geometry_msgs::msg::PoseStamped pose;
 	pose.header.stamp = t;
 	pose.pose.orientation.x = roll;
 	pose.pose.orientation.y = pitch;
 	pose.pose.orientation.z = yaw;
 	pose.pose.orientation.w = throttle;
 
-	topic.publish(pose);
+	topic->publish(pose);
 }
 
 void ObjectState::dumpDebug() {
 //	publishRPY(currentAttPub, t, );
 //	publishRPY(commandAttPub, t, )
-	ros::Time t = ros::Time::now();
+	rclcpp::Time t = rosNode->get_clock()->now();
 	publishRPY(commandAttPub, t, vehicle_command_ENU.getAttitude().roll, vehicle_command_ENU.getAttitude().pitch, vehicle_command_ENU.getAttitude().yaw, vehicle_command_ENU.getAttitude().throttle);
 	publishRPY(currentAttPub, t, vehicle_current_ENU.getAttitude().roll, vehicle_current_ENU.getAttitude().pitch, vehicle_current_ENU.getAttitude().yaw, vehicle_current_ENU.getAttitude().throttle);
-	geometry_msgs::PoseStamped p;
+	geometry_msgs::msg::PoseStamped p;
 	target_current_RFU.getPose(p.pose);
 	p.header.stamp = t;
-	setpointPub.publish(p);
+	setpointPub->publish(p);
 }
 
 void ObjectState::calculateTargetENU() {

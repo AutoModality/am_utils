@@ -11,26 +11,27 @@
 #include "string.h"
 #include <iostream>
 
-#include "ros/ros.h"
+#include <rclcpp/rclcpp.hpp>
 
-#include "brain_box_msgs/TargetPose.h"
-#include "brain_box_msgs/TargetPoseArray.h"
+#include <brain_box_msgs/msg/target_pose.hpp>
+#include <brain_box_msgs/msg/target_pose_array.hpp>
 
-#include "vb_util_lib/kinematics.h"
+#include <vb_util_lib/kinematics.h>
+#include <rclcpp/rclcpp.hpp>
 
 class KinematicsList {
 public:
-	KinematicsList();
+	KinematicsList(rclcpp::Node::SharedPtr node);
 	virtual ~KinematicsList();
 
-	Kinematics* updateList(const brain_box_msgs::TargetPoseArray::ConstPtr& msg);
+	Kinematics* updateList(const brain_box_msgs::msg::TargetPoseArray::SharedPtr msg);
 	Kinematics* findNode(std::string id);
 	Kinematics* trackNode(std::string id);
-	Kinematics* updateNode(const brain_box_msgs::TargetPose* pose);
+	Kinematics* updateNode(const brain_box_msgs::msg::TargetPose* pose);
 	void addNode(Kinematics* node);
 	bool isFocus(std::string id) {return (focus_node == NULL ? false : (id == focus_node->id));}
 	bool isFocus(const Kinematics* n) {return (n == NULL ? false : isFocus(n->getObjectId()));}
-	unsigned int cleanList(ros::Time age);
+	unsigned int cleanList(rclcpp::Time age);
 	void print();
 	void print(std::string s);
 
@@ -48,8 +49,10 @@ protected:
 private:
 	class KinematicsNode {
 	public:
-		KinematicsNode(Kinematics* p);
+		KinematicsNode(rclcpp::Node::SharedPtr n, Kinematics* p);
 		virtual ~KinematicsNode();
+
+		rclcpp::Node::SharedPtr nh_;
 
 		Kinematics* node {NULL};
 		std::string id {NULL};
@@ -58,8 +61,10 @@ private:
 		bool clean {true};
 	};
 
+
+
 	KinematicsNode* findNodePtr(std::string id);
-void deleteNode(KinematicsNode* p);
+	void deleteNode(KinematicsNode* p);
 
 	// The head of the linked list
 	KinematicsNode* head {NULL};
@@ -71,7 +76,9 @@ void deleteNode(KinematicsNode* p);
 	unsigned int cnt = 0;
 
 	// Last update time
-	ros::Time last_update;
+	rclcpp::Time last_update;
+
+	rclcpp::Node::SharedPtr node_;
 
 };
 

@@ -7,32 +7,32 @@
 
 #include <vb_util_lib/time_synchronizer.h>
 #include <vb_util_lib/frame_names.h>
+#include <am_utils/am_ros2_utility.h>
 
 //
 // Constructors
 //
 
-TimeSynchronizer::TimeSynchronizer():
-	n_("~")
+TimeSynchronizer::TimeSynchronizer(rclcpp::Node::SharedPtr node): n_(node)
 {
 	bool debounce;
 	double poll_rate;
 
-	ros::param::param<int>("~gpio_num", gpio_num_, 422);
-	ros::param::param<bool>("~debounce", debounce, false);
-	ros::param::param<double>("~poll_rate", poll_rate, 1.0);
+	n_->get_parameter_or("gpio_num", gpio_num_, 422);
+	n_->get_parameter_or("debounce", debounce, false);
+	n_->get_parameter_or("poll_rate", poll_rate, 1.0);
 
 	poll_rate_ = poll_rate;
 
-	time_synchronizer_pub_ = n_.advertise<brain_box_msgs::StampedInterruptTime>("/interrupt_time", 120);
+	time_synchronizer_pub_ = n_->create_publisher<brain_box_msgs::msg::StampedInterruptTime>("/interrupt_time", 120);
 
 	if(poll_rate < 0.001)
 	{// if the rate is too slow, just poll once
-		timer_synchronizer_poll_ = n_.createTimer(ros::Duration(1.0/poll_rate), &TimeSynchronizer::timerSynchronizerPollCallback, this, true);
+		timer_synchronizer_poll_ = n_->create_wall_timer(am::toDuration(1.0/poll_rate), std::bind(&TimeSynchronizer::timerSynchronizerPollCallback, this));
 	}
 	else
 	{
-		timer_synchronizer_poll_ = n_.createTimer(ros::Duration(1.0/poll_rate), &TimeSynchronizer::timerSynchronizerPollCallback, this);
+		timer_synchronizer_poll_ = n_->create_wall_timer(am::toDuration(1.0/poll_rate), std::bind(&TimeSynchronizer::timerSynchronizerPollCallback, this));
 	}
 
 	//printf("Instance of time_synchronizer.");
@@ -43,7 +43,7 @@ TimeSynchronizer::TimeSynchronizer():
 	char string_send[BUFFER_LENGTH];
 	sprintf(gpio_path, "/sys/ts_lkm/gpio%d/isDebounce", gpio_num_);
 	sprintf(string_send, "%d", debounce);
-	ROS_INFO_STREAM("Set debounce to: " << debounce);
+	RCLCPP_INFO_STREAM(n_->get_logger(), "Set debounce to: " << debounce);
 	fd = open(gpio_path, O_WRONLY);
 	if(fd < 0)
 	{
@@ -70,7 +70,7 @@ TimeSynchronizer::~TimeSynchronizer()
 // call back functions
 //
 
-void TimeSynchronizer::timerSynchronizerPollCallback(const ros::TimerEvent& event)
+void TimeSynchronizer::timerSynchronizerPollCallback()
 {
 	// Check if the interrupt is a new one.
 	// If it is a new one, then get the time and clear the newInterrupt in the kernel module.
@@ -81,22 +81,22 @@ void TimeSynchronizer::timerSynchronizerPollCallback(const ros::TimerEvent& even
 		case 1:
 			char time_interrupt_str[BUFFER_LENGTH];
 			sprintf(time_interrupt_str, "%.9f", getTimeInterrupt());
-			ROS_INFO_STREAM("Got new interrupt. The interrupt time is: " << time_interrupt_str);
+			RCLCPP_INFO_STREAM(n_->get_logger(),"Got new interrupt. The interrupt time is: " << time_interrupt_str);
 
 			stamped_interrupt_time_.header.frame_id = body_FLU;
-			stamped_interrupt_time_.header.stamp = ros::Time(time_interrupt_);
+			stamped_interrupt_time_.header.stamp = rclcpp::Time(time_interrupt_);
 			stamped_interrupt_time_.data = time_interrupt_;
 			stamped_interrupt_time_.count = getNumInterrupt();
 
-			time_synchronizer_pub_.publish(stamped_interrupt_time_);
+			time_synchronizer_pub_->publish(stamped_interrupt_time_);
 			break;
 
 		case 0:
-			ROS_INFO("There is no new interrupt!");
+			RCLCPP_INFO(n_->get_logger(),"There is no new interrupt!");
 			break;
 
 		default:
-			ROS_INFO("Failed to get status of interrupt!");
+			RCLCPP_INFO(n_->get_logger(),"Failed to get status of interrupt!");
 	}
 }
 
@@ -126,7 +126,7 @@ int TimeSynchronizer::getStatusInterrupt(void)
 		new_interrupt_ = true;
 		return 1;
 	}
-	else if (receive[0] = '0')
+	else if (receive[0] == '0')
 	{
 		new_interrupt_ = false;
 		return 0;
@@ -144,7 +144,7 @@ int TimeSynchronizer::setStatusInterrupt(bool status_interrupt)
 	char string_send[BUFFER_LENGTH];
 	sprintf(gpio_path, "/sys/ts_lkm/gpio%d/newInterrupt", gpio_num_);
 	sprintf(string_send, "%d", status_interrupt);
-	ROS_INFO_STREAM("Set status of interrupt to: " << status_interrupt);
+	RCLCPP_INFO_STREAM(n_->get_logger(), "Set status of interrupt to: " << status_interrupt);
 	fd = open(gpio_path, O_WRONLY);
 	if(fd < 0)
 	{
@@ -172,7 +172,7 @@ double TimeSynchronizer::getTimeInterrupt(void)
 	char receive[BUFFER_LENGTH];
 	double time_interrupt;
 	sprintf(gpio_path, "/sys/ts_lkm/gpio%d/timeInterrupt", gpio_num_);
-	ROS_INFO("Get interrupt time.");
+	RCLCPP_INFO(n_->get_logger(),"Get interrupt time.");
 	fd = open(gpio_path, O_RDONLY);
 	if(fd < 0)
 	{
@@ -204,7 +204,7 @@ int TimeSynchronizer::setTimeInterrupt(double time_interrupt)
 	char string_send[BUFFER_LENGTH];
 	sprintf(gpio_path, "/sys/ts_lkm/gpio%d/timeInterrupt", gpio_num_);
 	sprintf(string_send, "%.9f", time_interrupt);
-	ROS_INFO_STREAM("Set interrupt time to: " << time_interrupt);
+	RCLCPP_INFO_STREAM(n_->get_logger(), "Set interrupt time to: " << time_interrupt);
 	fd = open(gpio_path, O_WRONLY);
 	if(fd < 0)
 	{
@@ -249,7 +249,7 @@ int TimeSynchronizer::getNumInterrupt(void)
 
 	sscanf(receive, "%d", &num_interrupts);
 	num_interrupts_ = num_interrupts;
-	ROS_INFO_STREAM("Get number of interrupts: " << num_interrupts);
+	RCLCPP_INFO_STREAM(n_->get_logger(), "Get number of interrupts: " << num_interrupts);
 
 	return num_interrupts;
 }
@@ -263,7 +263,7 @@ int TimeSynchronizer::setNumInterrupt(int num_interrupts)
 	char string_send[BUFFER_LENGTH];
 	sprintf(gpio_path, "/sys/ts_lkm/gpio%d/numberInterrupts", gpio_num_);
 	sprintf(string_send, "%d", num_interrupts);
-	ROS_INFO_STREAM("Set number of interrupts to: " << num_interrupts);
+	RCLCPP_INFO_STREAM(n_->get_logger(), "Set number of interrupts to: " << num_interrupts);
 	fd = open(gpio_path, O_WRONLY);
 	if(fd < 0)
 	{
@@ -291,7 +291,7 @@ double TimeSynchronizer::getPollRate(void)
 int TimeSynchronizer::setPollRate(double poll_rate)
 {
 	poll_rate_ = poll_rate;
-	timer_synchronizer_poll_.setPeriod(ros::Duration(poll_rate));
+	//timer_synchronizer_poll_.setPeriod(rclcpp::Duration(poll_rate));
 
 	return 1;
 }

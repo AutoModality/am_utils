@@ -5,9 +5,10 @@
  *      Author: ubuntu
  */
 
-#include "vb_util_lib/kinematics_list.h"
+#include <vb_util_lib/kinematics_list.h>
 
-KinematicsList::KinematicsList() {
+KinematicsList::KinematicsList(rclcpp::Node::SharedPtr node): node_(node)
+{
     // TODO Auto-generated constructor stub
 
 }
@@ -38,17 +39,17 @@ Kinematics* KinematicsList::findNode(std::string id) {
     return  NULL;
 }
 
-Kinematics* KinematicsList::updateNode(const brain_box_msgs::TargetPose* pose) {
+Kinematics* KinematicsList::updateNode(const brain_box_msgs::msg::TargetPose* pose) {
     KinematicsNode* p = findNodePtr(pose->target_id);
     //	std::cout << "updateNode" << pose->target_id;
     if (p == NULL)
     {
         // new one so add it to existing list
         //		std::cout << " adding\n";
-        geometry_msgs::PoseStamped ps;
+        geometry_msgs::msg::PoseStamped ps;
         ps.header = pose->header;
         ps.pose = pose->pose;
-        Kinematics* np = new Kinematics(ps, pose->target_id);
+        Kinematics* np = new Kinematics(node_, ps, pose->target_id);
         addNode(np);
         return(np);
     }
@@ -62,7 +63,7 @@ Kinematics* KinematicsList::updateNode(const brain_box_msgs::TargetPose* pose) {
 }
 
 void KinematicsList::addNode(Kinematics* p) {
-    KinematicsNode* node = new KinematicsNode(p);
+    KinematicsNode* node = new KinematicsNode(node_, p);
     if (head != NULL)
     {
         // Push the node to the end of the list
@@ -81,7 +82,8 @@ void KinematicsList::addNode(Kinematics* p) {
     cnt++;
 }
 
-KinematicsList::KinematicsNode::KinematicsNode(Kinematics* p) {
+KinematicsList::KinematicsNode::KinematicsNode(rclcpp::Node::SharedPtr n, Kinematics* p): nh_(n)
+{
     node = p;
     if (p != NULL) {
         id = p->getObjectId();
@@ -135,12 +137,12 @@ Kinematics* KinematicsList::trackNode(std::string id) {
  * default focus node.
  */
 Kinematics* KinematicsList::updateList(
-        const brain_box_msgs::TargetPoseArray::ConstPtr& msg) {
+        const brain_box_msgs::msg::TargetPoseArray::SharedPtr msg) {
 
     Kinematics* f_node = NULL;
     for (int i = 0; i < msg->poses.size(); i++)
     {
-        const brain_box_msgs::TargetPose* p = &(msg->poses.at(i));
+        const brain_box_msgs::msg::TargetPose* p = &(msg->poses.at(i));
         //		std::cout << "target(" << i << ") " << p->target_id << "\n";
         const Kinematics* n = updateNode(p);
 
@@ -178,7 +180,7 @@ void KinematicsList::print() {
         KinematicsNode* n = head;
         for (int i = 0; i < cnt; i++)
         {
-        	geometry_msgs::Pose p;
+        	geometry_msgs::msg::Pose p;
         	n->node->getPose(p);
             std::cout << "    " << n->id << "," << p.position.x << "," << p.position.y << "," << p.position.z;
             n = n->next;

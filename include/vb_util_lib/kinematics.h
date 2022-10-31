@@ -14,26 +14,25 @@
 #include <sys/types.h>
 #include <string.h>
 
-#include <ros/ros.h>
-#include <std_msgs/Header.h>
-#include <geometry_msgs/Vector3.h>
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/PoseWithCovarianceStamped.h>
-#include <geometry_msgs/Twist.h>
-#include <geometry_msgs/TwistStamped.h>
-#include <nav_msgs/Odometry.h>
-#include <tf/transform_datatypes.h>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/header.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
+#include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
+#include <geometry_msgs/msg/pose.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
+#include <geometry_msgs/msg/twist.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <tf2/transform_datatypes.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <Eigen/StdVector>
-#include <Eigen/Geometry>
-//#include <brain_box_msgs/VxKinematics.h>
-#include <visualization_msgs/Marker.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <eigen3/Eigen/StdVector>
+#include <eigen3/Eigen/Geometry>
+#include <visualization_msgs/msg/marker.hpp>
 
 #include <vb_util_lib/topics.h>
 #include <vb_util_lib/control_util.h>
@@ -64,15 +63,15 @@ public:
 		COMPLETE = 0xf7
 	};
 
-    Kinematics();
-    Kinematics(ros::NodeHandle *n, std::string topic, std::string frame_id,
+    Kinematics(rclcpp::Node::SharedPtr node);
+    Kinematics(rclcpp::Node::SharedPtr node, std::string topic, std::string frame_id,
                bool pub_on_change=false, double pub_rate=0.0);
-    Kinematics(const geometry_msgs::PoseStamped& p);
-    Kinematics(const geometry_msgs::PoseStamped& p, const std::string id);
+    Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p);
+    Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p, const std::string id);
 
     virtual ~Kinematics();
 
-    void initROS(ros::NodeHandle *n);
+    void initROS(rclcpp::Node::SharedPtr node);
 
     bool isInitializedState(unsigned int mask) const {
     	return (pose_initialized_ & mask) == mask;
@@ -81,53 +80,53 @@ public:
      * General setters. Will maintain consistency between the pose with quaternions
      * and the vehcile attitude which is RPY. Whenever you set one the other get calculated
      */
-    void setPose(const geometry_msgs::PoseStamped& p, int debug=-1) {
+    void setPose(const geometry_msgs::msg::PoseStamped& p, int debug=-1) {
         setPose(p.header.frame_id, p.header.stamp, p.pose, debug);
     }
-    void setPose(const geometry_msgs::PoseWithCovarianceStamped& p, int debug=-1) {
+    void setPose(const geometry_msgs::msg::PoseWithCovarianceStamped& p, int debug=-1) {
         setPose(p.header.frame_id, p.header.stamp, p.pose.pose, debug);
     }
-    void setPose(const std_msgs::Header& h, const geometry_msgs::Pose& p, int debug=-1) {
+    void setPose(const std_msgs::msg::Header& h, const geometry_msgs::msg::Pose& p, int debug=-1) {
         setPose(h.frame_id, h.stamp, p, debug);
     }
-	void setPose(const ros::Time& update_time, double X, double Y, double Z,
+	void setPose(const rclcpp::Time& update_time, double X, double Y, double Z,
 			double Qw, double Qx, double Qy, double Qz, int debug=-1) {
 		setPose(frame_id_, update_time, X, Y, Z, Qw, Qx, Qy, Qz, debug);
 	}
 
-	void setPose(const std::string& source_frame, const ros::Time& update_time, double X, double Y, double Z,
+	void setPose(const std::string& source_frame, const rclcpp::Time& update_time, double X, double Y, double Z,
 			double Qw, double Qx, double Qy, double Qz, int debug=-1);
 
-    void setOdometry(const nav_msgs::Odometry::ConstPtr& msg, int debug=-1) {
+    void setOdometry(const nav_msgs::msg::Odometry::SharedPtr& msg, int debug=-1) {
     	setPose(msg->child_frame_id, msg->header.stamp, msg->pose.pose, debug);
         setLinearVelocity(msg->twist.twist.linear);
         setAngularVelocity(msg->twist.twist.angular);
     }
-    void setOdometry(nav_msgs::Odometry& msg, int debug=-1) {
+    void setOdometry(nav_msgs::msg::Odometry& msg, int debug=-1) {
     	setPose(msg.child_frame_id, msg.header.stamp, msg.pose.pose, debug);
         setLinearVelocity(msg.twist.twist.linear);
         setAngularVelocity(msg.twist.twist.angular);
     }
 
-    void getPose(geometry_msgs::Pose& p);
+    void getPose(geometry_msgs::msg::Pose& p);
     // Get this position in the desired frame
-    bool getPoseStamped(std::string& target_frame_id, geometry_msgs::PoseStamped& ps);
-    void getOdometry(nav_msgs::Odometry& ms);
+    bool getPoseStamped(std::string& target_frame_id, geometry_msgs::msg::PoseStamped& ps);
+    void getOdometry(nav_msgs::msg::Odometry& ms);
 
     /*
      * The following setters set the core attributes without regard to the frame of reference.
      * Therefore it assumes that the coordinates are in the same frame as this object.
      * Does not update the velocity.
      */
-    void setPosition(const ros::Time& update_time, const geometry_msgs::Point& p, int debug=-1) {
+    void setPosition(const rclcpp::Time& update_time, const geometry_msgs::msg::Point& p, int debug=-1) {
     	setPosition(update_time, p.x, p.y, p.z, debug);
     }
-    void setPosition(const ros::Time& update_time, const AM::Point& p, int debug=-1) {
+    void setPosition(const rclcpp::Time& update_time, const AM::Point& p, int debug=-1) {
     	setPosition(update_time, p.x, p.y, p.z, debug);
     }
-    void setPosition(const ros::Time& update_time, double x, double y, double z, int debug=-1);
+    void setPosition(const rclcpp::Time& update_time, double x, double y, double z, int debug=-1);
     void checkPosition(double x, double y, double z, int debug=-1);
-    void setAltitude(const ros::Time& update_time, double a) {
+    void setAltitude(const rclcpp::Time& update_time, double a) {
     	position_.z = a;
     	setUpdateTime(update_time, 0);
     }
@@ -135,7 +134,7 @@ public:
         return position_;
     }
 
-    void setAttitude(const ros::Time& update_time, double Qw, double Qx, double Qy, double Qz, bool yaw_corrected=true) {
+    void setAttitude(const rclcpp::Time& update_time, double Qw, double Qx, double Qy, double Qz, bool yaw_corrected=true) {
     	setOrientation(Qw, Qx, Qy, Qz, yaw_corrected);
     	setUpdateTime(update_time, 1);
     }
@@ -158,13 +157,13 @@ public:
         return orientation_;
     }
 
-    void setVelocity(const geometry_msgs::Vector3& linear, const geometry_msgs::Vector3& angular);
+    void setVelocity(const geometry_msgs::msg::Vector3& linear, const geometry_msgs::msg::Vector3& angular);
     void setVelocity(const Eigen::Vector3d& linear, const Eigen::Vector3d& angular);
 
     void setAngularVelocity(const Eigen::Vector3d& vel) {
     	setAngularVelocity(vel[0], vel[1], vel[2]);
     }
-    void setAngularVelocity(const geometry_msgs::Vector3& vel) {
+    void setAngularVelocity(const geometry_msgs::msg::Vector3& vel) {
     	setAngularVelocity(vel.x, vel.y, vel.z);
     }
     void setAngularVelocity(double x, double y, double z);
@@ -174,7 +173,7 @@ public:
     void setLinearVelocity(const Eigen::Vector3d& vel) {
         setLinearVelocity(vel[0], vel[1], vel[2]);
     }
-    void setLinearVelocity(const geometry_msgs::Vector3& vel) {
+    void setLinearVelocity(const geometry_msgs::msg::Vector3& vel) {
         setLinearVelocity(vel.x, vel.y, vel.z);
     }
     void setLinearVelocity(double x, double y, double z);
@@ -204,7 +203,7 @@ public:
         pose_initialized_ = 0;
     }
 
-    ros::Time getUpdateTime() const {
+    rclcpp::Time getUpdateTime() const {
         return update_time_;
     }
 
@@ -262,7 +261,7 @@ public:
         log_enabled_ = logEnabled;
     }
 
-    nav_msgs::Odometry& getMsg() {
+    nav_msgs::msg::Odometry& getMsg() {
         return msg_;
     }
 
@@ -283,15 +282,15 @@ public:
 	}
 
 protected:
-    ros::NodeHandle *nh_;
+    rclcpp::Node::SharedPtr nh_;
 
-    void setUpdateTime(const ros::Time& updateTime, int source) {
+    void setUpdateTime(const rclcpp::Time& updateTime, int source) {
     	update_time_cnt_++;
-    	if (updateTime.toSec() == update_time_.toSec())
+    	if (updateTime.seconds() == update_time_.seconds())
     	{
             duplicate_time_cnt_++;
-    		ROS_WARN_THROTTLE(15,"Kinematics::setUpdateTime duplicated now[%f] source[%d] time_cnt[%lu] dup_time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]",
-    				ros::Time::now().toSec(), source, update_time_cnt_, duplicate_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
+    		//RCLCPP_WARN_THROTTLE(nh_->get_logger(), nh_->get_clock(), 15,"Kinematics::setUpdateTime duplicated now[%f] source[%d] time_cnt[%lu] dup_time_cnt[%lu] update_cnt[%lu] new time[%f] same as previous time[%f]",
+    				//nh_->get_clock()::now().seconds(), source, update_time_cnt_, duplicate_time_cnt_, update_cnt_, updateTime.toSec(), update_time_.toSec());
     	}
         update_time_ = updateTime;
     }
@@ -319,7 +318,7 @@ private:
 
     // This is the core methods to set the pose taking into account the frame of the data as compared to the frame
     //   of this kinematics object.
-    void setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug=-1) {
+    void setPose(const std::string& source_frame, const rclcpp::Time& update_time, const geometry_msgs::msg::Pose& p, int debug=-1) {
     	setPose(source_frame, update_time, p.position.x, p.position.y, p.position.z,
     			p.orientation.w, p.orientation.x, p.orientation.y, p.orientation.z, debug);
     }
@@ -332,7 +331,7 @@ private:
     }
     void setAttitude(double roll, double pitch, double yaw, bool yaw_corrected=true, double throttle=0.0);
 
-    void setAttitude(const geometry_msgs::Quaternion& q, bool yaw_corrected=true) {
+    void setAttitude(const geometry_msgs::msg::Quaternion& q, bool yaw_corrected=true) {
     	setOrientation(q.w, q.x, q.y, q.z, yaw_corrected);
     }
     void setAttitude(const Eigen::Quaterniond& q, bool yaw_corrected=true) {
@@ -391,13 +390,13 @@ private:
     /**
      *  message caches
      */
-    geometry_msgs::Pose p_;
-    geometry_msgs::PoseStamped ps_;
+    geometry_msgs::msg::Pose p_;
+    geometry_msgs::msg::PoseStamped ps_;
 
     /**
      * Update time of the Kinematics
      */
-    ros::Time update_time_;
+    rclcpp::Time update_time_;
     /**
      * Incremented when the time is updated
      */
@@ -452,31 +451,31 @@ private:
     bool publisher_ {false};
 
     bool ros_init_ {false};
-    ros::Publisher pub_nh_;
-    ros::Subscriber sub_nh_;
-    ros::Timer pub_timer_;
+    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pub_nh_;
+    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_nh_;
+    rclcpp::TimerBase::SharedPtr pub_timer_;
 
     /**
      * Watchdog related stuff
      */
-    ros::Timer watchdog_timer_;
+    rclcpp::TimerBase::SharedPtr watchdog_timer_;
     bool enable_watchdog_ {true};
     bool update_stale_ {false};
-    void watchdogTimerCB(const ros::TimerEvent& te);
+    void watchdogTimerCB();
 
     /**
      * Timer callback for publishing stats messages
      */
-    void publishTimerCB(const ros::TimerEvent& te) {
+    void publishTimerCB() {
         sendKinematics();
     }
 
     /**
      * Callback to handle updates to Kinematics
      */
-    nav_msgs::Odometry msg_;
+    nav_msgs::msg::Odometry msg_;
     bool log_enabled_ {false};
-    void updateCB(const nav_msgs::Odometry::ConstPtr& msg);
+    void updateCB(const nav_msgs::msg::Odometry::SharedPtr msg);
 
     // Debug flag
     bool debug_ {false};
@@ -487,8 +486,8 @@ private:
      */
     bool rviz_debug_ {false};
     unsigned long rviz_point_cnt {0};
-    visualization_msgs::Marker marker;
-    ros::Publisher rviz_uav_marker_pub_;
+    visualization_msgs::msg::Marker marker;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr rviz_uav_marker_pub_;
 };
 
 #endif /* BRAIN_BOX_SRC_AM_SP_KINEMATICS_H_ */

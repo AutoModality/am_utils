@@ -11,16 +11,16 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 #include <vb_util_lib/key_value_stamped.h>
-#include <brain_box_msgs/KeyValue.h>
+#include <brain_box_msgs/msg/key_value.hpp>
 
 #define PARAM_UPDATE_TOPIC "/param_update"
 
 class ParamUpdate {
 public:
 //	ParamUpdate();
-	ParamUpdate(ros::NodeHandle& nh, bool publisher=false);
+	ParamUpdate(rclcpp::Node::SharedPtr nh, bool publisher=false);
 	virtual ~ParamUpdate();
 
 	void addParam(std::string key, KeyValueType type, bool save_default = false) {
@@ -103,11 +103,11 @@ public:
 	}
 
 private:
-	ros::NodeHandle* nh_;
+	rclcpp::Node::SharedPtr nh_;
 	bool publisher_ {false};
 
     void addParam(std::string key, KeyValueType type, bool save_default, std::vector<KeyValueStamped>& param_list) {
-    	KeyValueStamped kv(key, type);
+    	KeyValueStamped kv(nh_, key, type);
     	addParam(kv, save_default, param_list);
     }
     void addParam(KeyValueStamped& kv, bool save_default, std::vector<KeyValueStamped>& param_list);
@@ -119,8 +119,8 @@ private:
     bool updateDefaultParams();
     KeyValueStamped* findParam(KeyValueStamped& kvs);
 
-	ros::Publisher pub_;
-	ros::Subscriber sub_;
+	rclcpp::Publisher<brain_box_msgs::msg::KeyValue>::SharedPtr pub_;
+	rclcpp::Subscription<brain_box_msgs::msg::KeyValue>::SharedPtr sub_;
 	bool ros_init_ {false};
 
 	KeyValueStamped latest_update_;
@@ -136,7 +136,7 @@ private:
      */
     std::function<void(KeyValueStamped&)> callback_ {NULL};
 
-    void paramUpdateCB(const brain_box_msgs::KeyValue::ConstPtr& msg);
+    void paramUpdateCB(const brain_box_msgs::msg::KeyValue::SharedPtr msg);
 };
 
 #endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_PARAM_UPDATE_H_ */

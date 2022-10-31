@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 #include <string>
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 //#include <sensor_msgs/Joy.h>
 //#include <mavros_msgs/RCIn.h>
 
@@ -121,7 +121,7 @@ class rc_mapper
         eEndOfRCTypes
     };
 
-    rc_mapper(ros::NodeHandle n);
+    rc_mapper(rclcpp::Node::SharedPtr n);
     
     virtual ~rc_mapper();
 
@@ -145,7 +145,7 @@ class rc_mapper
     RC_TYPES GetSetRC(void);
 
     private:
-        ros::NodeHandle m_Handle;
+        rclcpp::Node::SharedPtr m_Handle;
         RC_TYPES m_SetRC; 
         std::string m_RCType;
         std::string m_RCTypeNames[eEndOfRCTypes];

@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include "rc_mapper.h"
 //#include <dji_sdk/RCChannels.h>
-#include <ros/ros.h>
-#include <sensor_msgs/Joy.h>
-#include <mavros_msgs/RCIn.h>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/joy.hpp>
+#include <mavros_msgs/msg/rc_in.hpp>
 
 #define MAX_DJI_CONTROL 10000.0
 
@@ -43,12 +43,12 @@ enum class RC_TYPE
 class RC_Controls 
 {
 public:
-    RC_Controls();
-    RC_Controls(ros::NodeHandle& n, RC_TYPE type = RC_TYPE::UNKNOWN);
+    RC_Controls(rclcpp::Node::SharedPtr node);
+    RC_Controls(rclcpp::Node::SharedPtr node, RC_TYPE type = RC_TYPE::UNKNOWN);
 
     virtual ~RC_Controls();
 
-    void setSubscriber(ros::NodeHandle& n);
+    void setSubscriber(rclcpp::Node::SharedPtr node);
 
     /**
      * Install a callback handler.
@@ -74,7 +74,7 @@ public:
     double roll {0.0};
     double pitch {0.0};
 
-    ros::Time stamp;
+    rclcpp::Time stamp;
     rc_mapper* rc_mapper_;
 
 //    const double MAX_DJI_CONTROL {10000.0};
@@ -84,6 +84,9 @@ public:
 //    RC_Controls& operator= ( const RC_Controls & ) = default;
 
 private:
+
+    rclcpp::Node::SharedPtr node_;
+
     // RC Controller raw values
     double mode_ {0.0};
     double gear_ {0.0};
@@ -122,25 +125,25 @@ private:
     std::function<void(RC_Controls*)> callback_ {NULL};
 
     // DJI callback functions
-    void djiRemoteCB(const sensor_msgs::Joy::ConstPtr&  msg);
-    ros::Subscriber dji_rc_channels_sub_;
-    void setDJIControls(const sensor_msgs::Joy::ConstPtr&  msg);
+    void djiRemoteCB(const sensor_msgs::msg::Joy::SharedPtr msg);
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr dji_rc_channels_sub_;
+    void setDJIControls(const sensor_msgs::msg::Joy::SharedPtr  msg);
     bool setDJIModeSwitch(double mode_switch, RC_MODE& state);
     bool setDJIGearSwitch(double gear_switch, RC_GEAR& state);
     void setDJIStickValue(double input, double& state) { state = input; }
 
     // Logitech callback functions
-    void logitechRemoteCB(const sensor_msgs::Joy::ConstPtr&  msg);
-    ros::Subscriber logitech_rc_channels_sub_;
-    void setLogitechControls(const sensor_msgs::Joy::ConstPtr&  msg);
+    void logitechRemoteCB(const sensor_msgs::msg::Joy::SharedPtr  msg);
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr logitech_rc_channels_sub_;
+    void setLogitechControls(const sensor_msgs::msg::Joy::SharedPtr msg);
     bool setLogitechModeSwitch(double mode_switch, RC_MODE& state);
     bool setLogitechGearSwitch(double gear_switch, RC_GEAR& state);
     void setLogitechStickValue(double input, double& state) { state = input; }
 
     // PX4 callback functions
-    void px4RemoteCB(const mavros_msgs::RCIn::ConstPtr&  msg);
-    ros::Subscriber px4_rc_channels_sub_;
-    void setPX4Controls(const mavros_msgs::RCIn::ConstPtr&  msg);
+    void px4RemoteCB(const mavros_msgs::msg::RCIn::SharedPtr  msg);
+    rclcpp::Subscription<mavros_msgs::msg::RCIn>::SharedPtr  px4_rc_channels_sub_;
+    void setPX4Controls(const mavros_msgs::msg::RCIn::SharedPtr  msg);
     bool setPX4ModeSwitch(double mode_switch, RC_MODE& state);
     bool setPX4GearSwitch(double gear_switch, RC_GEAR& state);
     bool setPX4ArmSwitch(double arm_switch, bool& state);

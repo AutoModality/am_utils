@@ -14,8 +14,8 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/unordered_map.hpp>
 
-#include <ros/ros.h>
-#include <brain_box_msgs/KeyValue.h>
+#include <rclcpp/rclcpp.hpp>
+#include <brain_box_msgs/msg/key_value.hpp>
 
 // Currently limited number of parameter types handled
 enum class KeyValueType{INT=0, BOOL, DOUBLE, STRING};
@@ -24,34 +24,34 @@ extern const boost::unordered_map<KeyValueType, std::string> param_type_2_string
 
 class KeyValueStamped {
 public:
-	KeyValueStamped() {};
+	KeyValueStamped(rclcpp::Node::SharedPtr node): node_(node) {};
 
-	KeyValueStamped(const brain_box_msgs::KeyValue::ConstPtr& msg);
+	KeyValueStamped(rclcpp::Node::SharedPtr node, const brain_box_msgs::msg::KeyValue::SharedPtr msg);
 
-	KeyValueStamped(std::string key, KeyValueType type);
+	KeyValueStamped(rclcpp::Node::SharedPtr node, std::string key, KeyValueType type);
 
-	KeyValueStamped(std::string key) : key_(key), type_(KeyValueType::STRING) {
-		stamp_ = ros::Time::now();
+	KeyValueStamped(rclcpp::Node::SharedPtr node, std::string key) : node_(node), key_(key), type_(KeyValueType::STRING) {
+		stamp_ = node_->get_clock()->now();
 	};
 
 	KeyValueStamped(std::string key, std::string val) : key_(key), type_(KeyValueType::STRING) {
 		setValue(val);
-		stamp_ = ros::Time::now();
+		stamp_ = node_->get_clock()->now();
 	};
 
 	KeyValueStamped(std::string key, bool val) : key_(key), type_(KeyValueType::BOOL), bool_value_(val) {
 		setValue(val);
-		stamp_ = ros::Time::now();
+		stamp_ = node_->get_clock()->now();
 	};
 
 	KeyValueStamped(std::string key, int val) : key_(key), type_(KeyValueType::INT), int_value_(val) {
 		setValue(val);
-		stamp_ = ros::Time::now();
+		stamp_ = node_->get_clock()->now();
 	};
 
 	KeyValueStamped(std::string key, double val) : key_(key), type_(KeyValueType::DOUBLE), double_value_(val) {
 		setValue(val);
-		stamp_ = ros::Time::now();
+		stamp_ = node_->get_clock()->now();
 	};
 
 	virtual ~KeyValueStamped() {};
@@ -113,7 +113,7 @@ public:
 		type_ = type;
 	}
 
-	void sendParam(ros::Publisher& pub);
+	void sendParam(rclcpp::Publisher<brain_box_msgs::msg::KeyValue>::SharedPtr pub);
 
     void print(std::string prefix);
 
@@ -135,9 +135,11 @@ public:
 		return db_init_;
 	}
 
-	bool saveDefault(ros::NodeHandle& nh);
+	bool saveDefault(rclcpp::Node::SharedPtr node);
 
 private:
+
+	rclcpp::Node::SharedPtr node_;
 
 	std::string key_ {""};
 
@@ -152,7 +154,7 @@ private:
 
     KeyValueType type_ {KeyValueType::STRING};
 
-	ros::Time stamp_;
+	rclcpp::Time stamp_;
 
 	bool updated_ {false};
 };

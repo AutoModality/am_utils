@@ -6,20 +6,21 @@
 #ifndef BRAIN_BOX_SRC_AM_SP_OBJECT_STATE_H_
 #define BRAIN_BOX_SRC_AM_SP_OBJECT_STATE_H_
 
-#include "math.h"
-#include "geometry_msgs/Pose.h"
-#include "geometry_msgs/PoseStamped.h"
-#include "geometry_msgs/Twist.h"
-#include "geometry_msgs/TwistStamped.h"
-#include "geometry_msgs/Quaternion.h"
+#include <math.h>
+#include <geometry_msgs/msg/pose.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <geometry_msgs/msg/twist.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
 
-#include "vb_util_lib/control_util.h"
-#include "vb_util_lib/kinematics.h"
-#include "vb_util_lib/kinematics_list.h"
+#include <vb_util_lib/control_util.h>
+#include <vb_util_lib/kinematics.h>
+#include <vb_util_lib/kinematics_list.h>
+#include <rclcpp/rclcpp.hpp>
 
 class ObjectState {
 public:
-	ObjectState(ros::NodeHandle *n);
+	ObjectState(rclcpp::Node::SharedPtr n);
 	virtual ~ObjectState();
 
 	// Current actual object kinematics
@@ -34,7 +35,7 @@ public:
 	// Target setpoint
 	Kinematics target_setpoint_ENU;
 	// Target origin
-	geometry_msgs::Pose target_origin_ENU;
+	geometry_msgs::msg::Pose target_origin_ENU;
 
 	// List of targets
 	KinematicsList target_list_RFU;
@@ -42,12 +43,12 @@ public:
 	void calculateTargetENU();
 
 	void setTargetOrigin();
-	geometry_msgs::Pose getTargetCurrentENUWRTOrigin();
+	geometry_msgs::msg::Pose getTargetCurrentENUWRTOrigin();
 
 	/*
 	 * Routines for logging state data
 	 */
-	void publishRPY(ros::Publisher topic, ros::Time t,
+	void publishRPY(rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr topic, rclcpp::Time t,
 			double roll, double pitch, double yaw, double throttle);
 	void dumpDebug();
 
@@ -56,17 +57,17 @@ public:
 	}
 
 protected:
-	ros::NodeHandle *rosNode;
+	rclcpp::Node::SharedPtr rosNode;
 
 private:
 	// Current target state
 	Kinematics target_current_RFU;
 
-	void initROS(ros::NodeHandle *n);
+	void initROS(rclcpp::Node::SharedPtr n);
 
-	ros::Publisher currentAttPub;
-	ros::Publisher commandAttPub;
-	ros::Publisher setpointPub;
+	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr currentAttPub;
+	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr commandAttPub;
+	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr setpointPub;
 
 };
 

@@ -7,6 +7,7 @@
 
 #include <vb_util_lib/task_trigger.h>
 #include <vb_util_lib/gps_util.h>
+#include <iostream>
 
 TaskTrigger::TaskTrigger() {
     conditions_.location_.error = -1.0;
@@ -47,7 +48,7 @@ bool TaskTrigger::loadJSON(Json::Value& fp) {
             !conditions_.FCU_connected_)
     {
         // no condition for trigger
-        ROS_WARN("    No condition for trigger, always true");
+        std::cout << "    No condition for trigger, always true" << std::endl;
     }
 
 //    printTriggers("", trigger_);

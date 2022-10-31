@@ -33,6 +33,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 pkg_check_modules(jsoncpp REQUIRED jsoncpp)
 
@@ -64,7 +65,6 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 
 					 src/vb_util_lib/am_geometry.cpp
 					 src/vb_util_lib/topics.cpp
-					 src/vb_util_lib/rotate.cpp
 					 src/vb_util_lib/am_heartbeat.cpp
 					 src/vb_util_lib/am_histogram.cpp
 					 src/vb_util_lib/am_param.cpp
@@ -81,6 +81,21 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/gis_util.cpp
 					 src/vb_util_lib/gps_location.cpp
 					 src/vb_util_lib/imu_class.cpp
+					 src/vb_util_lib/key_value_stamped.cpp
+					 src/vb_util_lib/kinematics.cpp
+					 src/vb_util_lib/kinematics_list.cpp
+					 src/vb_util_lib/location_source.cpp
+					 src/vb_util_lib/message.cpp
+					 src/vb_util_lib/msg_data.cpp
+					 src/vb_util_lib/msg_head.cpp
+					 src/vb_util_lib/object_state.cpp
+					 src/vb_util_lib/param_update.cpp
+					 src/vb_util_lib/rc_controls.cpp
+					 src/vb_util_lib/rc_mapper.cpp
+					 src/vb_util_lib/rotate.cpp
+				     src/vb_util_lib/row_marker.cpp
+				     src/vb_util_lib/task_trigger.cpp
+				     src/vb_util_lib/time_synchronizer.cpp
 					 #src/vb_util_lib/bag_logger.cpp
 					 )
 ament_target_dependencies(am_utils geometry_msgs brain_box_msgs PCL)

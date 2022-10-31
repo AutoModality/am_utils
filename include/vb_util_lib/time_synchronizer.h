@@ -17,17 +17,17 @@
 
 #define BUFFER_LENGTH 256               ///< The buffer length (crude but fine)
 
-#include <ros/ros.h>
-#include <brain_box_msgs/StampedInterruptTime.h>
+#include <rclcpp/rclcpp.hpp>
+#include <brain_box_msgs/msg/stamped_interrupt_time.hpp>
 
 class TimeSynchronizer
 {
 public:
-	TimeSynchronizer();
+	TimeSynchronizer(rclcpp::Node::SharedPtr node);
 
 	~TimeSynchronizer();
 
-	void timerSynchronizerPollCallback(const ros::TimerEvent& event);
+	void timerSynchronizerPollCallback();
 
 	int getStatusInterrupt(void);
 	int setStatusInterrupt(bool status_interrupt);
@@ -39,10 +39,10 @@ public:
 	int setPollRate(double poll_rate);
 
 private:
-	brain_box_msgs::StampedInterruptTime stamped_interrupt_time_; // message of sampling rate of lw20 altimeter
-	ros::NodeHandle n_;
-	ros::Publisher time_synchronizer_pub_;
-	ros::Timer timer_synchronizer_poll_;
+	brain_box_msgs::msg::StampedInterruptTime stamped_interrupt_time_; // message of sampling rate of lw20 altimeter
+	rclcpp::Node::SharedPtr n_;
+	rclcpp::Publisher<brain_box_msgs::msg::StampedInterruptTime>::SharedPtr time_synchronizer_pub_;
+	rclcpp::TimerBase::SharedPtr timer_synchronizer_poll_;
 	int fd_;
 	double time_interrupt_;
 	int num_interrupts_;

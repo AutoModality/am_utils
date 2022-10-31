@@ -8,12 +8,12 @@
 #ifndef VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_LOCATION_SOURCE_H_
 #define VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB_LOCATION_SOURCE_H_
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <vector>
 #include <map>
-#include <brain_box_msgs/LocationSource.h>
+#include <brain_box_msgs/msg/location_source.hpp>
 
 //#include <boost/assign/list_of.hpp>
 //#include <boost/unordered_map.hpp>
@@ -235,14 +235,14 @@ private:
     bool orientation_source_set_ {false};
 
     /// Used to receive location source messages
-    ros::Subscriber location_source_sub_;
+    rclcpp::Subscription<brain_box_msgs::msg::LocationSource>::SharedPtr location_source_sub_;
 
     /// Used to receive location source messages
-    ros::Subscriber location_source_pub_;
-    void locationSourceCB(const brain_box_msgs::LocationSource::ConstPtr& msg);
+    //ros::Subscriber location_source_pub_;
+    void locationSourceCB(const brain_box_msgs::msg::LocationSource::SharedPtr msg);
 
     /// Update the vector of control states with the message just received
-    void updateLocationSource(const brain_box_msgs::LocationSource::ConstPtr& msg);
+    void updateLocationSource(const brain_box_msgs::msg::LocationSource::SharedPtr msg);
 
     /// List of all the features being used for localization purposes
     std::vector<FeatureSource>features_;

@@ -9,26 +9,33 @@
 // #include <vb_util_lib/bag_logger.h> // TODO (dan) bag_logger
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <math.h>
+#include <am_utils/am_ros2_utility.h>
+#include <vb_util_lib/rotate.h>
 
-Kinematics::Kinematics() {
+using std::placeholders::_1;
+
+Kinematics::Kinematics(rclcpp::Node::SharedPtr node) : nh_(node), transformer_(node)
+{
 	_init();
 }
 
-Kinematics::Kinematics(ros::NodeHandle *n, std::string topic, std::string frame_id,
+Kinematics::Kinematics(rclcpp::Node::SharedPtr n, std::string topic, std::string frame_id,
         bool pub_on_change, double pub_rate) :  nh_(n),
-        topic_(topic), frame_id_(frame_id), pub_on_change_(pub_on_change), pub_rate_(pub_rate) {
+        topic_(topic), frame_id_(frame_id), pub_on_change_(pub_on_change), pub_rate_(pub_rate), transformer_(n)
+{
     _init();
     initROS(n);
 }
 
-Kinematics::Kinematics(const geometry_msgs::PoseStamped& p) :
-		frame_id_(p.header.frame_id) {
+Kinematics::Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p) : nh_(node),
+		frame_id_(p.header.frame_id), transformer_(node)
+{
 	_init();
 	setPose(p);
 }
 
-Kinematics::Kinematics(const geometry_msgs::PoseStamped& p, const std::string id) :
-		frame_id_(p.header.frame_id) {
+Kinematics::Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p, const std::string id) :
+		frame_id_(p.header.frame_id), nh_(node), transformer_(node) {
 	_init();
 	setPose(p);
 	object_id_ = id;
@@ -44,24 +51,23 @@ void Kinematics::_init() {
 	velLinear_[2] = 0.0;
 }
 
-void Kinematics::initROS(ros::NodeHandle *n) {
+void Kinematics::initROS(rclcpp::Node::SharedPtr n) {
     if (pub_on_change_ || pub_rate_ > 0.0)
     {
         publisher_ = true;
-        pub_nh_ = n->advertise<nav_msgs::Odometry>(topic_.c_str(), 1000);
-//        pub_nh_ = n->advertise<brain_box_msgs::VxKinematics>(topic_.c_str(), 1000);
+        pub_nh_ = n->create_publisher<nav_msgs::msg::Odometry>(topic_.c_str(), 1000);
+//        pub_nh_ = n->create_publisher<brain_box_msgs::msg::VxKinematics>(topic_.c_str(), 1000);
     }
     else
     {
         publisher_ = false;
-        sub_nh_ = n->subscribe<nav_msgs::Odometry>(topic_.c_str(), 1000,
-                &Kinematics::updateCB, this);
+        sub_nh_ = n->create_subscription<nav_msgs::msg::Odometry>(topic_.c_str(), 1000,
+                std::bind(&Kinematics::updateCB, this, _1));
     }
 
     if (pub_rate_ > 0)
     {
-        pub_timer_ = n->createTimer(ros::Duration(pub_rate_), &Kinematics::publishTimerCB, this);
-        pub_timer_.start();
+    	pub_timer_ = n->create_wall_timer(am::toDuration(pub_rate_), std::bind(&Kinematics::publishTimerCB, this));
     }
 
     if (isPublisher())
@@ -70,37 +76,32 @@ void Kinematics::initROS(ros::NodeHandle *n) {
 
     // Set up the watchdog stuff
     // RVIZ debug display
-    n->param("/Debug/kinematics_watchdog", enable_watchdog_, true);
-    ROS_INFO("Kinematics: kinematics_watchdog[%s]", enable_watchdog_ ? "TRUE" : "FALSE");
-    watchdog_timer_ = n->createTimer(ros::Duration(0.5), &Kinematics::watchdogTimerCB, this);
-    if (!enable_watchdog_)
+    n->get_parameter_or("/Debug/kinematics_watchdog", enable_watchdog_, true);
+    RCLCPP_INFO(n->get_logger(), "Kinematics: kinematics_watchdog[%s]", enable_watchdog_ ? "TRUE" : "FALSE");
+    if (enable_watchdog_)
     {
-    	watchdog_timer_.stop();
-    }
-    else
-    {
-    	watchdog_timer_.start();
+        watchdog_timer_ = n->create_wall_timer(am::toDuration(0.5), std::bind(&Kinematics::watchdogTimerCB, this));
     }
 
 
     ros_init_ = true;
 
     // RVIZ debug display
-    n->param("/Debug/vizualization", rviz_debug_, false);
+    n->get_parameter_or("/Debug/vizualization", rviz_debug_, false);
     if (rviz_debug_)
     {
-        ROS_INFO("Kinematics: rivz enabled");
-        rviz_uav_marker_pub_ = n->advertise<visualization_msgs::Marker>("/uav_marker", 1);
+        RCLCPP_INFO(n->get_logger(), "Kinematics: rivz enabled");
+        rviz_uav_marker_pub_ = n->create_publisher<visualization_msgs::msg::Marker>("/uav_marker", 1);
     }
 
-    n->param("/Debug/Kinematics/velocity_debug", enable_velocity_debug_, false);
+    n->get_parameter_or("/Kinematics/velocity_debug", enable_velocity_debug_, false);
 
     // Initialize the update time
-    setUpdateTime(ros::Time::now(), 5);
+    setUpdateTime(rclcpp::Clock{}.now(), 5);
 }
 
 //void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, const geometry_msgs::Pose& p, int debug) {
-void Kinematics::setPose(const std::string& source_frame, const ros::Time& update_time, double X, double Y, double Z,
+void Kinematics::setPose(const std::string& source_frame, const rclcpp::Time& update_time, double X, double Y, double Z,
 		double Qw, double Qx, double Qy, double Qz, int debug) {
 
 	if (source_frame == frame_id_)
@@ -111,12 +112,12 @@ void Kinematics::setPose(const std::string& source_frame, const ros::Time& updat
 	}
 	else
 	{
-		geometry_msgs::TransformStamped ts;
+		geometry_msgs::msg::TransformStamped ts;
 		if (!transformer_.getTransform(frame_id_, source_frame, ts))
 		{
-			ROS_ERROR("Kinematics::setPose : can't find transform target[%s] source[%s]", source_frame.c_str(), frame_id_.c_str());
+			RCLCPP_ERROR(nh_->get_logger(), "Kinematics::setPose : can't find transform target[%s] source[%s]", source_frame.c_str(), frame_id_.c_str());
 		}
-		geometry_msgs::PoseStamped ts_pt, cur_pt;
+		geometry_msgs::msg::PoseStamped ts_pt, cur_pt;
 		cur_pt.pose.position.x = X;
 		cur_pt.pose.position.y = Y;
 		cur_pt.pose.position.z = Z;
@@ -134,15 +135,18 @@ void Kinematics::setPose(const std::string& source_frame, const ros::Time& updat
 //		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TRANSFORM = \n" << ts);
 //		ROS_DEBUG_STREAM_COND(debug_ && publisher_, "XXXXXXXX TO POINT = \n" << ts_pt);
 	}
+	if(debug_ && publisher_)
+	{
+		RCLCPP_DEBUG(nh_->get_logger(), "XXXXXXXX FINAL XYZ[%0.2f  %0.2f  %0.2f]  RPY[%0.2f  %0.2f  %0.2f]",
+				position_.x, position_.y, position_.z,
+				attitude_.roll*(180.0/3.14159), attitude_.pitch*(180.0/3.14159), attitude_.yaw*(180.0/3.14159));
+	}
 
-	ROS_DEBUG_COND(debug_ && publisher_, "XXXXXXXX FINAL XYZ[%0.2f  %0.2f  %0.2f]  RPY[%0.2f  %0.2f  %0.2f]",
-			position_.x, position_.y, position_.z,
-			attitude_.roll*(180.0/3.14159), attitude_.pitch*(180.0/3.14159), attitude_.yaw*(180.0/3.14159));
 
 //    setUpdateTime(update_time);
 }
 
-void  Kinematics::getPose(geometry_msgs::Pose& p) {
+void  Kinematics::getPose(geometry_msgs::msg::Pose& p) {
     p.position.x = position_.x;
     p.position.y = position_.y;
     p.position.z = position_.z;
@@ -155,12 +159,12 @@ void  Kinematics::getPose(geometry_msgs::Pose& p) {
 }
 
 
-bool  Kinematics::getPoseStamped(std::string& target_frame_id, geometry_msgs::PoseStamped& ps) {
+bool  Kinematics::getPoseStamped(std::string& target_frame_id, geometry_msgs::msg::PoseStamped& ps) {
 
-	geometry_msgs::TransformStamped ts;
+	geometry_msgs::msg::TransformStamped ts;
 	if (!transformer_.getTransform(target_frame_id, frame_id_, ts, true))
 	{
-		ROS_ERROR("Kinematics::getPoseStamped : No transform from[%s] to[%s]", frame_id_.c_str(), target_frame_id.c_str());
+		RCLCPP_ERROR(nh_->get_logger(), "Kinematics::getPoseStamped : No transform from[%s] to[%s]", frame_id_.c_str(), target_frame_id.c_str());
 		return false;
 	}
 
@@ -177,12 +181,12 @@ bool  Kinematics::getPoseStamped(std::string& target_frame_id, geometry_msgs::Po
     return true;
 }
 
-void Kinematics::setPosition(const ros::Time& update_time, double x, double y, double z, int debug) {
+void Kinematics::setPosition(const rclcpp::Time& update_time, double x, double y, double z, int debug) {
 	checkPosition(x, y, z, debug);
 	setInitialized(POSE_STATE::XYZ);
 
 	// Calculate speed
-	double delta_t = update_time.toSec() - update_time_.toSec();
+	double delta_t = update_time.seconds() - update_time_.seconds();
 
 	if (update_cnt_ <= 0 || delta_t <= 0.0)
 	{
@@ -233,7 +237,7 @@ void Kinematics::checkPosition(double x, double y, double z, int debug) {
 			fabs(position_.y - y) > MAX_POS_ERR ||
 		    fabs(position_.z - z) > MAX_POS_ERR)
 		{
-			ROS_ERROR(">>> Kinematics hyperspace[%d] X[%0.2f : %0.2f] Y[%0.2f : %0.2f] Z[%0.2f : %0.2f] ",
+			RCLCPP_ERROR(nh_->get_logger(), ">>> Kinematics hyperspace[%d] X[%0.2f : %0.2f] Y[%0.2f : %0.2f] Z[%0.2f : %0.2f] ",
 					debug, position_.x, x, position_.y, y, position_.z, z);
 		}
 	}
@@ -292,8 +296,8 @@ void Kinematics::updateVelocity(double x, double y, double z, double t,
 		int debug) {
 }
 
-void Kinematics::setVelocity(const geometry_msgs::Vector3& linear,
-        const geometry_msgs::Vector3& angular) {
+void Kinematics::setVelocity(const geometry_msgs::msg::Vector3& linear,
+        const geometry_msgs::msg::Vector3& angular) {
     setLinearVelocity(linear);
     setAngularVelocity(angular);
 }
@@ -306,10 +310,10 @@ void Kinematics::setVelocity(const Eigen::Vector3d& linear,
 
 bool Kinematics::getLinearVelocity(std::string target_frame_id, Eigen::Vector3d& velocity) {
 
-	geometry_msgs::TransformStamped ts;
+	geometry_msgs::msg::TransformStamped ts;
 	if (!transformer_.getTransform(target_frame_id, frame_id_, ts, true))
 	{
-		ROS_ERROR("Kinematics::getLinearVelocity : No transform from[%s] to[%s]", frame_id_.c_str(), target_frame_id.c_str());
+		RCLCPP_ERROR(nh_->get_logger(), "Kinematics::getLinearVelocity : No transform from[%s] to[%s]", frame_id_.c_str(), target_frame_id.c_str());
 		return false;
 	}
 
@@ -346,7 +350,7 @@ void Kinematics::setLinearVelocity(double x, double y, double z) {
 	velLinear_[2] = z;
 }
 
-void Kinematics::getOdometry(nav_msgs::Odometry& ms) {
+void Kinematics::getOdometry(nav_msgs::msg::Odometry& ms) {
 	ms.pose.pose.position.x = position_.x;
 	ms.pose.pose.position.y = position_.y;
 	ms.pose.pose.position.z = position_.z;
@@ -502,15 +506,15 @@ void Kinematics::sendKinematics() {
         return;
     }
 
-    nav_msgs::Odometry ms;
+    nav_msgs::msg::Odometry ms;
 
     getOdometry(ms);
 //print(">>>>>>> SENDING KINEMATICS: ", true);
-    pub_nh_.publish(ms);
+    pub_nh_->publish(ms);
     // LOG_MSG(topic_, ms, 2); // TODO (dan) bag_logger
 }
 
-void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
+void Kinematics::updateCB(const nav_msgs::msg::Odometry::SharedPtr msg) {
     // LOG_MSG(topic_+"-R", msg, 2); // TODO (dan) bag_logger
     setUpdated(true);
 	setPosition(msg->header.stamp, msg->pose.pose.position);
@@ -535,12 +539,12 @@ void Kinematics::updateCB(const nav_msgs::Odometry::ConstPtr& msg) {
     }
 }
 
-void Kinematics::watchdogTimerCB(const ros::TimerEvent& te) {
-	ros::Duration d = ros::Time::now() - update_time_;
+void Kinematics::watchdogTimerCB() {
+	rclcpp::Duration d = nh_->get_clock()->now() - update_time_;
     update_stale_ = last_update_cnt_ == update_cnt_;
     if (update_stale_)
     {
-    	ROS_ERROR("ERROR: KINEMATICS WATCHDOG UPDATE STALE cnt[%ld]", update_cnt_);
+    	RCLCPP_ERROR(nh_->get_logger(), "ERROR: KINEMATICS WATCHDOG UPDATE STALE cnt[%ld]", update_cnt_);
     }
     last_update_cnt_ = update_cnt_;
 }
@@ -564,18 +568,18 @@ void Kinematics::test() {
 	double pitch = 1.1;
 	double yaw = 1.2;
 	double throttle = 3.1;
-	geometry_msgs::PoseStamped p;
-	p.header.stamp = ros::Time::now();
+	geometry_msgs::msg::PoseStamped p;
+	p.header.stamp = nh_->get_clock()->now();
 	p.header.frame_id = Asset_ENU;
 	p.pose.position.x = 5.1;
 	p.pose.position.y = 5.2;
 	p.pose.position.z = 5.3;
-	p.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
-	geometry_msgs::Vector3 vl;
+	p.pose.orientation = am::Rotate::toQuaternionMsg(roll, pitch, yaw);
+	geometry_msgs::msg::Vector3 vl;
 	vl.x = 10.0;
 	vl.y = 10.1;
 	vl.z = 10.2;
-	geometry_msgs::Vector3 van;
+	geometry_msgs::msg::Vector3 van;
 	van.x = 20.0;
 	van.y = 20.1;
 	van.z = 20.2;
@@ -586,11 +590,11 @@ void Kinematics::test() {
 	printf("          Linear velocity x:%f, y:%f, z:%f\n", van.x, van.y, van.z);
 
 	printf("Kinematics: setPosition - x,y,z\n");
-	setPosition(ros::Time::now(), p.pose.position.x, p.pose.position.y, p.pose.position.z);
+	setPosition(rclcpp::Clock().now(), p.pose.position.x, p.pose.position.y, p.pose.position.z);
 	print("TEST");
 
 	printf("Kinematics: setPosition - position\n");
-	setPosition(ros::Time::now(), p.pose.position);
+	setPosition(rclcpp::Clock().now(), p.pose.position);
 	print("TEST");
 
 	printf("Kinematics: setPose\n");
@@ -656,15 +660,15 @@ void Kinematics::publishMarker() {
     }
     if (rviz_point_cnt > 0)
     {
-        visualization_msgs::Marker line;
-        geometry_msgs::Point p;
+        visualization_msgs::msg::Marker line;
+        geometry_msgs::msg::Point p;
 
         line.header.frame_id = frame_id_;
-        line.header.stamp = ros::Time::now();
+        line.header.stamp = nh_->get_clock()->now();
         line.ns = "uav";
         line.id = rviz_point_cnt;
-        line.type = visualization_msgs::Marker::LINE_STRIP;
-        line.action = visualization_msgs::Marker::ADD;
+        line.type = visualization_msgs::msg::Marker::LINE_STRIP;
+        line.action = visualization_msgs::msg::Marker::ADD;
         // Set the scale of the marker -- 1x1x1 here means 1m on a side
         line.scale.x = 0.075;
 
@@ -674,7 +678,7 @@ void Kinematics::publishMarker() {
         line.color.b = 0.0f;
         line.color.a = 1.0;
 
-        line.lifetime = ros::Duration();
+        line.lifetime = rclcpp::Duration(0);
 
         p.x = marker.pose.position.x;
         p.y = marker.pose.position.y;
@@ -685,23 +689,23 @@ void Kinematics::publishMarker() {
         p.z = position().z;
         line.points.push_back(p);
 
-        rviz_uav_marker_pub_.publish(line);
+        rviz_uav_marker_pub_->publish(line);
     }
 
     // Send the current location to RVIZ
     marker.header.frame_id = frame_id_;
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp = nh_->get_clock()->now();
     marker.ns = "uav";
     marker.id = 0;
-    marker.type = visualization_msgs::Marker::ARROW;
-    marker.action = visualization_msgs::Marker::ADD;
+    marker.type = visualization_msgs::msg::Marker::ARROW;
+    marker.action = visualization_msgs::msg::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
     marker.pose.position.x = position().x;
     marker.pose.position.y = position().y;
     marker.pose.position.z = position().z;
     // translate roll, pitch and yaw into a Quaternion
-    tf::Quaternion q;
+    tf2::Quaternion q;
     //        q.setRPY(3.14159, 0.0, 0.0);
     //        geometry_msgs::Quaternion qt;
     //        tf::quaternionTFToMsg(q, qt);
@@ -709,8 +713,8 @@ void Kinematics::publishMarker() {
     q.setRPY(getAttitude().roll,
             getAttitude().pitch,
             getAttitude().yaw);
-    geometry_msgs::Quaternion odom_quat;
-    tf::quaternionTFToMsg(q, odom_quat);
+    geometry_msgs::msg::Quaternion odom_quat;
+    odom_quat = tf2::toMsg(q);
 
     marker.pose.orientation.x = odom_quat.x;
     marker.pose.orientation.y = odom_quat.y;
@@ -728,7 +732,7 @@ void Kinematics::publishMarker() {
     marker.color.b = 0.0f;
     marker.color.a = 0.9;
 
-    marker.lifetime = ros::Duration();
-    rviz_uav_marker_pub_.publish(marker);
+    marker.lifetime = rclcpp::Duration(0);
+    rviz_uav_marker_pub_->publish(marker);
     rviz_point_cnt++;
 }

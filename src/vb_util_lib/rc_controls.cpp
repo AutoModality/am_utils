@@ -46,20 +46,23 @@ using namespace am;
 
 #define DEADBAND 25
 
-RC_Controls::RC_Controls() {
+using std::placeholders::_1;
+
+RC_Controls::RC_Controls(rclcpp::Node::SharedPtr node): node_(node)
+{
 }
 
 RC_Controls::~RC_Controls() {
     // TODO Auto-generated destructor stub
 }
 
-RC_Controls::RC_Controls(ros::NodeHandle& n, RC_TYPE type) : rc_type_(type) 
+RC_Controls::RC_Controls(rclcpp::Node::SharedPtr node, RC_TYPE type): node_(node), rc_type_(type)
 {
-	rc_mapper_ = new rc_mapper(n);
-	setSubscriber(n);
+	rc_mapper_ = new rc_mapper(node);
+	setSubscriber(node);
 }
 
-void RC_Controls::setSubscriber(ros::NodeHandle& n) {
+void RC_Controls::setSubscriber(rclcpp::Node::SharedPtr node) {
 	// Initialize the min and max constants
 	/*n.param("/RC/max_value", MAX_VALUE_, MAX_VALUE_);
 	n.param("/RC/min_value", MIN_VALUE_, MIN_VALUE_);
@@ -69,17 +72,17 @@ void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 	if (rc_type == "DJI")
 	{
 		rc_type_ = RC_TYPE::DJI;
-		ROS_INFO("RC: rc_type[DJI]");
+		RCLCPP_INFO("RC: rc_type[DJI]");
 	}
 	else if (rc_type == "PX4")
 	{
 		rc_type_ = RC_TYPE::PX4;
-		ROS_INFO("RC: rc_type[PX4]");
+		RCLCPP_INFO("RC: rc_type[PX4]");
 	}
 	else if (rc_type == "ACSL")
 	{
 		rc_type_ = RC_TYPE::ACSL;
-		ROS_INFO("RC: rc_type[ACSL]");
+		RCLCPP_INFO("RC: rc_type[ACSL]");
 	}
 	else
 	{
@@ -149,23 +152,20 @@ void RC_Controls::setSubscriber(ros::NodeHandle& n) {
 	roll_sign_ 		= rc_mapper_->GetSign(rc_mapper::eRollSign);
 	pitch_sign_ 		= rc_mapper_->GetSign(rc_mapper::eRCPitch);
 
-	ROS_INFO("RC: RC Param Settings: throttle[%d], yaw[%d], roll[%d], pitch[%d], gear[%d], mode[%d], arm[%d], throttle_sign_[%d], yaw_sign_[%d], roll_sign_[%d], pitch_sign_[%d], max[%d], min[%d]", throttle_idx_, yaw_idx_, roll_idx_, pitch_idx_, gear_idx_, mode_idx_, arm_idx_, throttle_sign_, yaw_sign_, roll_sign_, pitch_sign_, MAX_VALUE_, MIN_VALUE_);
+	RCLCPP_INFO(node_->get_logger(), "RC: RC Param Settings: throttle[%d], yaw[%d], roll[%d], pitch[%d], gear[%d], mode[%d], arm[%d], throttle_sign_[%d], yaw_sign_[%d], roll_sign_[%d], pitch_sign_[%d], max[%d], min[%d]", throttle_idx_, yaw_idx_, roll_idx_, pitch_idx_, gear_idx_, mode_idx_, arm_idx_, throttle_sign_, yaw_sign_, roll_sign_, pitch_sign_, MAX_VALUE_, MIN_VALUE_);
 
 	RANGE_ = ((MAX_VALUE_ - MIN_VALUE_)/2);
 	ZERO_VALUE_ =  (MIN_VALUE_ + RANGE_);
 	UPPER_VALUE_ = (MAX_VALUE_ - (RANGE_/2));
 	LOWER_VALUE_ = (MIN_VALUE_ + (RANGE_/2));
 
-	logitech_rc_channels_sub_ = n.subscribe<sensor_msgs::Joy>("/joy", 10,
-			&RC_Controls::logitechRemoteCB, this);
+	logitech_rc_channels_sub_ = node_->create_subscription<sensor_msgs::msg::Joy>("/joy", 10, std::bind(&RC_Controls::logitechRemoteCB, this, _1));
 
-	dji_rc_channels_sub_ = n.subscribe<sensor_msgs::Joy>(am_topics::DJI_SDK_RC, 10,
-			&RC_Controls::djiRemoteCB, this);
+	dji_rc_channels_sub_ = node_->create_subscription<sensor_msgs::msg::Joy>(am_topics::DJI_SDK_RC, 10,	std::bind(&RC_Controls::djiRemoteCB, this, _1));
 
-	px4_rc_channels_sub_ = n.subscribe<mavros_msgs::RCIn>(am_topics::MAVROS_RC_IN, 10,
-			&RC_Controls::px4RemoteCB, this);
+	px4_rc_channels_sub_ = node_->create_subscription<mavros_msgs::msg::RCIn>(am_topics::MAVROS_RC_IN, 10, std::bind(&RC_Controls::px4RemoteCB, this,_1));
 
-	stamp = ros::Time::now();
+	stamp = node_->now();
 }
 
 bool RC_Controls::setEngagedState() {
@@ -173,12 +173,12 @@ bool RC_Controls::setEngagedState() {
 	{
 		if (yaw > ENGAGED_THRESHOLD && roll < -ENGAGED_THRESHOLD)
 		{
-			ROS_INFO(">>>>>>>> RC_CONTROL SPECIAL FUNCTION ENGAGED <<<<<<<<<<");
+			RCLCPP_INFO(node_->get_logger(), ">>>>>>>> RC_CONTROL SPECIAL FUNCTION ENGAGED <<<<<<<<<<");
 			user_function_engaged = true;
 		}
 		else if (yaw < -ENGAGED_THRESHOLD && roll > ENGAGED_THRESHOLD)
 		{
-			ROS_INFO("<<<<<<<<<< RC_CONTROL SPECIAL FUNCTION DISENGAGED >>>>>>>>>>");
+			RCLCPP_INFO(node_->get_logger(),"<<<<<<<<<< RC_CONTROL SPECIAL FUNCTION DISENGAGED >>>>>>>>>>");
 			user_function_engaged = false;
 		}
 	}
@@ -190,7 +190,7 @@ bool RC_Controls::setEngagedState() {
 // DJI specific RC stuff
 //===================================================
 
-void RC_Controls::setDJIControls(const sensor_msgs::Joy::ConstPtr& msg) {
+void RC_Controls::setDJIControls(const sensor_msgs::msg::Joy::SharedPtr msg) {
 
 	stamp = msg->header.stamp;
 
@@ -230,7 +230,7 @@ bool RC_Controls::setDJIModeSwitch(double mode_switch, RC_MODE& state) {
 	{
 		if (state != RC_MODE::POS)
 		{
-			ROS_INFO("RC: CHANGING TO POS MODE");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING TO POS MODE");
 			change_state = true;
 		}
 		state = RC_MODE::POS;
@@ -239,7 +239,7 @@ bool RC_Controls::setDJIModeSwitch(double mode_switch, RC_MODE& state) {
 	{
 		if (state != RC_MODE::ALT)
 		{
-			ROS_INFO("RC: CHANGING TO ALT MODE");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING TO ALT MODE");
 			change_state = true;
 		}
 		state = RC_MODE::ALT;
@@ -248,7 +248,7 @@ bool RC_Controls::setDJIModeSwitch(double mode_switch, RC_MODE& state) {
 	{
 		if (state != RC_MODE::ATT)
 		{
-			ROS_INFO("RC: CHANGING TO ATT MODE");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING TO ATT MODE");
 			change_state = true;
 		}
 		state = RC_MODE::ATT;
@@ -263,7 +263,7 @@ bool RC_Controls::setDJIGearSwitch(double gear_switch, RC_GEAR& state) {
 	{
 		if (state != RC_GEAR::UP)
 		{
-			ROS_INFO("RC: CHANGING GEAR TO UP");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING GEAR TO UP");
 			change = true;
 		}
 		state = RC_GEAR::UP;
@@ -273,7 +273,7 @@ bool RC_Controls::setDJIGearSwitch(double gear_switch, RC_GEAR& state) {
 		// gear switch down
 		if (state != RC_GEAR::DOWN)
 		{
-			ROS_INFO("RC: CHANGING GEAR TO DOWN");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING GEAR TO DOWN");
 			change = true;
 		}
 		state = RC_GEAR::DOWN;
@@ -282,7 +282,7 @@ bool RC_Controls::setDJIGearSwitch(double gear_switch, RC_GEAR& state) {
 	return change;
 }
 
-void RC_Controls::djiRemoteCB(const sensor_msgs::Joy::ConstPtr&  rc_msg) {
+void RC_Controls::djiRemoteCB(const sensor_msgs::msg::Joy::SharedPtr  rc_msg) {
 	setDJIControls(rc_msg);
 
     if (callback_ != NULL)
@@ -295,7 +295,7 @@ void RC_Controls::djiRemoteCB(const sensor_msgs::Joy::ConstPtr&  rc_msg) {
 // Logitech specific RC stuff
 //===================================================
 
-void RC_Controls::setLogitechControls(const sensor_msgs::Joy::ConstPtr& msg) {
+void RC_Controls::setLogitechControls(const sensor_msgs::msg::Joy::SharedPtr  msg) {
 
 	stamp = msg->header.stamp;
 
@@ -313,7 +313,7 @@ void RC_Controls::setLogitechControls(const sensor_msgs::Joy::ConstPtr& msg) {
 
 	setEngagedState();
 
-    ROS_INFO_THROTTLE(1.0, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f], engaged[%d]\n",
+    RCLCPP_INFO_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f], engaged[%d]\n",
           roll_, pitch_, yaw_, throttle_, gear_, mode_, user_function_engaged);
 }
 
@@ -331,7 +331,7 @@ bool RC_Controls::setLogitechGearSwitch(double gear_switch, RC_GEAR& state) {
 	return change;
 }
 
-void RC_Controls::logitechRemoteCB(const sensor_msgs::Joy::ConstPtr&  rc_msg) {
+void RC_Controls::logitechRemoteCB(const sensor_msgs::msg::Joy::SharedPtr rc_msg) {
 	setLogitechControls(rc_msg);
 
     if (callback_ != NULL)
@@ -349,7 +349,7 @@ void RC_Controls::logitechRemoteCB(const sensor_msgs::Joy::ConstPtr&  rc_msg) {
 //#define PX4_UPPER_VALUE (PX4_MAX_VALUE - (PX4_RANGE/2))
 //#define PX4_LOWER_VALUE (PX4_MIN_VALUE + (PX4_RANGE/2))
 
-void RC_Controls::setPX4Controls(const mavros_msgs::RCIn::ConstPtr&  msg) {
+void RC_Controls::setPX4Controls(const mavros_msgs::msg::RCIn::SharedPtr  msg) {
 
 	stamp = msg->header.stamp;
 
@@ -373,7 +373,7 @@ void RC_Controls::setPX4Controls(const mavros_msgs::RCIn::ConstPtr&  msg) {
 
 	setEngagedState();
 
-     //ROS_INFO_THROTTLE(2, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%d], mode[%d] armed[%d]\n",
+     //RCLCPP_INFO_THROTTLE(2, "XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%d], mode[%d] armed[%d]\n",
      //      roll, pitch, yaw, throttle, static_cast<int>(gear), static_cast<int>(mode), armed_switch);
 }
 
@@ -390,12 +390,12 @@ void RC_Controls::setPX4StickValue(double input, double& state, double polarity)
 	if (state > 1.0)
 	{
 		state = 1.0;
-		ROS_WARN_THROTTLE(2, "RC: Stick is out of range: -1.0 < %0.2f < 1.0", state);
+		RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "RC: Stick is out of range: -1.0 < %0.2f < 1.0", state);
 	}
 	else if (state < -1.0)
 	{
 		state = -1.0;
-		ROS_WARN_THROTTLE(2, "RC: Stick is out of range: -1.0 < %0.2f < 1.0", state);
+		RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "RC: Stick is out of range: -1.0 < %0.2f < 1.0", state);
 	}
 
 	state *= polarity;
@@ -408,7 +408,7 @@ bool RC_Controls::setPX4ModeSwitch(double mode_switch, RC_MODE& state) {
 	{
 		if (state != RC_MODE::POS)
 		{
-			ROS_INFO("RC: CHANGING TO POS MODE");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING TO POS MODE");
 			change_state = true;
 		}
 		state = RC_MODE::POS;
@@ -417,7 +417,7 @@ bool RC_Controls::setPX4ModeSwitch(double mode_switch, RC_MODE& state) {
 	{
 		if (state != RC_MODE::ALT)
 		{
-			ROS_INFO("RC: CHANGING TO ALT MODE");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING TO ALT MODE");
 			change_state = true;
 		}
 		state = RC_MODE::ALT;
@@ -426,12 +426,12 @@ bool RC_Controls::setPX4ModeSwitch(double mode_switch, RC_MODE& state) {
 	{
 		if (state != RC_MODE::ATT)
 		{
-			ROS_INFO("RC: CHANGING TO ATT MODE");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING TO ATT MODE");
 			change_state = true;
 		}
 		else if(mode_switch < MIN_VALUE_  || mode_switch > MAX_VALUE_ )
 		{
-			ROS_WARN_THROTTLE(2, "RC: Mode Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, mode_switch, MAX_VALUE_);
+			RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "RC: Mode Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, mode_switch, MAX_VALUE_);
 		}
 		
 		state = RC_MODE::ATT;
@@ -446,7 +446,7 @@ bool RC_Controls::setPX4GearSwitch(double gear_switch, RC_GEAR& state) {
 	{
 		if (state != RC_GEAR::UP)
 		{
-			ROS_INFO("RC: CHANGING GEAR TO UP");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING GEAR TO UP");
 			change = true;
 		}
 		state = RC_GEAR::UP;
@@ -456,12 +456,12 @@ bool RC_Controls::setPX4GearSwitch(double gear_switch, RC_GEAR& state) {
 		// gear switch down
 		if (state != RC_GEAR::DOWN)
 		{
-			ROS_INFO("RC: CHANGING GEAR TO DOWN");
+			RCLCPP_INFO(node_->get_logger(),"RC: CHANGING GEAR TO DOWN");
 			change = true;
 		}
 		else if(gear_switch < MIN_VALUE_  || gear_switch > MAX_VALUE_ )
 		{
-			ROS_WARN_THROTTLE(2, "RC: Gear Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, gear_switch, MAX_VALUE_);
+			RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "RC: Gear Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, gear_switch, MAX_VALUE_);
 		}
 		
 		state = RC_GEAR::DOWN;
@@ -476,7 +476,7 @@ bool RC_Controls::setPX4ArmSwitch(double arm_switch, bool& state) {
 	{
 		if (!state)
 		{
-			ROS_INFO("RC: SET ARM TO TRUE");
+			RCLCPP_INFO(node_->get_logger(),"RC: SET ARM TO TRUE");
 			change = true;
 		}
 		state = true;
@@ -486,12 +486,12 @@ bool RC_Controls::setPX4ArmSwitch(double arm_switch, bool& state) {
 		// gear switch down
 		if (state)
 		{
-			ROS_INFO("RC: SET ARM TO FALSE");
+			RCLCPP_INFO(node_->get_logger(),"RC: SET ARM TO FALSE");
 			change = true;
 		}
 		else if(arm_switch < MIN_VALUE_  || arm_switch > MAX_VALUE_ )
 		{
-			ROS_WARN_THROTTLE(2, "RC: Arm Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, arm_switch, MAX_VALUE_);
+			RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 2000, "RC: Arm Switch is out of range: %i < %0.2f < %i", MIN_VALUE_, arm_switch, MAX_VALUE_);
 		}		
 		state = false;
 	}
@@ -499,8 +499,8 @@ bool RC_Controls::setPX4ArmSwitch(double arm_switch, bool& state) {
 	return change;
 }
 
-void RC_Controls::px4RemoteCB(const mavros_msgs::RCIn::ConstPtr&  rc_msg) {
-//	ROS_INFO_STREAM(">>>>RC got message " << *rc_msg << "\n");
+void RC_Controls::px4RemoteCB(const mavros_msgs::msg::RCIn::SharedPtr  rc_msg) {
+//	RCLCPP_INFO_STREAM(">>>>RC got message " << *rc_msg << "\n");
 	setPX4Controls(rc_msg);
 
     if (callback_ != NULL)

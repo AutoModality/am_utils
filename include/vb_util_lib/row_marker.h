@@ -10,22 +10,25 @@
 
 #include <vector>
 #include <string.h>
-#include <ros/ros.h>
-#include <brain_box_msgs/RowView.h>
+#include <rclcpp/rclcpp.hpp>
+#include <brain_box_msgs/msg/row_view.hpp>
+#include <visualization_msgs/msg/marker.hpp>
 
 class RowMarker
 {
 public:
-    RowMarker() {};
-    RowMarker(ros::NodeHandle& n, std::string topic);
+    RowMarker(rclcpp::Node::SharedPtr node): node_(node)
+    {};
+    RowMarker(rclcpp::Node::SharedPtr n, std::string topic);
 
-    void visualizeRow(int id, const brain_box_msgs::Row& row);
+    void visualizeRow(int id, const brain_box_msgs::msg::Row& row);
 
-    void visualizeRows(const std::vector<brain_box_msgs::Row>& rows, bool clear=true);
+    void visualizeRows(const std::vector<brain_box_msgs::msg::Row>& rows, bool clear=true);
 
 private:
-    ros::Publisher pub_;
-    int id_;
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr pub_;
+    int id_ {0};
 };
 
 

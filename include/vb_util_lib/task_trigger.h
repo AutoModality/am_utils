@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <ros/ros.h>
 #include <vb_util_lib/json.h>
 #include <vb_util_lib/gis_util.h>
 #include <vb_util_lib/gis_entity.h>

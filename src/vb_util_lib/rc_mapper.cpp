@@ -9,7 +9,7 @@
 #include <vb_util_lib/rc_mapper.h>
 #include <vb_util_lib/topics.h>
 
-rc_mapper::rc_mapper(ros::NodeHandle n)
+rc_mapper::rc_mapper(rclcpp::Node::SharedPtr n)
 : m_Handle(n)
 , m_SetRC(eRCT_DJI)
 , m_MinValue(1)
@@ -124,34 +124,36 @@ rc_mapper::RC_TYPES rc_mapper::DetermineRCSetting(std::string* _rctype)
 
 void rc_mapper::SetFromParameters(void)
 {
-    m_Handle.param<std::string>("/RC/rc_type", m_RCType, m_RCTypeNames[eRCT_DJI].c_str());
+
+    m_Handle->get_parameter_or("/RC/rc_type", m_RCType, m_RCTypeNames[eRCT_DJI]);
+
     m_SetRC = DetermineRCSetting(&m_RCType);
 
-    ROS_INFO("RC: SetRC string[%s] and enum[%d]", m_RCType.c_str(), m_SetRC);
+    RCLCPP_INFO(m_Handle->get_logger(), "RC: SetRC string[%s] and enum[%d]", m_RCType.c_str(), m_SetRC);
 
     switch(m_SetRC)
     {
     case eRCT_DJI:
     default:
     {
-    m_Handle.param("/RC/throttle", m_Channels[eRCThrottle], DJI_RC_THROTTLE);
-    m_Handle.param("/RC/yaw", m_Channels[eRCYaw], DJI_RC_YAW);
-    m_Handle.param("/RC/roll", m_Channels[eRCRoll], DJI_RC_ROLL);
-    m_Handle.param("/RC/pitch", m_Channels[eRCPitch], DJI_RC_PITCH);
-    m_Handle.param("/RC/gear", m_Channels[eRCGear], DJI_RC_GEAR);
-    m_Handle.param("/RC/mode", m_Channels[eRCMode], DJI_RC_MODE);
-    m_Handle.param("/RC/arm", m_Channels[eRCArm], DJI_RC_ARM);
-    m_Handle.param("/RC/throttle_sign", m_Signs[eThrottleSign], DJI_RC_THROTTLE_SIGN);
-    m_Handle.param("/RC/yaw_sign", m_Signs[eYawSign], DJI_RC_YAW_SIGN);
-    m_Handle.param("/RC/roll_sign", m_Signs[eRollSign], DJI_RC_ROLL_SIGN);
-    m_Handle.param("/RC/pitch_sign", m_Signs[ePitchSign], DJI_RC_PITCH_SIGN);
-    m_Handle.param("/RC/minvalue", m_MinValue, DJI_RC_MIN_VALUE);
-    m_Handle.param("/RC/maxvalue", m_MaxValue, DJI_RC_MAX_VALUE);
+    m_Handle->get_parameter_or("/RC/throttle", m_Channels[eRCThrottle], DJI_RC_THROTTLE);
+    m_Handle->get_parameter_or("/RC/yaw", m_Channels[eRCYaw], DJI_RC_YAW);
+    m_Handle->get_parameter_or("/RC/roll", m_Channels[eRCRoll], DJI_RC_ROLL);
+    m_Handle->get_parameter_or("/RC/pitch", m_Channels[eRCPitch], DJI_RC_PITCH);
+    m_Handle->get_parameter_or("/RC/gear", m_Channels[eRCGear], DJI_RC_GEAR);
+    m_Handle->get_parameter_or("/RC/mode", m_Channels[eRCMode], DJI_RC_MODE);
+    m_Handle->get_parameter_or("/RC/arm", m_Channels[eRCArm], DJI_RC_ARM);
+    m_Handle->get_parameter_or("/RC/throttle_sign", m_Signs[eThrottleSign], DJI_RC_THROTTLE_SIGN);
+    m_Handle->get_parameter_or("/RC/yaw_sign", m_Signs[eYawSign], DJI_RC_YAW_SIGN);
+    m_Handle->get_parameter_or("/RC/roll_sign", m_Signs[eRollSign], DJI_RC_ROLL_SIGN);
+    m_Handle->get_parameter_or("/RC/pitch_sign", m_Signs[ePitchSign], DJI_RC_PITCH_SIGN);
+    m_Handle->get_parameter_or("/RC/minvalue", m_MinValue, DJI_RC_MIN_VALUE);
+    m_Handle->get_parameter_or("/RC/maxvalue", m_MaxValue, DJI_RC_MAX_VALUE);
 
     if(m_SetRC != eRCT_DJI)
     {
         m_SetRC = eRCT_DJI;
-        ROS_ERROR("RC: Illegal RC type parameter[%s], defaulting to DJI", m_RCType.c_str());
+        RCLCPP_ERROR(m_Handle->get_logger(), "RC: Illegal RC type parameter[%s], defaulting to DJI", m_RCType.c_str());
         m_RCType = m_RCTypeNames[m_SetRC];
     }
         break;
@@ -159,57 +161,57 @@ void rc_mapper::SetFromParameters(void)
 
     case eRCT_PX4:
     {
-        m_Handle.param("/RC/throttle", m_Channels[eRCThrottle], PX4_RC_THROTTLE);
-        m_Handle.param("/RC/yaw", m_Channels[eRCYaw], PX4_RC_YAW);
-        m_Handle.param("/RC/roll", m_Channels[eRCRoll], PX4_RC_ROLL);
-        m_Handle.param("/RC/pitch", m_Channels[eRCPitch], PX4_RC_PITCH);
-        m_Handle.param("/RC/gear", m_Channels[eRCGear], PX4_RC_GEAR);
-        m_Handle.param("/RC/mode", m_Channels[eRCMode], PX4_RC_MODE);
-        m_Handle.param("/RC/arm", m_Channels[eRCArm], PX4_RC_ARM);
-        m_Handle.param("/RC/throttle_sign", m_Signs[eThrottleSign], PX4_RC_THROTTLE_SIGN);
-        m_Handle.param("/RC/yaw_sign", m_Signs[eYawSign], PX4_RC_YAW_SIGN);
-        m_Handle.param("/RC/roll_sign", m_Signs[eRollSign], PX4_RC_ROLL_SIGN);
-        m_Handle.param("/RC/pitch_sign", m_Signs[ePitchSign], PX4_RC_PITCH_SIGN);
-        m_Handle.param("/RC/minvalue", m_MinValue, PX4_RC_MIN_VALUE);
-        m_Handle.param("/RC/maxvalue", m_MaxValue, PX4_RC_MAX_VALUE);
+        m_Handle->get_parameter_or("/RC/throttle", m_Channels[eRCThrottle], PX4_RC_THROTTLE);
+        m_Handle->get_parameter_or("/RC/yaw", m_Channels[eRCYaw], PX4_RC_YAW);
+        m_Handle->get_parameter_or("/RC/roll", m_Channels[eRCRoll], PX4_RC_ROLL);
+        m_Handle->get_parameter_or("/RC/pitch", m_Channels[eRCPitch], PX4_RC_PITCH);
+        m_Handle->get_parameter_or("/RC/gear", m_Channels[eRCGear], PX4_RC_GEAR);
+        m_Handle->get_parameter_or("/RC/mode", m_Channels[eRCMode], PX4_RC_MODE);
+        m_Handle->get_parameter_or("/RC/arm", m_Channels[eRCArm], PX4_RC_ARM);
+        m_Handle->get_parameter_or("/RC/throttle_sign", m_Signs[eThrottleSign], PX4_RC_THROTTLE_SIGN);
+        m_Handle->get_parameter_or("/RC/yaw_sign", m_Signs[eYawSign], PX4_RC_YAW_SIGN);
+        m_Handle->get_parameter_or("/RC/roll_sign", m_Signs[eRollSign], PX4_RC_ROLL_SIGN);
+        m_Handle->get_parameter_or("/RC/pitch_sign", m_Signs[ePitchSign], PX4_RC_PITCH_SIGN);
+        m_Handle->get_parameter_or("/RC/minvalue", m_MinValue, PX4_RC_MIN_VALUE);
+        m_Handle->get_parameter_or("/RC/maxvalue", m_MaxValue, PX4_RC_MAX_VALUE);
         break;
     }
     case eRCT_ACSL:
     {
-        m_Handle.param("/RC/throttle", m_Channels[eRCThrottle], ACSL_RC_THROTTLE);
-        m_Handle.param("/RC/yaw", m_Channels[eRCYaw], ACSL_RC_YAW);
-        m_Handle.param("/RC/roll", m_Channels[eRCRoll], ACSL_RC_ROLL);
-        m_Handle.param("/RC/pitch", m_Channels[eRCPitch], ACSL_RC_PITCH);
-        m_Handle.param("/RC/gear", m_Channels[eRCGear], ACSL_RC_GEAR);
-        m_Handle.param("/RC/mode", m_Channels[eRCMode], ACSL_RC_MODE);
-        m_Handle.param("/RC/arm", m_Channels[eRCArm], ACSL_RC_ARM);
-        m_Handle.param("/RC/throttle_sign", m_Signs[eThrottleSign], ACSL_RC_THROTTLE_SIGN);
-        m_Handle.param("/RC/yaw_sign", m_Signs[eYawSign], ACSL_RC_YAW_SIGN);
-        m_Handle.param("/RC/roll_sign", m_Signs[eRollSign], ACSL_RC_ROLL_SIGN);
-        m_Handle.param("/RC/pitch_sign", m_Signs[ePitchSign], ACSL_RC_PITCH_SIGN);
-        m_Handle.param("/RC/minvalue", m_MinValue, ACSL_RC_MIN_VALUE);
-        m_Handle.param("/RC/maxvalue", m_MaxValue, ACSL_RC_MAX_VALUE);
+        m_Handle->get_parameter_or("/RC/throttle", m_Channels[eRCThrottle], ACSL_RC_THROTTLE);
+        m_Handle->get_parameter_or("/RC/yaw", m_Channels[eRCYaw], ACSL_RC_YAW);
+        m_Handle->get_parameter_or("/RC/roll", m_Channels[eRCRoll], ACSL_RC_ROLL);
+        m_Handle->get_parameter_or("/RC/pitch", m_Channels[eRCPitch], ACSL_RC_PITCH);
+        m_Handle->get_parameter_or("/RC/gear", m_Channels[eRCGear], ACSL_RC_GEAR);
+        m_Handle->get_parameter_or("/RC/mode", m_Channels[eRCMode], ACSL_RC_MODE);
+        m_Handle->get_parameter_or("/RC/arm", m_Channels[eRCArm], ACSL_RC_ARM);
+        m_Handle->get_parameter_or("/RC/throttle_sign", m_Signs[eThrottleSign], ACSL_RC_THROTTLE_SIGN);
+        m_Handle->get_parameter_or("/RC/yaw_sign", m_Signs[eYawSign], ACSL_RC_YAW_SIGN);
+        m_Handle->get_parameter_or("/RC/roll_sign", m_Signs[eRollSign], ACSL_RC_ROLL_SIGN);
+        m_Handle->get_parameter_or("/RC/pitch_sign", m_Signs[ePitchSign], ACSL_RC_PITCH_SIGN);
+        m_Handle->get_parameter_or("/RC/minvalue", m_MinValue, ACSL_RC_MIN_VALUE);
+        m_Handle->get_parameter_or("/RC/maxvalue", m_MaxValue, ACSL_RC_MAX_VALUE);
         break;
     }
     case eRCT_LOGITECH:
     {
-        m_Handle.param("/RC/throttle", m_Channels[eRCThrottle], LOGITECH_RC_THROTTLE);
-        m_Handle.param("/RC/yaw", m_Channels[eRCYaw], LOGITECH_RC_YAW);
-        m_Handle.param("/RC/roll", m_Channels[eRCRoll], LOGITECH_RC_ROLL);
-        m_Handle.param("/RC/pitch", m_Channels[eRCPitch], LOGITECH_RC_PITCH);
-        m_Handle.param("/RC/gear", m_Channels[eRCGear], LOGITECH_RC_GEAR);
-        m_Handle.param("/RC/mode", m_Channels[eRCMode], LOGITECH_RC_MODE);
-        m_Handle.param("/RC/arm", m_Channels[eRCArm], LOGITECH_RC_ARM);
-        m_Handle.param("/RC/throttle_sign", m_Signs[eThrottleSign], LOGITECH_RC_THROTTLE_SIGN);
-        m_Handle.param("/RC/yaw_sign", m_Signs[eYawSign], LOGITECH_RC_YAW_SIGN);
-        m_Handle.param("/RC/roll_sign", m_Signs[eRollSign], LOGITECH_RC_ROLL_SIGN);
-        m_Handle.param("/RC/pitch_sign", m_Signs[ePitchSign], LOGITECH_RC_PITCH_SIGN);
-        m_Handle.param("/RC/minvalue", m_MinValue, LOGITECH_RC_MIN_VALUE);
-        m_Handle.param("/RC/maxvalue", m_MaxValue, LOGITECH_RC_MAX_VALUE);
+        m_Handle->get_parameter_or("/RC/throttle", m_Channels[eRCThrottle], LOGITECH_RC_THROTTLE);
+        m_Handle->get_parameter_or("/RC/yaw", m_Channels[eRCYaw], LOGITECH_RC_YAW);
+        m_Handle->get_parameter_or("/RC/roll", m_Channels[eRCRoll], LOGITECH_RC_ROLL);
+        m_Handle->get_parameter_or("/RC/pitch", m_Channels[eRCPitch], LOGITECH_RC_PITCH);
+        m_Handle->get_parameter_or("/RC/gear", m_Channels[eRCGear], LOGITECH_RC_GEAR);
+        m_Handle->get_parameter_or("/RC/mode", m_Channels[eRCMode], LOGITECH_RC_MODE);
+        m_Handle->get_parameter_or("/RC/arm", m_Channels[eRCArm], LOGITECH_RC_ARM);
+        m_Handle->get_parameter_or("/RC/throttle_sign", m_Signs[eThrottleSign], LOGITECH_RC_THROTTLE_SIGN);
+        m_Handle->get_parameter_or("/RC/yaw_sign", m_Signs[eYawSign], LOGITECH_RC_YAW_SIGN);
+        m_Handle->get_parameter_or("/RC/roll_sign", m_Signs[eRollSign], LOGITECH_RC_ROLL_SIGN);
+        m_Handle->get_parameter_or("/RC/pitch_sign", m_Signs[ePitchSign], LOGITECH_RC_PITCH_SIGN);
+        m_Handle->get_parameter_or("/RC/minvalue", m_MinValue, LOGITECH_RC_MIN_VALUE);
+        m_Handle->get_parameter_or("/RC/maxvalue", m_MaxValue, LOGITECH_RC_MAX_VALUE);
         break;
     }
     }
-    ROS_INFO("RC: Parameter driven values: throttle[%d], yaw[%d], roll[%d], pitch[%d], gear[%d], mode[%d], arm[%d], min[%d], max[%d]",
+    RCLCPP_INFO(m_Handle->get_logger(), "RC: Parameter driven values: throttle[%d], yaw[%d], roll[%d], pitch[%d], gear[%d], mode[%d], arm[%d], min[%d], max[%d]",
         m_Channels[eRCThrottle], m_Channels[eRCYaw], m_Channels[eRCRoll], m_Channels[eRCPitch],
         m_Channels[eRCGear], m_Channels[eRCMode], m_Channels[eRCArm], m_MinValue, m_MaxValue);
 }

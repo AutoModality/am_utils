@@ -7,20 +7,23 @@
 
 #include <vb_util_lib/param_update.h>
 
+using std::placeholders::_1;
+
+
 //ParamUpdate::ParamUpdate() {
 //	// TODO Auto-generated constructor stub
 //
 //}
 
-ParamUpdate::ParamUpdate(ros::NodeHandle& nh, bool publisher) : nh_(&nh), publisher_(publisher) {
+ParamUpdate::ParamUpdate(rclcpp::Node::SharedPtr n, bool publisher) : nh_(n), latest_update_(n), publisher_(publisher) {
 	// Create ros publishers and subscribers
 	if (publisher)
 	{
-		pub_ = nh.advertise<brain_box_msgs::KeyValue>(PARAM_UPDATE_TOPIC, 10);
+		pub_ = nh_->create_publisher<brain_box_msgs::msg::KeyValue>(PARAM_UPDATE_TOPIC, 10);
 	}
 	else
 	{
-		sub_ = nh.subscribe<brain_box_msgs::KeyValue>(PARAM_UPDATE_TOPIC, 10, &ParamUpdate::paramUpdateCB, this);
+		sub_ = nh_->create_subscription<brain_box_msgs::msg::KeyValue>(PARAM_UPDATE_TOPIC, 10, std::bind(&ParamUpdate::paramUpdateCB, this, _1));
 	}
 	ros_init_ = true;
 }
@@ -30,16 +33,18 @@ ParamUpdate::~ParamUpdate() {
 }
 
 bool ParamUpdate::sendAllParams(std::vector<KeyValueStamped>& param_list) {
-	ROS_INFO("    ParamUpdate::sendAllParams");
+	RCLCPP_INFO(nh_->get_logger(), "    ParamUpdate::sendAllParams");
 
 	for (std::vector<KeyValueStamped>::iterator i = param_list.begin(); i != param_list.end(); i++)
 	{
 		i->sendParam(pub_);
 	}
+
+	return true;
 }
 
 bool ParamUpdate::sendAllDefaultParams() {
-	ROS_INFO("    ParamUpdate::sendAllDefaultParams");
+	RCLCPP_INFO(nh_->get_logger(), "    ParamUpdate::sendAllDefaultParams");
 
 	for (std::vector<KeyValueStamped>::iterator i = default_params_.begin(); i != default_params_.end(); i++)
 	{
@@ -53,15 +58,16 @@ bool ParamUpdate::sendAllDefaultParams() {
 }
 
 bool ParamUpdate::updateDefaultParams() {
-	ROS_INFO("    ParamUpdate::updateDefaultParams");
+	RCLCPP_INFO(nh_->get_logger(), "    ParamUpdate::updateDefaultParams");
 	for (std::vector<KeyValueStamped>::iterator i = default_params_.begin(); i != default_params_.end(); i++)
 	{
-		i->saveDefault(*nh_);
+		i->saveDefault(nh_);
 	}
+	return true;
 }
 
-void ParamUpdate::paramUpdateCB(const brain_box_msgs::KeyValue::ConstPtr& msg) {
-	KeyValueStamped kv(msg);
+void ParamUpdate::paramUpdateCB(const brain_box_msgs::msg::KeyValue::SharedPtr msg) {
+	KeyValueStamped kv(nh_, msg);
 
 	setParam(kv, true);
 }
@@ -160,7 +166,7 @@ bool ParamUpdate::setParam(KeyValueStamped& kvs, bool update_param_db) {
 
 	if ((kv = findParam(kvs)) == NULL)
 	{
-		ROS_WARN("ParamUpdate::setParam KEY[%s] not found", kvs.getKey().c_str());
+		RCLCPP_WARN(nh_->get_logger(), "ParamUpdate::setParam KEY[%s] not found", kvs.getKey().c_str());
 		return false;
 	}
 
@@ -175,31 +181,32 @@ bool ParamUpdate::setParam(KeyValueStamped& kvs, bool update_param_db) {
 		double double_val;
 		std::string string_val;
 		bool bool_val;
-		if (!nh_->hasParam(kv->getKey()))
+		rclcpp::Parameter p;
+		if (!nh_->get_parameter(kv->getKey(),p))
 		{
-			ROS_WARN("ParamUpdate::setParam: NO PARAM DB ENTRY FOUND FOR %s", kv->getKey().c_str());
+			RCLCPP_WARN(nh_->get_logger(), "ParamUpdate::setParam: NO PARAM DB ENTRY FOUND FOR %s", kv->getKey().c_str());
 		}
 		else
 		{
-			ROS_INFO("ParamUpdate::setParam: UPDATING PARAM DB %s", kv->getKey().c_str());
+			RCLCPP_INFO(nh_->get_logger(), "ParamUpdate::setParam: UPDATING PARAM DB %s", kv->getKey().c_str());
 
 			switch (kv->getType())
 			{
 			case KeyValueType::INT:
 				kv->getValue(int_val);
-				nh_->setParam(kv->getKey(), int_val);
+				nh_->declare_parameter(kv->getKey(), int_val);
 				break;
 			case KeyValueType::STRING:
 				kv->getValue(string_val);
-				nh_->setParam(kv->getKey(), string_val);
+				nh_->declare_parameter(kv->getKey(), string_val);
 				break;
 			case KeyValueType::BOOL:
 				kv->getValue(bool_val);
-				nh_->setParam(kv->getKey(), bool_val);
+				nh_->declare_parameter(kv->getKey(), bool_val);
 				break;
 			case KeyValueType::DOUBLE:
 				kv->getValue(double_val);
-				nh_->setParam(kv->getKey(), double_val);
+				nh_->declare_parameter(kv->getKey(), double_val);
 				break;
 			}
 		}

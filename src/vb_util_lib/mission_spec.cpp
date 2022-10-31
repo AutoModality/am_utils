@@ -143,7 +143,7 @@ bool MissionSpec::loadFlightPlanFile(std::string fn) {
     return true;
 }
 
-void MissionSpec::print(std::string pre) {
+void MissionSpec::print(const std::string &pre) {
     printf("%s  MISSION_SPEC[%s], version[%s]\n", pre.c_str(), name_.c_str(), version_.c_str());
     printf("%s      script file[%s]\n", pre.c_str(), script_file_.c_str());
     printf("%s      flight plan file[%s]\n", pre.c_str(), flight_plans_file_.c_str());
