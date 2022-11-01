@@ -8,14 +8,15 @@
 #ifndef VISBOX_PACKAGES_VISION_AM_VISION_LIB_INCLUDE_AM_VISION_LIB_TRAJECTORY_H_
 #define VISBOX_PACKAGES_VISION_AM_VISION_LIB_INCLUDE_AM_VISION_LIB_TRAJECTORY_H_
 
-#include <ros/ros.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <nav_msgs/Odometry.h>
-#include <std_msgs/Time.h>
+#include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <nav_msgs/msg/path.hpp>
+#include <builtin_interfaces/msg/time.hpp>
 #include <string>
 #include <vector>
 
-#include <Eigen/Geometry>
+#include <eigen3/Eigen/Geometry>
 
 #include <vb_util_lib/BagReader.h>
 #include <vb_util_lib/GeometryPoseExtractor.h>
@@ -62,12 +63,14 @@ struct TrajectoryStats {
 class TrajectoryData
 {
 public:
-    TrajectoryData() {
+    TrajectoryData(rclcpp::Node::SharedPtr node): node_(node), transformer_(node_){
     	coord_offset_[0] = 0.0;
     	coord_offset_[1] = 0.0;
     	coord_offset_[2] = 0.0;
     }
-    TrajectoryData(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type) {
+    TrajectoryData(rclcpp::Node::SharedPtr node, std::string &bag_file_location,
+    		std::string &topic, TRAJECTORY_MSG_TYPE msg_type): node_(node), transformer_(node_)
+    {
         setup(bag_file_location, topic, msg_type);
     }
 
@@ -75,30 +78,30 @@ public:
     }
 
     void setup(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type) {
-    	ros::Time t = ros::Time::now();
+    	rclcpp::Time t = node_->now();
     	setup(bag_file_location, topic, msg_type, false, t);
     }
 
-    void setup(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type, bool trigger_enable, ros::Time& trigger_time);
+    void setup(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type, bool trigger_enable, rclcpp::Time& trigger_time);
 
-    void addPose(geometry_msgs::PoseStamped& pose) {
+    void addPose(geometry_msgs::msg::PoseStamped& pose) {
         pose_msgs_.push_back(pose);
     }
 
-    void addPose(const nav_msgs::Odometry& pose);
+    void addPose(const nav_msgs::msg::Odometry& pose);
 
-    void addComparePose(geometry_msgs::PoseStamped& pose) {
+    void addComparePose(geometry_msgs::msg::PoseStamped& pose) {
         compare_trajectory_.push_back(pose);
     }
 
-    void addComparePose(const nav_msgs::Odometry& pose);
+    void addComparePose(const nav_msgs::msg::Odometry& pose);
 
     // Fetch a pose in this trajectory that has the same time stamp as specified by t
-    bool getPose(ros::Time &stamp, geometry_msgs::PoseStamped& pose) {
-        getPose(stamp, pose_msgs_, pose);
+    bool getPose(rclcpp::Time &stamp, geometry_msgs::msg::PoseStamped& pose) {
+        return getPose(node_, stamp, pose_msgs_, pose);
     }
 
-    std::vector<geometry_msgs::PoseStamped> &getPoses() {
+    std::vector<geometry_msgs::msg::PoseStamped> &getPoses() {
         return pose_msgs_;
     }
 
@@ -107,7 +110,7 @@ public:
     // Calculate the statistics of this trajectory as compared to a truth trajectory
     void calculateStats() {
         printf("SSSSSSSSS\n");
-        calculateStats(pose_msgs_, compare_trajectory_, trajectory_stats_, stats_);
+        calculateStats(node_, pose_msgs_, compare_trajectory_, trajectory_stats_, stats_);
         printf("EEEEEEEE\n");
     }
 
@@ -121,11 +124,11 @@ public:
     void compareTrajectory(TrajectoryData& truth, Eigen::Vector3d& coord_offset, double time_offset);
 
     // publish a path fo rthis trajectory that can be displyed in RVIZ
-    void publishRvizPath(ros::Publisher& pub) {
-    	ros::Time tmp;
+    void publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr pub) {
+    	rclcpp::Time tmp;
     	publishRvizPath(pub, false, tmp, tmp);
     }
-    void publishRvizPath(ros::Publisher& pub, bool trim_time, ros::Time& start, ros::Time& end);
+    void publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr pub, bool trim_time, rclcpp::Time& start, rclcpp::Time& end);
 
     void setOffsets(double x, double y, double z, double t) {
     	coord_offset_[0] = x;
@@ -146,14 +149,14 @@ public:
         printStats(prefix, stats_);
     }
 
-    void getStartTime(ros::Time& start) {
+    void getStartTime(rclcpp::Time& start) {
     	if (pose_msgs_.size() > 0)
     	{
     		start = pose_msgs_.front().header.stamp;
     	}
     }
 
-    void getEndTime(ros::Time& end) {
+    void getEndTime(rclcpp::Time& end) {
     	if (pose_msgs_.size() > 0)
     	{
     		end = pose_msgs_.back().header.stamp;
@@ -162,26 +165,26 @@ public:
 
     // General purpose method that can take any PoseStamped vector trajectory and return
     //   the pose on that trajectory that has the same time stamp as
-    static bool getPose(ros::Time &stamp, std::vector<geometry_msgs::PoseStamped>& trajectory,
-                        geometry_msgs::PoseStamped& pose);
+    static bool getPose(rclcpp::Node::SharedPtr node, rclcpp::Time &stamp, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
+                        geometry_msgs::msg::PoseStamped& pose);
 
     // General purpose method that can take any PoseStamped vector trajectory and return
     //   statistics about the point on that trajectory that is the closest.
     // If time_span != 0.0 then it restricts the search to only points that are within a certain time
     //   of pt.header.stamp
-    static bool getPose(geometry_msgs::PoseStamped& pt, std::vector<geometry_msgs::PoseStamped>& trajectory,
+    static bool getPose(rclcpp::Node::SharedPtr node, geometry_msgs::msg::PoseStamped& pt, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
                         PointStat& pose, double time_span=0.0);
 
     // General purpose routine that will return the interpolated position between p1 and p2 based
     //   on the time stamp.
-    static geometry_msgs::PoseStamped interpolatePose(ros::Time &stamp,
-                           geometry_msgs::PoseStamped& p1, geometry_msgs::PoseStamped& p2);
+    static geometry_msgs::msg::PoseStamped interpolatePose(rclcpp::Time &stamp,
+                           geometry_msgs::msg::PoseStamped& p1, geometry_msgs::msg::PoseStamped& p2);
 
     // Takes the trajectory vector and compares it to the truth trajectory to create a vector
     //   of statistics. For each element in the trajectory vector there will be an element in the
     //   stats vector.
-    static void calculateStats(std::vector<geometry_msgs::PoseStamped>& trajectory,
-                      std::vector<geometry_msgs::PoseStamped>& truth,
+    static void calculateStats(rclcpp::Node::SharedPtr node, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
+                      std::vector<geometry_msgs::msg::PoseStamped>& truth,
                       std::vector<TrajectoryPointStats>& stats_vector, TrajectoryStats& stats);
 
     static void printStats(std::string prefix, TrajectoryStats& stats);
@@ -189,19 +192,22 @@ public:
     void test(double x_off, double y_off, double z_off, double t_off);
 
 private:
+
+    rclcpp::Node::SharedPtr node_;
+
     am::Transformer transformer_;
-    geometry_msgs::TransformStamped compare_transform_;
+    geometry_msgs::msg::TransformStamped compare_transform_;
 
     TrajectoryStats stats_;
 
-    static void printPoint(std::string prefix, geometry_msgs::PoseStamped& p);
+    static void printPoint(std::string prefix, geometry_msgs::msg::PoseStamped& p);
 
     static void printPointStamp(std::string prefix, AM::PointStamp& p);
 
     static void printPointStat(std::string prefix, PointStat& p);
 
     static void printTrajectory(std::string prefix, std::string title,
-                         std::vector<geometry_msgs::PoseStamped>& traj_msgs);
+                         std::vector<geometry_msgs::msg::PoseStamped>& traj_msgs);
 
     static void printTrajectoryPointStats(std::string prefix, TrajectoryPointStats& s);
 
@@ -210,9 +216,9 @@ private:
     Eigen::Vector3d coord_offset_;
     double time_offset_ {0.0};
 
-    std::vector<geometry_msgs::PoseStamped> pose_msgs_;
+    std::vector<geometry_msgs::msg::PoseStamped> pose_msgs_;
 
-    std::vector<geometry_msgs::PoseStamped> compare_trajectory_;
+    std::vector<geometry_msgs::msg::PoseStamped> compare_trajectory_;
 
     std::vector<TrajectoryPointStats> trajectory_stats_;
 };

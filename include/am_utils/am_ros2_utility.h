@@ -9,6 +9,7 @@
 #define INCLUDE_AM_UTILS_AM_ROS2_UTILITY_H_
 
 #include <chrono>
+#include <rclcpp/rclcpp.hpp>
 
 namespace am
 {
@@ -20,8 +21,6 @@ std::chrono::duration<T, std::ratio<1>> toDuration(T seconds)
 {
     return std::chrono::duration<T, std::ratio<1>>(seconds);
 }
-
-
 
 }
 

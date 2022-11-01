@@ -34,6 +34,7 @@ find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL REQUIRED)
 find_package(visualization_msgs REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
 
 pkg_check_modules(jsoncpp REQUIRED jsoncpp)
 
@@ -64,7 +65,6 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 
 					 
 					 src/vb_util_lib/am_geometry.cpp
-					 src/vb_util_lib/topics.cpp
 					 src/vb_util_lib/am_heartbeat.cpp
 					 src/vb_util_lib/am_histogram.cpp
 					 src/vb_util_lib/am_param.cpp
@@ -72,7 +72,6 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/circ_list.cpp
 					 src/vb_util_lib/control_util.cpp
 					 src/vb_util_lib/csv_logger.cpp
-					 src/vb_util_lib/transformer.cpp
 					 src/vb_util_lib/file_spec.cpp
 					 src/vb_util_lib/ftp_request.cpp
 					 src/vb_util_lib/ftp_response.cpp
@@ -96,6 +95,11 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 				     src/vb_util_lib/row_marker.cpp
 				     src/vb_util_lib/task_trigger.cpp
 				     src/vb_util_lib/time_synchronizer.cpp
+				     src/vb_util_lib/time_util.cpp
+					 src/vb_util_lib/topics.cpp
+					 src/vb_util_lib/trajectory_data.cpp
+					 src/vb_util_lib/transformer.cpp
+
 					 #src/vb_util_lib/bag_logger.cpp
 					 )
 ament_target_dependencies(am_utils geometry_msgs brain_box_msgs PCL)
