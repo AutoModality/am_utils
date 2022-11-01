@@ -72,6 +72,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/circ_list.cpp
 					 src/vb_util_lib/control_util.cpp
 					 src/vb_util_lib/csv_logger.cpp
+					 src/vb_util_lib/current_enu_kinematics.cpp
 					 src/vb_util_lib/file_spec.cpp
 					 src/vb_util_lib/ftp_request.cpp
 					 src/vb_util_lib/ftp_response.cpp

@@ -11,16 +11,18 @@
 #include <random>
 #include <vb_util_lib/kinematics.h>
 #include <vb_util_lib/topics.h>
-#include <nav_msgs/Odometry.h>
-#include <std_msgs/Float64.h>
+#include <nav_msgs/msg/odometry.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 #include <vb_util_lib/transformer.h>
 
+#include <rclcpp/rclcpp.hpp>
+
+#include <tf2_ros/transform_broadcaster.h>
+
 class CurrentENUKinematics: public Kinematics {
 public:
-    CurrentENUKinematics();
-
-    CurrentENUKinematics(ros::NodeHandle *n, std::string topic=am::am_topics::CTRL_VX_VEHICLE_CURRENTENU,
+    CurrentENUKinematics(rclcpp::Node::SharedPtr node, std::string topic=am::am_topics::CTRL_VX_VEHICLE_CURRENTENU,
             bool pub_on_change=false, double pub_rate=0.0);
 
     virtual ~CurrentENUKinematics();
@@ -32,9 +34,9 @@ public:
 
     void sendENUTransform();
 
-    bool getPoseStamped(std::string frame, geometry_msgs::PoseStamped& pose);
+    bool getPoseStamped(std::string frame, geometry_msgs::msg::PoseStamped& pose);
 
-    void updateODCB(const nav_msgs::Odometry::ConstPtr& msg);
+    void updateODCB(const nav_msgs::msg::Odometry::SharedPtr msg);
 
     // Method to publish the position to the Odometry topic of choice
     void publishOD();
@@ -43,12 +45,14 @@ public:
     void publishOD_Enable(bool enable, std::string& topic, bool ned_frame);
 
 private:
-    ros::Subscriber od_sub_nh_;
+    CurrentENUKinematics();
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr od_sub_nh_;
 
-    ros::Subscriber agh_sub_nh_;
+    //ros::Subscriber agh_sub_nh_;
 
     // Variables used to publish the odometry when it is changed
-    ros::Publisher od_pub_;
+    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr od_pub_;
     std::string od_pub_topic_ {""};
 	bool od_pub_enable_ {false};
     bool od_pub_ned_ {false};
@@ -66,13 +70,13 @@ private:
     // error testing
     std::random_device odom_random_;  //Will be used to obtain a seed for the random number engine
     std::mt19937  odom_gen_; //Standard mersenne_twister_engine seeded with rd()
-    geometry_msgs::Point odom_trans_error_m_;
+    geometry_msgs::msg::Point odom_trans_error_m_;
     double odom_yaw_error_r_;
     double odom_dropout_prob_;
     double odom_hyperspace_prob_;
     int odom_hyperspace_count_;
     int odom_hyperspace_counter_ {0};
-    geometry_msgs::Point odom_hyperspace_trans_offset_m_;
+    geometry_msgs::msg::Point odom_hyperspace_trans_offset_m_;
     double odom_hyperspace_yaw_offset_r_;
     std::normal_distribution<double> *odom_trans_error_x_nd_;
     std::normal_distribution<double> *odom_trans_error_y_nd_;
@@ -80,10 +84,10 @@ private:
     std::normal_distribution<double> *odom_trans_error_yaw_nd_;
     std::uniform_real_distribution<double> odom_prob_ud_;
 
-    tf2_ros::Buffer tfBuffer;
+    std::shared_ptr<tf2_ros::Buffer> tfBuffer_;
 
-    tf2_ros::TransformBroadcaster* br;
-    tf2_ros::StaticTransformBroadcaster* static_br;
+    std::shared_ptr<tf2_ros::TransformBroadcaster> br_;
+    std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_br_;
 
     am::Transformer transformer_;
     bool transform_init_ {false};
@@ -91,14 +95,20 @@ private:
     /**
      * Timer callback for doing updates
      */
-    ros::Timer update_timer_;
-    void updateTimerCB(const ros::TimerEvent& te) {
+    rclcpp::TimerBase::SharedPtr update_timer_;
+    bool enable_timer_ {false};
+
+    void updateTimerCB() {
+    	if(!enable_timer_)
+    	{
+    		return;
+    	}
     	doUpdate(true);
     }
 
-    void updateAGLCB(const std_msgs::Float64ConstPtr& height_agl);
+    void updateAGLCB(const std_msgs::msg::Float64::SharedPtr height_agl);
 
-    void addYaw(geometry_msgs::Quaternion &q, double yaw_add_r);
+    void addYaw(geometry_msgs::msg::Quaternion &q, double yaw_add_r);
 };
 
 #endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_CURRENTENUKINEMATICS_H_ */
