@@ -1,6 +1,8 @@
 #include <vb_util_lib/bag_logger.h>
 
-BagLogger *BagLogger::s_instance_ = 0;
+//BagLogger *BagLogger::s_instance_ = 0;
+
+
 
 std::string BagLogger::getLogFileDir() {
     using namespace std;
@@ -21,9 +23,31 @@ std::string BagLogger::getLogFileDir() {
         else
             continue;
     }
-    ROS_INFO("LG: NO LOG_XXX SD CARD FOUND");
+    printf("LG: NO LOG_XXX SD CARD FOUND\n");
 
     return string(DEFAULT_BAG_DIR);
+}
+
+void BagLogger::add_topic(const std::string &topic, const std::string &message_in_str)
+{
+	rosbag2_storage::TopicMetadata tm;
+	tm.name = topic;
+	tm.type = message_in_str;
+	tm.serialization_format = rmw_get_serialization_format();
+	tm.offered_qos_profiles = "";
+
+	writer_->create_topic(tm);
+}
+
+void BagLogger::LOG(std::shared_ptr<rclcpp::SerializedMessage> message,
+		rclcpp::Time &time, const std::string &topic, const std::string &message_string, int level)
+{
+	if(is_logging_ && level <= log_level_)
+	{
+		writer_->write(*message, topic, message_string, time);
+	}
+
+
 }
 
 std::string BagLogger::getSequence(std::string dir, std::string prefix) {
@@ -92,7 +116,7 @@ void BagLogger::dumpParams(std::string prefix) {
     std::string filename = getLogFileName(prefix);
     std::string cmd = "rosparam dump " + filename;
 
-    ROS_INFO("BAG_LOGGER: Dumping params to %s", filename.c_str());
+    printf("BAG_LOGGER: Dumping params to %s\n", filename.c_str());
 
     system(cmd.c_str());
 
@@ -104,13 +128,12 @@ void BagLogger::startLogging(std::string prefix, unsigned log_level) {
     {
         if ((prefix == prefix_) && (log_level == log_level_))
         {
-            ROS_INFO("LG: Already logging at prefix[%s] and log level[%d]", prefix.c_str(), log_level_);
+            printf("LG: Already logging at prefix[%s] and log level[%d]\n", prefix.c_str(), log_level_);
             return;
         }
         else
         {
-            ROS_INFO("LG: Closing bag file %s", file_name_.c_str());
-            bag.close();
+            printf("LG: Closing bag file %s\n", file_name_.c_str());
             log_level_ = 0;
             prefix_ = "";
             is_logging_ = false;
@@ -121,8 +144,9 @@ void BagLogger::startLogging(std::string prefix, unsigned log_level) {
     {
         prefix_ = prefix;
         file_name_ = getLogFileName(prefix);
-        bag.open(file_name_, rosbag::bagmode::Write);
-        ROS_INFO("Opening bag file %s", file_name_.c_str());
+        //bag.open(file_name_, rosbag::bagmode::Write);
+        writer_->open(file_name_);
+        printf("Opening bag file %s\n", file_name_.c_str());
         log_level_ = log_level;
         is_logging_ = true;
     }
@@ -133,9 +157,8 @@ void BagLogger::stopLogging() {
     {
         log_level_ = 0;
         is_logging_ = false;
-        ROS_INFO("LG: Closing bag file %s", file_name_.c_str());
+        printf("LG: Closing bag file %s\n", file_name_.c_str());
         prefix_ = "";
-        bag.close();
     }
     return;
 }
@@ -144,7 +167,7 @@ void BagLogger::open_log(std::string prefix, FILE **debug_file, int log_level) {
   return;
     if (*debug_file != NULL)
     {
-        ROS_WARN("LOGGER: Tried to reopen test logger with prefix %s", prefix.c_str());
+        printf("LOGGER: Tried to reopen test logger with prefix %s\n", prefix.c_str());
         return;
     }
     if (log_level > 0)
@@ -153,7 +176,7 @@ void BagLogger::open_log(std::string prefix, FILE **debug_file, int log_level) {
 
         if (log_name != "")
         {
-            ROS_INFO("LOGGER: OPENING GENERAL TEXT LOG FILE %s", log_name.c_str());
+            printf("LOGGER: OPENING GENERAL TEXT LOG FILE %s\n", log_name.c_str());
             *debug_file = fopen (log_name.c_str(),"w");
         }
     }

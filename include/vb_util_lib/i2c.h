@@ -21,7 +21,7 @@
 #include <fcntl.h>              // for I2C
 #include <stdint.h>
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 class I2CAdapter
 {
@@ -37,7 +37,7 @@ protected:
 class I2CDevice : public I2CAdapter
 {
 public:
-  I2CDevice(int adatpor_num, int addr);
+  I2CDevice(rclcpp::Node::SharedPtr node, int adatpor_num, int addr);
 
   int setAddr(int addr);
   double getRateHz();
@@ -50,6 +50,8 @@ protected:
   int addr_; // The I2C device address
   double rate_hz_;
   int file_;
+private:
+  rclcpp::Node::SharedPtr node_;
 };
 
 #endif /* VISBOX_PACKAGES_COMMON_UTILS_UTIL_LIB_INCLUDE_VB_UTIL_LIB__I2C_H_ */

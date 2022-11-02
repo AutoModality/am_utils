@@ -11,13 +11,14 @@
 #include <string.h>
 #include <boost/lexical_cast.hpp>
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <am_utils/mission_cmd_type.h>
 #include <am_utils/message_util.h>
 
 #include <vb_util_lib/time_util.h>
 #include <vb_util_lib/json_utils.h>
+#include <rosgraph_msgs/msg/>
 // #include <vb_util_lib/bag_logger.h>
 
 bool AMJSONUtils::isJSONMember(Json::Value value, const char *memberName)
@@ -407,31 +408,31 @@ void AMJSONUtils::headerToJson(
 
 void AMJSONUtils::jsonToCtrlVxCmnd(
 		Json::Value &value,
-		brain_box_msgs::BBVxCommand &msg)
+		brain_box_msgs::msg::BBVxCommand &msg)
 {
 	if(value["data"]["command"] == "COMMAND_START")
 	{
-		msg.command = brain_box_msgs::BBVxCommand::COMMAND_START;
+		msg.command = brain_box_msgs::msg::BBVxCommand::COMMAND_START;
 	}
 	else if(value["data"]["command"] == "COMMAND_STOP")
 	{
-		msg.command = brain_box_msgs::BBVxCommand::COMMAND_STOP;
+		msg.command = brain_box_msgs::msg::BBVxCommand::COMMAND_STOP;
 	}
 	else if(value["data"]["command"] == "COMMAND_TRACK_TARGET")
 	{
-		msg.command = brain_box_msgs::BBVxCommand::COMMAND_TRACK_TARGET;
+		msg.command = brain_box_msgs::msg::BBVxCommand::COMMAND_TRACK_TARGET;
 		msg.target_id = value["data"]["target_id"].asString();
 		if(value["data"]["frame_of_reference"] == "FOR_TARGET")
 		{
-			msg.frame_of_reference = brain_box_msgs::BBVxCommand::FOR_TARGET;
+			msg.frame_of_reference = brain_box_msgs::msg::BBVxCommand::FOR_TARGET;
 		}
 		else if(value["data"]["frame_of_reference"] == "FOR_GLOBAL")
 		{
-			msg.frame_of_reference = brain_box_msgs::BBVxCommand::FOR_GLOBAL;
+			msg.frame_of_reference = brain_box_msgs::msg::BBVxCommand::FOR_GLOBAL;
 		}
 		else
 		{
-			msg.frame_of_reference = brain_box_msgs::BBVxCommand::FOR_VEHICLE;
+			msg.frame_of_reference = brain_box_msgs::msg::BBVxCommand::FOR_VEHICLE;
 		}
 		msg.kinematics.position.x = value["data"]["kinematics"]["position"]["x"].asDouble();
 		msg.kinematics.position.y = value["data"]["kinematics"]["position"]["y"].asDouble();
@@ -445,7 +446,7 @@ void AMJSONUtils::jsonToCtrlVxCmnd(
 
 void AMJSONUtils::jsonToCtrlVxPid_param(
 		Json::Value &value,
-		brain_box_msgs::PIDParam &msg)
+		brain_box_msgs::msg::PIDParam &msg)
 {
 	if(value["data"]["axis"] == "X")
 	{
@@ -463,13 +464,13 @@ void AMJSONUtils::jsonToCtrlVxPid_param(
 	{
 		msg.axis = 3;
 	}
-	msg.I = value["data"]["i"].asDouble();
-	msg.D = value["data"]["d"].asDouble();
-	msg.P = value["data"]["p"].asDouble();
-	msg.iMax = value["data"]["iMax"].asDouble();
-	msg.iMin = value["data"]["iMin"].asDouble();
-	msg.maxError = value["data"]["maxError"].asDouble();
-	msg.maxSetpoint = value["data"]["maxSetpoint"].asDouble();
+	msg.pid_i = value["data"]["i"].asDouble();
+	msg.pid_d = value["data"]["d"].asDouble();
+	msg.pid_p = value["data"]["p"].asDouble();
+	msg.i_max = value["data"]["iMax"].asDouble();
+	msg.i_min = value["data"]["iMin"].asDouble();
+	msg.max_error = value["data"]["maxError"].asDouble();
+	msg.max_set_point = value["data"]["maxSetpoint"].asDouble();
 	msg.land_error = value["data"]["landError"].asDouble();
 	msg.loiter_time = value["data"]["loiterTime"].asDouble();
 	msg.land_speed = value["data"]["landSpeed"].asDouble();
@@ -477,31 +478,31 @@ void AMJSONUtils::jsonToCtrlVxPid_param(
 
 void AMJSONUtils::jsonToCtrlVideoCmnd(
 		Json::Value &value,
-		brain_box_msgs::VideoCmnd &msg)
+		brain_box_msgs::msg::VideoCmnd &msg)
 {
 	if(value["data"]["command"] == "COMMAND_RECORD_STILLS_START")
 	{
-		msg.command = brain_box_msgs:: VideoCmnd::COMMAND_RECORD_STILLS_START;
+		msg.command = brain_box_msgs::msg::VideoCmnd::COMMAND_RECORD_STILLS_START;
 	}
 	else if(value["data"]["command"] == "COMMAND_RECORD_STILLS_STOP")
 	{
-		msg.command = brain_box_msgs:: VideoCmnd::COMMAND_RECORD_STILLS_STOP;
+		msg.command = brain_box_msgs::msg::VideoCmnd::COMMAND_RECORD_STILLS_STOP;
 	}
 	else if(value["data"]["command"] == "COMMAND_STREAM_VIDEO_START")
 	{
-		msg.command = brain_box_msgs:: VideoCmnd:: COMMAND_STREAM_VIDEO_START;
+		msg.command = brain_box_msgs::msg::VideoCmnd::COMMAND_STREAM_VIDEO_START;
 	}
 	else if(value["data"]["command"] == "COMMAND_STREAM_VIDEO_STOP")
 	{
-		msg.command = brain_box_msgs:: VideoCmnd:: COMMAND_STREAM_VIDEO_STOP;
+		msg.command = brain_box_msgs::msg::VideoCmnd::COMMAND_STREAM_VIDEO_STOP;
 	}
 	else if(value["data"]["command"] == "COMMAND_RECORD_VIDEO_START")
 	{
-		msg.command = brain_box_msgs:: VideoCmnd:: COMMAND_RECORD_VIDEO_START;
+		msg.command = brain_box_msgs::msg::VideoCmnd::COMMAND_RECORD_VIDEO_START;
 	}
 	else if(value["data"]["command"] == "COMMAND_RECORD_VIDEO_STOP")
 	{
-		msg.command = brain_box_msgs:: VideoCmnd:: COMMAND_RECORD_VIDEO_STOP;
+		msg.command = brain_box_msgs::msg::VideoCmnd::COMMAND_RECORD_VIDEO_STOP;
 	}
 	else
 	{
@@ -511,17 +512,17 @@ void AMJSONUtils::jsonToCtrlVideoCmnd(
 
 void AMJSONUtils::jsonToCtrlVisionCmnd(
 		Json::Value &value,
-		brain_box_msgs::VisionCmnd &msg)
+		brain_box_msgs::msg::VisionCmnd &msg)
 {
 	msg.marker_configs.clear();
     for (const Json::Value& json_marker_config : value["marker_configs"])
     {
-    	brain_box_msgs::MarkerConfig marker_config;
+    	brain_box_msgs::msg::MarkerConfig marker_config;
 		marker_config.type.type = json_marker_config["type"]["type"].asString();
 		marker_config.image_pixels_k = json_marker_config["image_pixels_k"].asUInt();
 	    for (const Json::Value& json_family : json_marker_config["families"])
 	    {
-	    	brain_box_msgs::MarkerConfigFamily marker_config_family;
+	    	brain_box_msgs::msg::MarkerConfigFamily marker_config_family;
 	    	marker_config_family.family_name = json_family["family_name"].asString();
 	    	marker_config_family.marker_size_m = json_family["marker_size_m"].asFloat();
 	    	marker_config.families.push_back(marker_config_family);
@@ -532,7 +533,7 @@ void AMJSONUtils::jsonToCtrlVisionCmnd(
 
 void AMJSONUtils::jsonToRemoteCtrlVxMission(
 		Json::Value &value,
-		brain_box_msgs::VxMissionExecCmd &msg)
+		brain_box_msgs::msg::VxMissionExecCmd &msg)
 {
 	// TODO: figure way to do reverse mapping in mission_cmd_type.cpp
 	if(value["data"]["command"]["key"] == "EXECUTE")
@@ -561,7 +562,7 @@ void AMJSONUtils::jsonToRemoteCtrlVxMission(
 
 void AMJSONUtils::jsonToLogControl(
 		Json::Value &value,
-		brain_box_msgs::LogControl &msg)
+		brain_box_msgs::msg::LogControl &msg)
 {
 	// TODO: figure way to do reverse mapping in mission_cmd_type.cpp
 	msg.enable = value["data"]["enable"].asBool();
@@ -627,7 +628,7 @@ void AMJSONUtils::poseStampedToJson(
 		boost::posix_time::ptime timestamp,
 		std::string messageName,
 		std::string sender,
-		const geometry_msgs::PoseStamped &msg)
+		const geometry_msgs::msg::PoseStamped &msg)
 {
 
 	headerToJson(value, vehicleId, sequence, timestamp, messageName, sender, AMMessage::TYPE_AUTOMOD);
@@ -643,7 +644,7 @@ void AMJSONUtils::poseStampedToJson(
 
 void AMJSONUtils::bbPoseToJson(
 		Json::Value &value,
-		const brain_box_msgs::TargetPose &msg)
+		const brain_box_msgs::msg::TargetPose &msg)
 {
     value["confidence"] = msg.confidence;
     value["pose"]["position"]["x"] = msg.pose.position.x;
@@ -690,7 +691,7 @@ void AMJSONUtils::throttleToJson(
 		boost::posix_time::ptime timestamp,
 		std::string messageName,
 		std::string sender,
-		const std_msgs::Float64 &msg)
+		const std_msgs::msg::Float64 &msg)
 {
 	headerToJson(value, vehicleId, sequence, timestamp, messageName, sender, AMMessage::TYPE_AUTOMOD);
 
@@ -808,15 +809,15 @@ std::string spStateIntToString(int state)
 {
 	 switch(state)
 	 {
-	 case brain_box_msgs::SPStatus::STATE_LANDED:
+	 case brain_box_msgs::msg::SPStatus::STATE_LANDED:
 		   return "LANDED";
-	 case brain_box_msgs::SPStatus::STATE_TAKING_OFF:
+	 case brain_box_msgs::msg::SPStatus::STATE_TAKING_OFF:
 		 return "TAKING_OFF";
-	 case brain_box_msgs::SPStatus::STATE_LOITER:
+	 case brain_box_msgs::msg::SPStatus::STATE_LOITER:
 		   return "LOITER";
-	 case brain_box_msgs::SPStatus::STATE_TRACKING:
+	 case brain_box_msgs::msg::SPStatus::STATE_TRACKING:
 		   return "TRACKING";
-	 case brain_box_msgs::SPStatus::STATE_LANDING:
+	 case brain_box_msgs::msg::SPStatus::STATE_LANDING:
 		   return "LANDING";
 	 }
 	 return "";
@@ -827,7 +828,7 @@ Json::Value AMJSONUtils::statusVisionToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::VisionStatus &msg)
+		const brain_box_msgs::msg::VisionStatus &msg)
 {
 	Json::Value value;
 	value.clear();
@@ -845,14 +846,14 @@ Json::Value AMJSONUtils::statusVisionToJson(
 	value["data"]["native_image_width"] = msg.native_image_width;
 	value["data"]["native_image_width"] = msg.native_image_width;
 	Json::Value& poseArray = value["data"]["marker_statuses"];
-	for(brain_box_msgs::MarkerStatus marker_status: msg.marker_statuses)
+	for(brain_box_msgs::msg::MarkerStatus marker_status: msg.marker_statuses)
 	{
 		Json::Value elementValue;
-		if(marker_status.type.type == brain_box_msgs::MarkerType::TYPE_APRILTAGS)
+		if(marker_status.type.type == brain_box_msgs::msg::MarkerType::TYPE_APRILTAGS)
 		{
 			elementValue["type"]["type"] = "APRILTAGS";
 		}
-		else if(marker_status.type.type == brain_box_msgs::MarkerType::TYPE_ARUCO)
+		else if(marker_status.type.type == brain_box_msgs::msg::MarkerType::TYPE_ARUCO)
 		{
 			elementValue["type"]["type"] = "ARUCO";
 		}
@@ -872,15 +873,15 @@ std::string operatorMsgTypeToString(int type)
 {
 	 switch(type)
 	 {
-	 case brain_box_msgs::OperatorMsg::INFO:
+	 case brain_box_msgs::msg::OperatorMsg::INFO:
 		   return "INFO";
-	 case brain_box_msgs::OperatorMsg::WARNING:
+	 case brain_box_msgs::msg::OperatorMsg::WARNING:
 		 return "WARNING";
-	 case brain_box_msgs::OperatorMsg::OP_ERROR:
+	 case brain_box_msgs::msg::OperatorMsg::OP_ERROR:
 		   return "ERROR";
-	 case brain_box_msgs::OperatorMsg::CRITICAL:
+	 case brain_box_msgs::msg::OperatorMsg::CRITICAL:
 		   return "CRITICAL";
-	 case brain_box_msgs::OperatorMsg::SYSTEM:
+	 case brain_box_msgs::msg::OperatorMsg::SYSTEM:
 		   return "SYSTEM";
 	 }
 	 return "";
@@ -891,7 +892,7 @@ Json::Value AMJSONUtils::ctrlVxMissionMessageToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::OperatorMsg &msg)
+		const brain_box_msgs::msg::OperatorMsg &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -948,7 +949,7 @@ Json::Value AMJSONUtils::vstateSummaryToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::VxState &msg)
+		const brain_box_msgs::msg::VxState &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -986,7 +987,7 @@ Json::Value AMJSONUtils::statusVideoToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::VideoStatus &msg)
+		const brain_box_msgs::msg::VideoStatus &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -1013,7 +1014,7 @@ Json::Value AMJSONUtils::statusSuperToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::SuperStatus &msg)
+		const brain_box_msgs::msg::SuperStatus &msg)
 {
 	Json::Value value;
 	value.clear();
@@ -1055,7 +1056,7 @@ Json::Value AMJSONUtils::statusC2ToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::C2Status &msg)
+		const brain_box_msgs::msg::C2Status &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -1072,7 +1073,7 @@ Json::Value AMJSONUtils::statusVisLogToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::VisLogStatus &msg)
+		const brain_box_msgs::msg::VisLogStatus &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -1109,7 +1110,7 @@ Json::Value AMJSONUtils::statusFTPToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::FTPStatus &msg)
+		const brain_box_msgs::msg::FTPStatus &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -1131,7 +1132,7 @@ Json::Value AMJSONUtils::statusDepthToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::DepthStatus &msg)
+		const brain_box_msgs::msg::DepthStatus &msg)
 {
 	Json::Value value;
 	value.clear();
@@ -1144,7 +1145,7 @@ Json::Value AMJSONUtils::statusDepthToJson(
 	value["data"]["odometry_z_m"] = msg.odometry_z_m;
 	value["data"]["agl_m"] = msg.agl_m;
 	Json::Value& poseArray = value["data"]["guidance_statuses"];
-	for(brain_box_msgs::GuidanceStatus guidance_status: msg.guidance_statuses)
+	for(brain_box_msgs::msg::GuidanceStatus guidance_status: msg.guidance_statuses)
 	{
 		Json::Value elementValue;
 		elementValue["name"] = guidance_status.name;
@@ -1172,7 +1173,7 @@ Json::Value AMJSONUtils::statusCommsToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const brain_box_msgs::CommsStatus &msg)
+		const brain_box_msgs::msg::CommsStatus &msg)
 {
 	 Json::Value value;
 	 value.clear();
@@ -1200,7 +1201,7 @@ Json::Value AMJSONUtils::heartbeatToJson(
 }
 
 Json::Value AMJSONUtils::snsrCamTrgtActToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-		std::string sender, const brain_box_msgs::TargetPoseArray &msg)
+		std::string sender, const brain_box_msgs::msg::TargetPoseArray &msg)
 {
 	Json::Value value;
 	value.clear();

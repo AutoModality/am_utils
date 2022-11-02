@@ -5,7 +5,7 @@
  *      Author: ubuntu
  */
 
-#include <image_cmd.h>
+#include <vb_util_lib/image_cmd.h>
 
 std::map<IMAGE_CMD, std::string> imageCmd_2_string = {
         {IMAGE_CMD::VIDEO, "VIDEO"},

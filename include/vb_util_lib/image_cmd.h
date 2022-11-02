@@ -10,7 +10,7 @@
 
 #include <string>
 #include <map>
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 #include <vb_util_lib/json.h>
 #include <vb_util_lib/task_trigger.h>
 #include <vb_util_lib/fcu_control.h>

@@ -4,7 +4,7 @@
 #include <vb_util_lib/dji_challenge_util.h>
 #include <vb_util_lib/json_utils.h>
 
-brain_box_msgs::VisionCmnd DJIChallengeUtil::selectMode(Mode mode)
+brain_box_msgs::msg::VisionCmnd DJIChallengeUtil::selectMode(Mode mode)
 {
 	Json::Value root;
 	Json::Reader reader;
@@ -19,7 +19,7 @@ brain_box_msgs::VisionCmnd DJIChallengeUtil::selectMode(Mode mode)
 	}
 	std::ifstream file("/home/ubuntu/catkin_ws/src/visbox/packages/vision/vision/launch/" + file_name);
 	file >> root;
-	brain_box_msgs::VisionCmnd vision_cmnd;
+	brain_box_msgs::msg::VisionCmnd vision_cmnd;
 	AMJSONUtils::jsonToCtrlVisionCmnd(root, vision_cmnd);
 	return vision_cmnd;
 }

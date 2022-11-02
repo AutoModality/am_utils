@@ -69,6 +69,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/am_histogram.cpp
 					 src/vb_util_lib/am_param.cpp
 					 src/vb_util_lib/am_util.cpp
+					 src/vb_util_lib/bag_logger.cpp
 					 src/vb_util_lib/circ_list.cpp
 					 src/vb_util_lib/control_util.cpp
 					 src/vb_util_lib/csv_logger.cpp
@@ -80,7 +81,9 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/gis_entity.cpp
 					 src/vb_util_lib/gis_util.cpp
 					 src/vb_util_lib/gps_location.cpp
+					 src/vb_util_lib/i2c.cpp
 					 src/vb_util_lib/imu_class.cpp
+					 #src/vb_util_lib/jsoncpp.cpp
 					 src/vb_util_lib/key_value_stamped.cpp
 					 src/vb_util_lib/kinematics.cpp
 					 src/vb_util_lib/kinematics_list.cpp
@@ -98,7 +101,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 				     src/vb_util_lib/time_synchronizer.cpp
 				     src/vb_util_lib/time_util.cpp
 					 src/vb_util_lib/topics.cpp
-					 src/vb_util_lib/trajectory_data.cpp
+					 #src/vb_util_lib/trajectory_data.cpp
 					 src/vb_util_lib/transformer.cpp
 
 					 #src/vb_util_lib/bag_logger.cpp

@@ -17,20 +17,23 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-#include <ros/ros.h>
-#include <rosbag/bag.h>
+#include <rclcpp/rclcpp.hpp>
+#include <rosbag2_cpp/typesupport_helpers.hpp>
+#include <rosbag2_cpp/writer.hpp>
+#include <rosbag2_cpp/typesupport_helpers.hpp>
+
 
 #define DEFAULT_BAG_DIR "/var/log/amros/"
 #define DEFAULT_MEDIA_DIR "/media/amros"
 
-#define LOG_MSG(topic, msg, level) { LOG_MSG_STAMP(topic, msg, ros::Time::now(), level) }
+//#define LOG_MSG(topic, msg, level) { LOG_MSG_STAMP(topic, msg, ros::Time::now(), level) }
 
-#define LOG_MSG_STAMP(topic, msg, t, level) { if (BagLogger::instance()->isLogging() && \
+//#define LOG_MSG_STAMP(topic, msg, t, level) { if (BagLogger::instance()->isLogging() && \
                                                  (level) <= BagLogger::instance()->getLogLevel()) { \
     BagLogger::instance()->bag.write((topic), (t), (msg)); } }
 
 class BagLogger {
-    static BagLogger *s_instance_;
+    //static BagLogger *s_instance_;
 
     unsigned log_level_ {0};
 
@@ -41,19 +44,57 @@ class BagLogger {
     std::string file_name_;
 
 public:
-    BagLogger() {};
+    BagLogger()
+    {
+    	writer_ = std::make_unique<rosbag2_cpp::Writer>();
 
-    ~BagLogger() {};
+    }
 
-    rosbag::Bag bag;
+    ~BagLogger()
+    {
 
-    static BagLogger *instance() {
+    }
+
+    void add_topic(const std::string &topic, const std::string &message_in_str);
+
+    void LOG(std::shared_ptr<rclcpp::SerializedMessage> message,
+    		rclcpp::Time &time, const std::string &topic, const std::string &message_string, int level);
+
+    template<class MessageT>
+    std::string getMessageName()
+    {
+    	return rosidl_generator_traits::name<MessageT>();
+    }
+
+    template<class MessageT>
+    void serializeMessage(const MessageT &m, std::shared_ptr<rclcpp::SerializedMessage> message)
+    {
+    	rclcpp::SerializedMessage serialized_msg;
+    	rclcpp::Serialization<MessageT> serialization;
+    	serialization.serialize_message(&message, serialized_msg);
+    }
+
+    template <class MessageT>
+    void LOG(const MessageT &msg, const rclcpp::Time &time, const std::string &topic, int level)
+    {
+    	if(is_logging_ && level <= log_level_)
+    	{
+    		writer_->write(msg, topic, time);
+    	}
+    }
+
+
+    std::unique_ptr<rosbag2_cpp::Writer> writer_;
+
+
+/*    static BagLogger *instance() {
         if (!s_instance_)
         {
             s_instance_ = new BagLogger;
         }
         return s_instance_;
     }
+*/
 
     bool isLogging() { return is_logging_; }
 
@@ -91,7 +132,7 @@ public:
     void setLogHandle(FILE** handle) {
         if (file_handle_ != NULL)
         {
-            ROS_ERROR("LOGGER:setLogHandle - file-handle already set and not NULL");
+            perror("LOGGER:setLogHandle - file-handle already set and not NULL\n");
             return;
         }
         file_handle_ = handle;
@@ -100,7 +141,7 @@ public:
       return;
       if (file_handle_ == NULL)
         {
-            ROS_ERROR("LOGGER:open_log - file handle NULL and needs to be set");
+    	  	perror("LOGGER:open_log - file handle NULL and needs to be set\n");
             return;
         }
         open_log(prefix, file_handle_, log_level);
@@ -109,7 +150,7 @@ public:
       return;
         if (file_handle_ == NULL)
         {
-            ROS_ERROR("LOGGER:close_log - file handle NULL and needs to be set");
+        	perror("LOGGER:close_log - file handle NULL and needs to be set\n");
             return;
         }
         close_log(file_handle_);
@@ -118,7 +159,7 @@ public:
       return;
         if (file_handle_ == NULL)
         {
-            ROS_ERROR("LOGGER:debug_log - file handle NULL and needs to be set");
+        	perror("LOGGER:debug_log - file handle NULL and needs to be set\n");
             return;
         }
         va_list args;

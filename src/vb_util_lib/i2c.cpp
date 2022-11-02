@@ -12,15 +12,17 @@ I2CAdapter::I2CAdapter(int adapter_num) :
 {
 }
 
-I2CDevice::I2CDevice(int adapter_num, int addr) :
-  I2CAdapter(adapter_num), addr_(addr)
+I2CDevice::I2CDevice(rclcpp::Node::SharedPtr node, int adapter_num, int addr) :
+  I2CAdapter(adapter_num), addr_(addr), node_(node)
 {
-  ros::param::param<double>("~rate_hz", rate_hz_, 10);
+	node_->get_parameter_or("rate_hz", rate_hz_, 10.0);
 }
 
 int I2CDevice::setAddr(int addr)
 {
   addr_ = addr;
+
+  return 0;
 }
 
 double I2CDevice::getRateHz()
@@ -59,7 +61,7 @@ int I2CDevice::init()
   {
     snprintf(filename, 19, "/dev/i2c-%d", i);
     file_ = open(filename, O_RDWR);
-    ROS_INFO("I2C device: %s", filename);
+    RCLCPP_INFO(node_->get_logger(), "I2C device: %s", filename);
 
     // Check if the I2C adapter is accessible
     if (file_ < 0)
@@ -80,7 +82,7 @@ int I2CDevice::init()
     //  continue;
 
     setAdapterNum(i);
-    ROS_INFO_STREAM("I2C device with address " << addr_ << " is on I2C-" << i);
+    RCLCPP_INFO_STREAM(node_->get_logger(), "I2C device with address " << addr_ << " is on I2C-" << i);
 
     return 1;
   }
