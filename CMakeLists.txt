@@ -38,6 +38,26 @@ find_package(rosbag2_cpp REQUIRED)
 
 pkg_check_modules(jsoncpp REQUIRED jsoncpp)
 
+set(dependencies
+        camera_info_manager
+        OpenCV
+        Eigen3
+        brain_box_msgs
+        builtin_interfaces
+        rclcpp
+        rclpy
+        sensor_msgs
+        stereo_msgs
+        std_msgs
+        nav_msgs
+        tf2
+        tf2_geometry_msgs
+        tf2_ros
+        pcl_conversions
+        visualization_msgs
+        rosbag2_cpp
+      )
+
 include_directories(
 	include
 	${jsoncpp_INCLUDE_DIRS}
@@ -84,6 +104,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/vb_util_lib/i2c.cpp
 					 src/vb_util_lib/imu_class.cpp
 					 #src/vb_util_lib/jsoncpp.cpp
+					 #src/vb_util_lib/json_util.cpp
 					 src/vb_util_lib/key_value_stamped.cpp
 					 src/vb_util_lib/kinematics.cpp
 					 src/vb_util_lib/kinematics_list.cpp
@@ -109,7 +130,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 ament_target_dependencies(am_utils geometry_msgs brain_box_msgs PCL)
 
 
-
+ament_export_targets(am_utilsTargets HAS_LIBRARY_TARGET)
 
 ament_export_include_directories(include)
 ament_export_libraries(am_utils)
@@ -117,6 +138,17 @@ ament_export_libraries(am_utils)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+install(DIRECTORY include/
+            DESTINATION include/
+    )
+install(
+  TARGETS am_utils
+  EXPORT am_utilsTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -129,4 +161,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_include_directories(include)
+ament_export_libraries(am_utils)
+ament_export_dependencies(${dependencies})
 ament_package()

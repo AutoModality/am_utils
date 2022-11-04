@@ -12,7 +12,6 @@
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <std_msgs/msg/float64.hpp>
-//#include <rosgraph_msgs/Log.h>
 
 #include <brain_box_msgs/msg/c2_status.hpp>
 #include <brain_box_msgs/msg/comms_status.hpp>
@@ -33,6 +32,7 @@
 #include <brain_box_msgs/msg/vx_state.hpp>
 #include <brain_box_msgs/msg/pid_param.hpp>
 #include <brain_box_msgs/msg/log_control.hpp>
+#include <rcl_interfaces/msg/log.hpp>
 
 #include <vb_util_lib/json.h>
 #include <vb_util_lib/ftp_request.h>
@@ -91,7 +91,7 @@ public:
     static Json::Value ctrlVxMissionMessageToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string sender, const brain_box_msgs::msg::OperatorMsg &msg);
     static Json::Value rosoutToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const rosgraph_msgs::msg::Log &msg);
+    		std::string sender, const rcl_interfaces::msg::Log &msg);
     static Json::Value vstateSummaryToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string sender, const brain_box_msgs::msg::VxState &msg);
 

@@ -18,7 +18,8 @@
 
 #include <vb_util_lib/time_util.h>
 #include <vb_util_lib/json_utils.h>
-#include <rosgraph_msgs/msg/>
+#include <rcl_interfaces/msg/log.hpp>
+#include <vb_util_lib/utility.h>
 // #include <vb_util_lib/bag_logger.h>
 
 bool AMJSONUtils::isJSONMember(Json::Value value, const char *memberName)
@@ -440,7 +441,7 @@ void AMJSONUtils::jsonToCtrlVxCmnd(
 	}
 	else
 	{
-		ROS_WARN_STREAM("bad vx command: " << value["data"]["command"]);
+		std::cout << YELLOW << "bad vx command: " << value["data"]["command"] << COLOR_RESET << std::endl;
 	}
 }
 
@@ -506,7 +507,7 @@ void AMJSONUtils::jsonToCtrlVideoCmnd(
 	}
 	else
 	{
-		ROS_WARN_STREAM("bad vision command: " << value["data"]["command"]);
+		std::cout << YELLOW << "bad vision command: " << value["data"]["command"] << COLOR_RESET << std::endl;
 	}
 }
 
@@ -554,7 +555,7 @@ void AMJSONUtils::jsonToRemoteCtrlVxMission(
 	}
 	else
 	{
-		ROS_WARN_STREAM("bad mission command: " << value["data"]["command"]["key"]);
+		std::cout << YELLOW << "bad mission command: " << value["data"]["command"]["key"] << COLOR_RESET << std::endl;
 	}
 	msg.command.value = value["data"]["command"]["value"].asString();
 
@@ -611,7 +612,7 @@ bool AMJSONUtils::jsonToAMMessageHead(Json::Value &value, AMMessage &msg)
 	}
 	catch(...)
 	{
-		ROS_WARN_STREAM("bad date in message: " << timeString);
+		std::cout << YELLOW << "bad date in message: " << timeString << COLOR_RESET << std::endl;
 	}
 	msgHead->setTime(time);
 	msgHead->setName(valueHead["name"].asString());
@@ -909,15 +910,15 @@ std::string logLevelToString(int type)
 {
 	 switch(type)
 	 {
-	 case rosgraph_msgs::Log::DEBUG:
+	 case rcl_interfaces::msg::Log::DEBUG:
 		   return "DEBUG";
-	 case rosgraph_msgs::Log::INFO:
+	 case rcl_interfaces::msg::Log::INFO:
 		   return "INFO";
-	 case rosgraph_msgs::Log::WARN:
+	 case rcl_interfaces::msg::Log::WARN:
 		   return "WARN";
-	 case rosgraph_msgs::Log::ERROR:
+	 case rcl_interfaces::msg::Log::ERROR:
 		   return "ERROR";
-	 case rosgraph_msgs::Log::FATAL:
+	 case rcl_interfaces::msg::Log::FATAL:
 		   return "FATAL";
 	 }
 	 return "";
@@ -928,14 +929,14 @@ Json::Value AMJSONUtils::rosoutToJson(
 		uint16_t sequence,
 		boost::posix_time::ptime timestamp,
 		std::string sender,
-		const rosgraph_msgs::Log &msg)
+		const rcl_interfaces::msg::Log &msg)
 {
 	 Json::Value value;
 	 value.clear();
 
 	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_ROSOUT, sender, AMMessage::TYPE_AUTOMOD);
 
-	 if(msg.level >= rosgraph_msgs::Log::INFO)
+	 if(msg.level >= rcl_interfaces::msg::Log::INFO)
 	 {
 		 value["data"]["level"] = logLevelToString(msg.level);
 		 value["data"]["msg"] = msg.msg;
@@ -1021,7 +1022,7 @@ Json::Value AMJSONUtils::statusSuperToJson(
 
 	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_SUPER, sender, AMMessage::TYPE_AUTOMOD);
 
-	 	value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
+	value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	value["data"]["status"]["lastContact"] = TimeUtil::printTime(msg.status.last_contact.toBoost());
 
 	value["data"]["c2_status"]["summary"] = MessageUtil::statusIntToString(msg.c2_status.summary);
