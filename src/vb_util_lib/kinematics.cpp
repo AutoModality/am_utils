@@ -678,7 +678,7 @@ void Kinematics::publishMarker() {
         line.color.b = 0.0f;
         line.color.a = 1.0;
 
-        line.lifetime = rclcpp::Duration(0);
+        line.lifetime = rclcpp::Duration(0,0);
 
         p.x = marker.pose.position.x;
         p.y = marker.pose.position.y;
@@ -732,7 +732,7 @@ void Kinematics::publishMarker() {
     marker.color.b = 0.0f;
     marker.color.a = 0.9;
 
-    marker.lifetime = rclcpp::Duration(0);
+    marker.lifetime = rclcpp::Duration(0,0);
     rviz_uav_marker_pub_->publish(marker);
     rviz_point_cnt++;
 }

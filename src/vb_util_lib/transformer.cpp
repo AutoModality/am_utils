@@ -40,7 +40,7 @@ bool Transformer::getTransform(const std::string target, const std::string sourc
 
     try
     {
-        transform = tfBuffer().lookupTransform(target, source, rclcpp::Time(0), rclcpp::Duration(wait));
+        transform = tfBuffer().lookupTransform(target, source, rclcpp::Time(0), rclcpp::Duration(wait, 0));
     }
     catch (tf2::TransformException &ex) {
         RCLCPP_ERROR_STREAM(node_->get_logger(), "Transformer::getTransform TRANSFORM ERROR source[" << source << "], target[" << target << "]  ERROR: " << ex.what());

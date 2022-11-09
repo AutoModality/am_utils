@@ -22,6 +22,10 @@ public:
   static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
          pcl::PointCloud<pcl::PointXYZ> &pcl);
 
+  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
+
+  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
+
   static bool isSetToNaN(pcl::PointXYZIR &point);
 
   static void setNaN(pcl::PointXYZIR &point);

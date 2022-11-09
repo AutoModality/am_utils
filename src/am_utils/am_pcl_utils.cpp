@@ -94,6 +94,16 @@ void AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPt
 	}
 }
 
+void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out)
+{
+	pcl::toROSMsg<pcl::PointXYZ>(cloud, cloud_out);
+}
+
+void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out)
+{
+	pcl::toROSMsg<pcl::PointXYZIR>(cloud, cloud_out);
+}
+
 bool AMPCLUtils::isSetToNaN(pcl::PointXYZIR &point)
 {
   if (std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z) ||
