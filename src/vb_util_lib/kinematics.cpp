@@ -7,7 +7,7 @@
 
 #include <vb_util_lib/kinematics.h>
 // #include <vb_util_lib/bag_logger.h> // TODO (dan) bag_logger
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <math.h>
 #include <am_utils/am_ros2_utility.h>
 #include <vb_util_lib/rotate.h>

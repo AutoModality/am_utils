@@ -20,7 +20,7 @@
 
 #define _PI_R 3.14159
 #define _TWOPI_R (2*_PI_R)
-#define PI_2 1.5707963
+const double PI_2 = 1.5707963;
 
 #define C_EARTH (double) 6378137.0
 

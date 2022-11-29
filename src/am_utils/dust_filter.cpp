@@ -16,7 +16,7 @@ namespace am
 DustFilter::DustFilter(const std::string &node_name, std::string name_space) : Node(node_name), name_space_(name_space)
 {
   getParams();
-  debug_pcl_pub_ = this->create_publisher<pcl::PointCloud<pcl::PointXYZIR>>("/debug/" + name_space_ + "/dust_filter/pcl", 10);
+  //debug_pcl_pub_ = this->create_publisher<pcl::PointCloud<pcl::PointXYZIR>>("/debug/" + name_space_ + "/dust_filter/pcl", 10);
 }
 
 DustFilter::~DustFilter()
@@ -182,10 +182,10 @@ int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl, bool skip_dust_fi
 
   pcl.is_dense = is_dense;
 
-  if (debug_pcl_pub_->get_subscription_count() > 0)
-  {
-    debug_pcl_pub_->publish(pcl);
-  }
+  //if (debug_pcl_pub_->get_subscription_count() > 0)
+  //{
+    //debug_pcl_pub_->publish(pcl);
+  //}
 
   return points_removed;
 }

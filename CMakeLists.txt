@@ -37,6 +37,7 @@ find_package(visualization_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
 find_package(camera_info_manager REQUIRED)
 find_package(stereo_msgs REQUIRED)
+find_package(mavros_msgs REQUIRED)
 
 pkg_check_modules(jsoncpp REQUIRED jsoncpp)
 
@@ -60,6 +61,7 @@ set(dependencies
         rosbag2_cpp
         brain_box_msgs
         geometry_msgs
+        mavros_msgs
       )
 
 include_directories(

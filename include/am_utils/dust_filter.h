@@ -10,7 +10,7 @@ namespace am
 class DustFilter : public rclcpp::Node
 {
 private:
-  rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZIR>>::SharedPtr debug_pcl_pub_;
+  //rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZIR>>::SharedPtr debug_pcl_pub_;
 
   float range_threshold_m_;
   float max_range_m_;
