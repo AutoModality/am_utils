@@ -35,6 +35,8 @@ find_package(pcl_conversions REQUIRED)
 find_package(PCL REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
+find_package(camera_info_manager REQUIRED)
+find_package(stereo_msgs REQUIRED)
 
 pkg_check_modules(jsoncpp REQUIRED jsoncpp)
 
@@ -56,6 +58,8 @@ set(dependencies
         pcl_conversions
         visualization_msgs
         rosbag2_cpp
+        brain_box_msgs
+        geometry_msgs
       )
 
 include_directories(
@@ -127,7 +131,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 
 					 #src/vb_util_lib/bag_logger.cpp
 					 )
-ament_target_dependencies(am_utils geometry_msgs brain_box_msgs PCL)
+ament_target_dependencies(am_utils ${dependencies} PCL)
 
 
 ament_export_targets(am_utilsTargets HAS_LIBRARY_TARGET)

@@ -12,6 +12,7 @@
 //#include <tf2/transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <vb_util_lib/frame_names.h>
+#include <am_utils/am_ros2_utility.h>
 
 RowMarker::RowMarker(rclcpp::Node::SharedPtr node, std::string topic): node_(node)
 {
@@ -60,7 +61,7 @@ void RowMarker::visualizeRow(int id, const brain_box_msgs::msg::Row& row) {
     marker.color.b = 0.0f;
     marker.color.a = 0.9;
 
-    marker.lifetime = rclcpp::Duration(0);
+    marker.lifetime = rclcpp::Duration(am::toDuration(0.0));
     pub_->publish(marker);
 
 

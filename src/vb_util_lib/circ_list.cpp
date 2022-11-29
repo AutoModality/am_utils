@@ -6,6 +6,7 @@
  */
 
 #include <vb_util_lib/circ_list.h>
+#include <am_utils/am_ros2_utility.h>
 
 //CircularList::CircularList()  {
 
@@ -86,7 +87,7 @@ void CircularList::testObjList() {
     int i = 0;
     rclcpp::Time base = rclcpp::Clock().now();
     rclcpp::Time stamp = base;
-    rclcpp::Duration d(1.0);
+    rclcpp::Duration d(am::toDuration(1.0));
     for (;i < 5; i++)
     {
     	std_msgs::msg::Header s;
@@ -110,7 +111,7 @@ void CircularList::testObjList() {
     unsigned start_idx = 0;
     unsigned cnt = 0;
 
-    stamp = base + rclcpp::Duration(5.5);
+    stamp = base + rclcpp::Duration(am::toDuration(5.5));
     getObjectTimeIdx(stamp, start_idx, cnt);
     unsigned k = start_idx;
     printf(">>> SEARCHING FOR ALL OBJECTS WITHIN STAMP[%f:%ld] start_idx[%u]  cnt[%u]\n", stamp.seconds(), stamp.nanoseconds(), start_idx, cnt);
