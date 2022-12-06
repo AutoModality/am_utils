@@ -7,7 +7,7 @@
 namespace am
 {
 
-class DustFilter : public rclcpp::Node
+class DustFilter
 {
 private:
   //rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZIR>>::SharedPtr debug_pcl_pub_;
@@ -33,10 +33,12 @@ private:
   void printInsideParams();
   void printOutsideParams();
 
+  rclcpp::Node::SharedPtr node_;
+
 
 
 public:
-  DustFilter(const std::string &node_name, std::string name_space);
+  DustFilter(rclcpp::Node::SharedPtr node, std::string name_space);
   ~DustFilter();
 
   int process(pcl::PointCloud<pcl::PointXYZIR> &pc, bool skip_dust_filter = false);

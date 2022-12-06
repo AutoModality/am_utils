@@ -23,8 +23,8 @@ std::chrono::duration<T, std::ratio<1>> toDuration(T seconds)
 }
 
 template<class T>
-void getParam(rclcpp::Node::SharedPtr node, const std::string &param_name,
-		const T &initial_value, T &param, bool with_declaration=true)
+void getParam(rclcpp::Node::SharedPtr node, const std::string &param_name, T &param,
+		const T &initial_value, bool with_declaration=true)
 {
 	if(with_declaration)
 	{
