@@ -88,7 +88,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 src/am_utils/message_util.cpp
 					 src/am_utils/mission_cmd_type.cpp
 					 src/am_utils/operator_msg_type.cpp
-					 
+					 src/am_utils/am_ros2_utility.cpp
 					 
 					 src/vb_util_lib/am_geometry.cpp
 					 src/vb_util_lib/am_heartbeat.cpp

@@ -1,6 +1,6 @@
 #include <vb_util_lib/trajectory_data.h>
 #include <nav_msgs/msg/path.hpp>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 void TrajectoryData::setup(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type,
 		bool trigger_enable, rclcpp::Time& trigger_time)

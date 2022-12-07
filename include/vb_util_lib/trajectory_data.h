@@ -23,7 +23,7 @@
 #include <vb_util_lib/transformer.h>
 #include <vb_util_lib/am_geometry.h>
 #include <vb_util_lib/frame_names.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 enum class TRAJECTORY_MSG_TYPE
 {

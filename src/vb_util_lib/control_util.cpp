@@ -7,7 +7,7 @@
 
 
 #include <vb_util_lib/control_util.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 const char* axisLabel[] = {"X", "Y", "Z"};
 const char* paramLabel[] = {"P", "I", "D"};
