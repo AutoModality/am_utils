@@ -21,4 +21,19 @@ std::vector<std::string> toVector(const std::string &raw_str, char del)
 	}
 	return vec;
 }
+
+std::string vectToStr(const std::vector<std::string> &vect)
+{
+	std::string res = "";
+	for(int i = 0; i < vect.size(); i++)
+	{
+		res += vect[i];
+		if(i < vect.size() - 1)
+		{
+			res += ", ";
+		}
+	}
+
+	return res;
+}
 }

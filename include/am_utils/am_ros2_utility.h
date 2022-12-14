@@ -36,6 +36,8 @@ void getParam(rclcpp::Node::SharedPtr node, const std::string &param_name, T &pa
 
 std::vector<std::string> toVector(const std::string &raw_str, char del);
 
+std::string vectToStr(const std::vector<std::string> &vect);
+
 }
 
 
