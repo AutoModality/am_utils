@@ -64,13 +64,14 @@ set(dependencies
         geometry_msgs
         mavros_msgs
         jsoncpp
+        PCL
       )
 
 include_directories(
-	include
-	${jsoncpp_INCLUDE_DIRS}
-	${PCL_INCLUDE_DIRS}
-  	/usr/include/eigen3
+					include
+					${jsoncpp_INCLUDE_DIRS}
+					${PCL_INCLUDE_DIRS}
+					/usr/include/eigen3
   	)
 
 link_directories(${PCL_LIBRARY_DIRS})
@@ -135,19 +136,17 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 
 					 #src/vb_util_lib/bag_logger.cpp
 					 )
-ament_target_dependencies(am_utils ${dependencies} PCL)
-
-
+target_link_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
+ament_target_dependencies(am_utils ${dependencies})
 ament_export_targets(am_utilsTargets HAS_LIBRARY_TARGET)
-
 ament_export_include_directories(include)
-ament_export_libraries(am_utils)
+ament_export_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 install(DIRECTORY include/
-            DESTINATION include/
+        DESTINATION include/
     )
 install(
   TARGETS am_utils
