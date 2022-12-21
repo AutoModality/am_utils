@@ -61,13 +61,13 @@ public:
     		rclcpp::Time &time, const std::string &topic, const std::string &message_string, int level);
 
     template <class MessageT>
-        void LOG(const MessageT &msg, const rclcpp::Time &time, const std::string &topic, int level)
-        {
-        	if(is_logging_ && level <= log_level_)
-        	{
-        		writer_->write(msg, topic, time);
-        	}
-        }
+    void LOG(const MessageT &msg, const std::string &topic, const std::string &msg_str, const rclcpp::Time &time, int level)
+    {
+    	if(is_logging_ && level <= log_level_)
+    	{
+    		writer_->write<MessageT>(msg, topic, time);
+    	}
+    }
 
     template<class MessageT>
     static std::string messageTypeAsString()

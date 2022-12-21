@@ -135,7 +135,7 @@ bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, rclcpp::Time &t, std:
     	//ROS_INFO_STREAM("traj.size: " << traj.size());
     	//ROS_INFO("traj[0].header.stamp.toSec(): %f", traj[0].header.stamp.toSec());
     	//ROS_INFO("traj[traj.size()-1].header.stamp.toSec(): %f", traj[traj.size()-1].header.stamp.toSec());
-    	RCLCPP_WARN(node->get_logger(), "TrajectoryData::getPose2 - specified time not within compare trajectory time span %0.2f   %0.2f   %0.2f", traj[0].header.stamp.sec, t_sec, traj[traj.size()-1].header.stamp.sec);
+    	RCLCPP_WARN(node->get_logger(), "TrajectoryData::getPose2 - specified time not within compare trajectory time span %0.2f   %0.2f   %0.2d", traj[0].header.stamp.sec, t_sec, traj[traj.size()-1].header.stamp.sec);
     	//ROS_INFO("t_sec: %f", t_sec);
         return false;
     }
@@ -231,7 +231,7 @@ void TrajectoryData::publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::Sha
         	}
         	else
         	{
-        		RCLCPP_INFO(node_->get_logger(), "TRIMMED POINT times[%0.3f  %0.3f  %0.3f]", start.seconds(), p.header.stamp.sec, end.seconds());
+        		RCLCPP_INFO(node_->get_logger(), "TRIMMED POINT times[%0.3f  %0.3d  %0.3f]", start.seconds(), p.header.stamp.sec, end.seconds());
         	}
         }
         else

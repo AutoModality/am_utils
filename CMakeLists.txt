@@ -131,7 +131,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 				     src/vb_util_lib/time_synchronizer.cpp
 				     src/vb_util_lib/time_util.cpp
 					 src/vb_util_lib/topics.cpp
-					 src/vb_util_lib/trajectory_data.cpp
+					 #src/vb_util_lib/trajectory_data.cpp
 					 src/vb_util_lib/transformer.cpp
 					 src/vb_util_lib/bag_logger.cpp
 					 )
@@ -140,6 +140,10 @@ ament_target_dependencies(am_utils ${dependencies})
 ament_export_targets(am_utilsTargets HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
 ament_export_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(bag_logger_test src/nodes/bag_logger_test.cpp)
+target_link_libraries(bag_logger_test am_utils)
+ament_target_dependencies(bag_logger_test ${dependencies})
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -155,6 +159,10 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
+
+install(TARGETS
+  bag_logger_test
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -41,6 +41,17 @@ std::string getMessageName()
 	return rosidl_generator_traits::name<MessageT>();
 }
 
+template<class T>
+T getRandom(T min, T max, bool reset = false)
+{
+	if(reset)
+	{
+		srand((unsigned) time(0));
+	}
+
+    return (min + 1) + (((T) rand()) / (T) RAND_MAX) * (max - (min + 1));
+}
+
 std::vector<std::string> toVector(const std::string &raw_str, char del);
 
 std::string vectToStr(const std::vector<std::string> &vect);

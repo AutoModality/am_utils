@@ -44,7 +44,7 @@ void BagLogger::LOG(std::shared_ptr<rclcpp::SerializedMessage> message,
 {
 	if(is_logging_ && level <= log_level_)
 	{
-		writer_->write(*message, topic, message_string, time);
+		//writer_->write(*message, topic, message_string, time);
 	}
 
 
