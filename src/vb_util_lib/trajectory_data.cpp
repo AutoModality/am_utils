@@ -1,6 +1,8 @@
 #include <vb_util_lib/trajectory_data.h>
 #include <nav_msgs/msg/path.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <am_utils/am_ros2_utility.h>
+
 
 void TrajectoryData::setup(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type,
 		bool trigger_enable, rclcpp::Time& trigger_time)
@@ -209,7 +211,7 @@ void TrajectoryData::publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::Sha
     }
     nav_msgs::msg::Path path;
 //    ros::Duration time_offset = (ros::Time::now() - pose_msgs_[pose_msgs_.size()-1].header.stamp) + ros::Duration(time_offset_);
-    rclcpp::Duration time_offset = (node_->now() - pose_msgs_[0].header.stamp) + rclcpp::Duration(time_offset_);
+    rclcpp::Duration time_offset = (node_->now() - pose_msgs_[0].header.stamp) + rclcpp::Duration(am::toDuration(time_offset_));
 
     for(int i = 0; i < pose_msgs_.size(); i++)
     {
@@ -264,7 +266,7 @@ void TrajectoryData::compareTrajectory(TrajectoryData& truth,
         return;
     }
 
-    rclcpp::Duration d = rclcpp::Duration(time_offset+time_offset_);
+    rclcpp::Duration d = rclcpp::Duration(am::toDuration(time_offset+time_offset_));
     geometry_msgs::msg::PoseStamped pt;
     for (std::vector<geometry_msgs::msg::PoseStamped>::iterator it = truth_vector.begin();
             it != truth_vector.end(); it++)

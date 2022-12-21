@@ -34,9 +34,18 @@ void getParam(rclcpp::Node::SharedPtr node, const std::string &param_name, T &pa
 	node->get_parameter_or(param_name, param, initial_value);
 }
 
+//a function that returns the string representation of a given ros2 message,
+template<class MessageT>
+std::string getMessageName()
+{
+	return rosidl_generator_traits::name<MessageT>();
+}
+
 std::vector<std::string> toVector(const std::string &raw_str, char del);
 
 std::string vectToStr(const std::vector<std::string> &vect);
+
+
 
 }
 

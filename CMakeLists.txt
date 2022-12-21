@@ -131,10 +131,9 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 				     src/vb_util_lib/time_synchronizer.cpp
 				     src/vb_util_lib/time_util.cpp
 					 src/vb_util_lib/topics.cpp
-					 #src/vb_util_lib/trajectory_data.cpp
+					 src/vb_util_lib/trajectory_data.cpp
 					 src/vb_util_lib/transformer.cpp
-
-					 #src/vb_util_lib/bag_logger.cpp
+					 src/vb_util_lib/bag_logger.cpp
 					 )
 target_link_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
 ament_target_dependencies(am_utils ${dependencies})

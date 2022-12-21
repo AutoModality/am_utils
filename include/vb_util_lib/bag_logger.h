@@ -60,8 +60,17 @@ public:
     void LOG(std::shared_ptr<rclcpp::SerializedMessage> message,
     		rclcpp::Time &time, const std::string &topic, const std::string &message_string, int level);
 
+    template <class MessageT>
+        void LOG(const MessageT &msg, const rclcpp::Time &time, const std::string &topic, int level)
+        {
+        	if(is_logging_ && level <= log_level_)
+        	{
+        		writer_->write(msg, topic, time);
+        	}
+        }
+
     template<class MessageT>
-    std::string getMessageName()
+    static std::string messageTypeAsString()
     {
     	return rosidl_generator_traits::name<MessageT>();
     }
@@ -72,15 +81,6 @@ public:
     	rclcpp::SerializedMessage serialized_msg;
     	rclcpp::Serialization<MessageT> serialization;
     	serialization.serialize_message(&message, serialized_msg);
-    }
-
-    template <class MessageT>
-    void LOG(const MessageT &msg, const rclcpp::Time &time, const std::string &topic, int level)
-    {
-    	if(is_logging_ && level <= log_level_)
-    	{
-    		writer_->write(msg, topic, time);
-    	}
     }
 
 
