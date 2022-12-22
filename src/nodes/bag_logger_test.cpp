@@ -14,14 +14,15 @@
 class TestClass
 {
 public:
-	TestClass(rclcpp::Node::SharedPtr node): node_(node), bag_logger_()
+	TestClass(rclcpp::Node::SharedPtr node): node_(node)
 	{
-		bag_logger_.add_topic("/points", "geometry_msgs::msg::PointStamped");
 
 		pub_ = node_->create_publisher<geometry_msgs::msg::PointStamped>("/points",1);
 
 		points_sub_ = node_->create_subscription<geometry_msgs::msg::PointStamped>("/points",1,
 				std::bind(&TestClass::pointCB, this, std::placeholders::_1));
+
+		log_ctrl_pub_ = node_->create_publisher<brain_box_msgs::msg::LogControl>("/ctrl/log_control",1);
 
 		log_ctrl_sub_ = node_->create_subscription<brain_box_msgs::msg::LogControl>
 		("/ctrl/log_control",1,std::bind(&TestClass::logCtrlCB, this, std::placeholders::_1));
@@ -31,13 +32,15 @@ public:
 
 	~TestClass()
 	{
-
+		delete BagLogger::instance();
 	}
 private:
 
 	rclcpp::Node::SharedPtr node_;
 
 	rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr pub_;
+
+	rclcpp::Publisher<brain_box_msgs::msg::LogControl>::SharedPtr log_ctrl_pub_;
 
 	rclcpp::Subscription<geometry_msgs::msg::PointStamped>::SharedPtr points_sub_;
 
@@ -47,28 +50,29 @@ private:
 
 	void pointCB(const geometry_msgs::msg::PointStamped::SharedPtr msg)
 	{
-		bag_logger_.LOG(msg, "/points", "geometry_msgs::msg::PointStamped", msg->header.stamp, 2);
+		LOG_MSG(*msg, "/points", "geometry_msgs/msg/PointStamped", msg->header.stamp, 1);
 	}
 
 	void logCtrlCB(const brain_box_msgs::msg::LogControl::SharedPtr msg)
 	{
 		if(msg->enable)
 		{
-			bag_logger_.startLogging("LG", msg->level);
+			BagLogger::instance()->startLogging("LG", 3);
 			RCLCPP_INFO(node_->get_logger(), "%s: Logging is started", node_->get_name());
 		}
 		else
 		{
-			bag_logger_.stopLogging();
+			BagLogger::instance()->stopLogging();
 			RCLCPP_INFO(node_->get_logger(), "%s: Logging is stopped", node_->get_name());
 		}
 	}
 
-	BagLogger bag_logger_;
-
 	void timerCB()
 	{
 		static double val = 0.0;
+		static bool logging_is_started_ = false;
+		static rclcpp::Time start_t = node_->now();
+		static bool enable_logging_ = true;
 
 		geometry_msgs::msg::PointStamped p;
 		p.header.frame_id = "";
@@ -78,6 +82,48 @@ private:
 		p.point.z = am::getRandom<double>(0.0, 100.0);
 
 		pub_->publish(p);
+
+		if(enable_logging_)
+		{
+			if(!logging_is_started_)
+			{
+				if((node_->now() - start_t).seconds() >= 5.0)
+				{
+					brain_box_msgs::msg::LogControl log_ctrl_msg;
+					log_ctrl_msg.enable = true;
+					log_ctrl_msg.level = 3;
+					log_ctrl_pub_->publish(log_ctrl_msg);
+
+					start_t = node_->now();
+					logging_is_started_ = true;
+				}
+			}
+			else
+			{
+				if((node_->now() - start_t).seconds() >= 5.0)
+				{
+					brain_box_msgs::msg::LogControl log_ctrl_msg;
+					log_ctrl_msg.enable = false;
+					log_ctrl_msg.level = 3;
+					log_ctrl_pub_->publish(log_ctrl_msg);
+					enable_logging_ = false;
+					start_t = node_->now();
+				}
+			}
+		}
+
+
+
+		if(!enable_logging_)
+		{
+			if((node_->now() - start_t).seconds() >= 5.0)
+			{
+				enable_logging_ = true;
+				logging_is_started_ = false;
+				start_t = node_->now();
+			}
+		}
+
 	}
 };
 

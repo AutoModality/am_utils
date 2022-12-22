@@ -1,8 +1,6 @@
 #include <vb_util_lib/bag_logger.h>
 
-//BagLogger *BagLogger::s_instance_ = 0;
-
-
+BagLogger *BagLogger::s_instance_ = 0;
 
 std::string BagLogger::getLogFileDir() {
     using namespace std;
@@ -46,11 +44,10 @@ void BagLogger::LOG(std::shared_ptr<rclcpp::SerializedMessage> message,
 	{
 		//writer_->write(*message, topic, message_string, time);
 	}
-
-
 }
 
-std::string BagLogger::getSequence(std::string dir, std::string prefix) {
+std::string BagLogger::getSequence(std::string dir, std::string prefix)
+{
     using namespace std;
     using namespace boost::filesystem;
     using namespace boost;
@@ -60,7 +57,7 @@ std::string BagLogger::getSequence(std::string dir, std::string prefix) {
     path p(dir);
     for (auto i = directory_iterator(p); i != directory_iterator(); i++)
     {
-        if (!is_directory(i->path())) //we eliminate directories
+        if (is_directory(i->path())) //we eliminate directories
         {
             // cout << i->path().filename().string() << endl;
             std::vector<std::string> fields;
@@ -91,7 +88,8 @@ std::string BagLogger::getSequence(std::string dir, std::string prefix) {
     return s.str();
 }
 
-std::string BagLogger::getLogFileName(std::string prefix, std::string suffix) {
+std::string BagLogger::getLogFileName(std::string prefix, std::string suffix)
+{
 //    log_name_prefix_ = prefix;
     time_t rawtime;
     struct tm * timeinfo;
@@ -104,15 +102,16 @@ std::string BagLogger::getLogFileName(std::string prefix, std::string suffix) {
 
     std::string seq_str = getSequence(dir_str, prefix);
 
-    std::string format_str = dir_str+prefix+"-"+seq_str+"-%Y-%m-%d-%H-%M-%S."+suffix;
-
+    //std::string format_str = dir_str+prefix+"-"+seq_str+"-%Y-%m-%d-%H-%M-%S."+suffix;
+    std::string format_str = dir_str+prefix+"-"+seq_str+"-%Y-%m-%d-%H-%M-%S";
     strftime(buffer, 80, format_str.c_str(), timeinfo);
     std::string str(buffer);
 
     return str;
 }
 
-void BagLogger::dumpParams(std::string prefix) {
+void BagLogger::dumpParams(std::string prefix)
+{
     std::string filename = getLogFileName(prefix);
     std::string cmd = "rosparam dump " + filename;
 
@@ -123,7 +122,8 @@ void BagLogger::dumpParams(std::string prefix) {
     return;
 }
 
-void BagLogger::startLogging(std::string prefix, unsigned log_level) {
+void BagLogger::startLogging(std::string prefix, unsigned log_level)
+{
     if (is_logging_)
     {
         if ((prefix == prefix_) && (log_level == log_level_))
@@ -134,6 +134,8 @@ void BagLogger::startLogging(std::string prefix, unsigned log_level) {
         else
         {
             printf("LG: Closing bag file %s\n", file_name_.c_str());
+            //bag.close();
+            close_bagfile();
             log_level_ = 0;
             prefix_ = "";
             is_logging_ = false;
@@ -145,25 +147,32 @@ void BagLogger::startLogging(std::string prefix, unsigned log_level) {
         prefix_ = prefix;
         file_name_ = getLogFileName(prefix);
         //bag.open(file_name_, rosbag::bagmode::Write);
+        //printf("prefix: %s, file_name_: %s\n",prefix.c_str(), file_name_.c_str());
+
+        writer_ = std::make_unique<rosbag2_cpp::Writer>();
         writer_->open(file_name_);
         printf("Opening bag file %s\n", file_name_.c_str());
         log_level_ = log_level;
         is_logging_ = true;
+
     }
 }
 
-void BagLogger::stopLogging() {
+void BagLogger::stopLogging()
+{
     if (is_logging_)
     {
         log_level_ = 0;
         is_logging_ = false;
         printf("LG: Closing bag file %s\n", file_name_.c_str());
         prefix_ = "";
+        close_bagfile();
     }
     return;
 }
 
-void BagLogger::open_log(std::string prefix, FILE **debug_file, int log_level) {
+void BagLogger::open_log(std::string prefix, FILE **debug_file, int log_level)
+{
   return;
     if (*debug_file != NULL)
     {
@@ -182,7 +191,8 @@ void BagLogger::open_log(std::string prefix, FILE **debug_file, int log_level) {
     }
 }
 
-void BagLogger::close_log(FILE **debug_file) {
+void BagLogger::close_log(FILE **debug_file)
+{
   return;
     if (*debug_file != NULL)
     {
@@ -191,7 +201,8 @@ void BagLogger::close_log(FILE **debug_file) {
     }
 }
 
-void BagLogger::debug_log(FILE **debug_file, const char* format, ...) {
+void BagLogger::debug_log(FILE **debug_file, const char* format, ...)
+{
     va_list args;
     return;
     if (*debug_file == NULL)

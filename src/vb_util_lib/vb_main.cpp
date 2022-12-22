@@ -10,6 +10,7 @@
 #include <brain_box_msgs/msg/heartbeat.hpp>
 #include <termios.h>
 #include <vb_util_lib/super_status.h>
+#include <am_utils/am_ros2_utility.h>
 #include <string>
 
 void changemode(int dir)
@@ -43,19 +44,20 @@ int kbhit (void)
 
 }
 
-bool userInputEnabled(ros::NodeHandle& n)
+bool userInputEnabled(rclcpp::Node::SharedPtr node)
 {
     bool user_input = false;
 
-    if (n.hasParam("/DisableUserInput"))
+    /*if (am::getParam<bool>(node, "/DisableUserInput", user_input, user_input))
     {
         user_input = false;
     }
     else
     {
-        n.getParam("UserInput", user_input);
+        //n.getParam("UserInput", user_input);
+        am::getParam<bool>(node, "UserInput", user_input, user_input);
     }
-    ROS_INFO("USER INPUT %s", user_input ? "ENABLED" : "DISABLED");
+    RCLCPP_INFO(node->get_logger(), "USER INPUT %s", user_input ? "ENABLED" : "DISABLED");*/
 
     return user_input;
 }

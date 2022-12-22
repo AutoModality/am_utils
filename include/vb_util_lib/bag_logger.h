@@ -26,14 +26,16 @@
 #define DEFAULT_BAG_DIR "/var/log/amros/"
 #define DEFAULT_MEDIA_DIR "/media/amros"
 
-//#define LOG_MSG(topic, msg, level) { LOG_MSG_STAMP(topic, msg, ros::Time::now(), level) }
 
-//#define LOG_MSG_STAMP(topic, msg, t, level) { if (BagLogger::instance()->isLogging() && \
+//in ros2 you cannot do ros::Time::now(). You have to send the time over
+#define LOG_MSG(msg, topic, msg_str, t, level) { LOG_MSG_STAMP(msg, topic, msg_str, t, level) }
+
+#define LOG_MSG_STAMP(msg, topic, msg_str, t, level) { if (BagLogger::instance()->isLogging() && \
                                                  (level) <= BagLogger::instance()->getLogLevel()) { \
-    BagLogger::instance()->bag.write((topic), (t), (msg)); } }
+											BagLogger::instance()->LOG((msg), (topic), (msg_str), (t), (level)); } }
 
 class BagLogger {
-    //static BagLogger *s_instance_;
+    static BagLogger *s_instance_;
 
     unsigned log_level_ {0};
 
@@ -47,12 +49,11 @@ public:
     BagLogger()
     {
     	writer_ = std::make_unique<rosbag2_cpp::Writer>();
-
     }
 
     ~BagLogger()
     {
-
+    	writer_.release();
     }
 
     void add_topic(const std::string &topic, const std::string &message_in_str);
@@ -65,7 +66,7 @@ public:
     {
     	if(is_logging_ && level <= log_level_)
     	{
-    		writer_->write<MessageT>(msg, topic, time);
+    		writer_->write(msg, topic, time);
     	}
     }
 
@@ -87,14 +88,14 @@ public:
     std::unique_ptr<rosbag2_cpp::Writer> writer_;
 
 
-/*    static BagLogger *instance() {
+   static BagLogger *instance() {
         if (!s_instance_)
         {
             s_instance_ = new BagLogger;
         }
         return s_instance_;
     }
-*/
+
 
     bool isLogging() { return is_logging_; }
 
@@ -102,7 +103,7 @@ public:
 
     static std::string getSequence(std::string dir, std::string prefix);
 
-    static std::string getLogFileName(std::string prefix, std::string suffix="bag");
+    static std::string getLogFileName(std::string prefix, std::string suffix="");
 
     void dumpParams(std::string prefix);
 
@@ -166,6 +167,11 @@ public:
         va_start( args, format );
         debug_log(file_handle_, format, args);
         va_end( args );
+    }
+
+    void close_bagfile()
+    {
+    	writer_->get_implementation_handle().close();
     }
 
 private:

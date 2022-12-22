@@ -35,6 +35,7 @@ find_package(pcl_conversions REQUIRED)
 find_package(PCL REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
+find_package(rosbag2_storage REQUIRED)
 find_package(camera_info_manager REQUIRED)
 find_package(stereo_msgs REQUIRED)
 find_package(mavros_msgs REQUIRED)
@@ -60,6 +61,7 @@ set(dependencies
         pcl_conversions
         visualization_msgs
         rosbag2_cpp
+        rosbag2_storage
         brain_box_msgs
         geometry_msgs
         mavros_msgs
@@ -134,6 +136,7 @@ add_library(am_utils src/am_utils/am_statistics.cpp
 					 #src/vb_util_lib/trajectory_data.cpp
 					 src/vb_util_lib/transformer.cpp
 					 src/vb_util_lib/bag_logger.cpp
+					 src/vb_util_lib/vb_main.cpp
 					 )
 target_link_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
 ament_target_dependencies(am_utils ${dependencies})
