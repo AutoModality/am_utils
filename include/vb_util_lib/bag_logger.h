@@ -17,7 +17,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
 #include <rosbag2_cpp/writer.hpp>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
@@ -28,11 +28,17 @@
 
 
 //in ros2 you cannot do ros::Time::now(). You have to send the time over
-#define LOG_MSG(msg, topic, msg_str, t, level) { LOG_MSG_STAMP(msg, topic, msg_str, t, level) }
+#define LOG_MSG(msg, topic, level) { LOG_MSG_STAMP(msg, topic, am::ClockNow(), level) }
 
-#define LOG_MSG_STAMP(msg, topic, msg_str, t, level) { if (BagLogger::instance()->isLogging() && \
+#define LOG_MSG_STAMP(msg, topic, t, level) { if (BagLogger::instance()->isLogging() && \
                                                  (level) <= BagLogger::instance()->getLogLevel()) { \
-											BagLogger::instance()->LOG((msg), (topic), (msg_str), (t), (level)); } }
+											BagLogger::instance()->LOG((msg), (topic), (t), (level)); } }
+
+#define LOG_MSG2(msg, topic, msg_str, t, level) { LOG_MSG2_STAMP(msg, topic, msg_str, t, level) }
+
+#define LOG_MSG2_STAMP(msg, topic, msg_str, t, level) { if (BagLogger::instance()->isLogging() && \
+                                                 (level) <= BagLogger::instance()->getLogLevel()) { \
+											BagLogger::instance()->LOG2((msg), (topic), (msg_str), (t), (level)); } }
 
 class BagLogger {
     static BagLogger *s_instance_;
@@ -62,7 +68,16 @@ public:
     		rclcpp::Time &time, const std::string &topic, const std::string &message_string, int level);
 
     template <class MessageT>
-    void LOG(const MessageT &msg, const std::string &topic, const std::string &msg_str, const rclcpp::Time &time, int level)
+    void LOG(const MessageT &msg, const std::string &topic, const rclcpp::Time &time, int level)
+    {
+    	if(is_logging_ && level <= log_level_)
+    	{
+    		writer_->write(msg, topic, time);
+    	}
+    }
+
+    template <class MessageT>
+    void LOG2(const MessageT &msg, const std::string &topic, const std::string &msg_str, const rclcpp::Time &time, int level)
     {
     	if(is_logging_ && level <= log_level_)
     	{

@@ -13,6 +13,19 @@
 
 namespace am
 {
+//
+// Simple class used to create a global node handle singleton
+//
+class Node
+{
+public:
+  Node() {}
+
+  virtual ~Node() {}
+
+  static std::shared_ptr<rclcpp::Node> node;
+};
+
 // toDuration() can be used whenever a float or double has to be converted to std::chrono::duration datatype
 // This function is needed when you are create a timer
 template <typename T>
@@ -31,6 +44,12 @@ void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, T& pa
   }
 
   node->get_parameter_or(param_name, param, initial_value);
+}
+
+template <class T>
+void getParam(const std::string& param_name, T& param, const T& initial_value)
+{
+  am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
 
 // a function that returns the string representation of a given ros2 message,
@@ -55,18 +74,7 @@ std::vector<std::string> toVector(const std::string& raw_str, char del);
 
 std::string vectToStr(const std::vector<std::string>& vect);
 
-//
-// Simple class used to create a global node handle singleton
-//
-class Node
-{
-public:
-  Node() {}
-
-  virtual ~Node() {}
-
-  static std::shared_ptr<rclcpp::Node> node;
-};
+inline rclcpp::Time ClockNow() {return am::Node::node->now();}; 
 
 }  // namespace am
 
