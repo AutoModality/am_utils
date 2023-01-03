@@ -50,14 +50,14 @@ void BagLogger::add_topic(const std::string& topic, const std::string& message_i
   writer_->create_topic(tm);
 }
 
-void BagLogger::LOG(std::shared_ptr<rclcpp::SerializedMessage> message, rclcpp::Time& time, const std::string& topic,
-                    const std::string& message_string, int level)
-{
-  if (is_logging_ && level <= log_level_)
-  {
-    // writer_->write(*message, topic, message_string, time);
-  }
-}
+// void BagLogger::LOG(std::shared_ptr<rclcpp::SerializedMessage> message, rclcpp::Time& time, const std::string& topic,
+//                     const std::string& message_string, int level)
+// {
+//   if (is_logging_ && level <= log_level_)
+//   {
+//     // writer_->write(*message, topic, message_string, time);
+//   }
+// }
 
 std::string BagLogger::getSequence(std::string dir, std::string prefix)
 {

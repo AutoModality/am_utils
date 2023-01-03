@@ -49,8 +49,8 @@ private:
 
   void pointCB(const geometry_msgs::msg::PointStamped::SharedPtr msg)
   {
-	LOG_MSG(*msg, "/points_now", 1);
-	LOG_MSG_STAMP(*msg, "/points_stamped", msg->header.stamp, 1);
+	LOG_MSG("/points_now", *msg,  1);
+	LOG_MSG_STAMP("/points_stamped", *msg, msg->header.stamp, 1);
   }
 
   void logCtrlCB(const brain_box_msgs::msg::LogControl::SharedPtr msg)
