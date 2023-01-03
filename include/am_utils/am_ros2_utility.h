@@ -47,7 +47,7 @@ void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, T& pa
 }
 
 template <class T>
-void getParam(const std::string& param_name, T& param, const T& initial_value)
+void getParameter(const std::string& param_name, T& param, const T& initial_value)
 {
   am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
@@ -75,7 +75,7 @@ std::vector<std::string> toVector(const std::string& raw_str, char del);
 std::string vectToStr(const std::vector<std::string>& vect);
 
 inline rclcpp::Time ClockNow() {return am::Node::node->now();}; 
-
+inline rclcpp::Clock::SharedPtr getClock() {return am::Node::node->get_clock();};
 }  // namespace am
 
 // Defines to convert ROS1 outputs to ROS2

@@ -17,7 +17,7 @@ using std::placeholders::_1;
 }*/
 
 CurrentENUKinematics::CurrentENUKinematics(rclcpp::Node::SharedPtr node, std::string topic,
-        bool pub_on_change, double pub_rate) : node_(node), transformer_(node),
+        bool pub_on_change, double pub_rate) : node_(node), transformer_(),
             Kinematics(node, topic!="" ? topic : am::am_topics::CTRL_VX_VEHICLE_CURRENTENU,
             		Asset_ENU, pub_on_change, pub_rate), odom_gen_(odom_random_()),
             		odom_prob_ud_(0.0, 1.0) {
@@ -30,18 +30,18 @@ CurrentENUKinematics::CurrentENUKinematics(rclcpp::Node::SharedPtr node, std::st
     if (isPublisher())
     {
         node_->get_parameter_or("/locator/publish_enu_transform", publish_transform_, true);
-        RCLCPP_INFO(node_->get_logger(),"CurrentENUKinematics: publish_transform_[%s]", publish_transform_ ? "TRUE" : "FALSE");
+        ROS_INFO("CurrentENUKinematics: publish_transform_[%s]", publish_transform_ ? "TRUE" : "FALSE");
 
         od_sub_nh_ = node_->create_subscription<nav_msgs::msg::Odometry>("odometry/Asset_ENU", 1000, std::bind(&CurrentENUKinematics::updateODCB, this, _1));
 
         if (parent_frame_ != Asset_ENU && parent_frame_ != World_ENU)
         {
-        	RCLCPP_ERROR(node_->get_logger(),"CurrentENUKinematics: parent_frame[%s] invalid. Setting to %s", parent_frame_.c_str(), Asset_ENU);
+        	ROS_ERROR("CurrentENUKinematics: parent_frame[%s] invalid. Setting to %s", parent_frame_.c_str(), Asset_ENU);
         	parent_frame_ = Asset_ENU;
         }
         else
         {
-        	RCLCPP_ERROR(node_->get_logger(), "CurrentENUKinematics: parent_frame[%s]", parent_frame_.c_str());
+        	ROS_ERROR("CurrentENUKinematics: parent_frame[%s]", parent_frame_.c_str());
         }
 
         update_timer_ = node_->create_wall_timer(am::toDuration(0.1), std::bind(&CurrentENUKinematics::updateTimerCB, this));
@@ -50,41 +50,41 @@ CurrentENUKinematics::CurrentENUKinematics(rclcpp::Node::SharedPtr node, std::st
 
         // odom error testing
         node_->get_parameter_or("/locator/odom_trans_error_x", odom_trans_error_m_.x, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(), "CurrentENUKinematics: odom_trans_error_x: " << odom_trans_error_m_.x);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_x: " << odom_trans_error_m_.x);
         odom_trans_error_x_nd_ = new std::normal_distribution<double>(0, odom_trans_error_m_.x);
 
         node_->get_parameter_or("/locator/odom_trans_error_y", odom_trans_error_m_.y, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_trans_error_y:" << odom_trans_error_m_.y);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_y:" << odom_trans_error_m_.y);
         odom_trans_error_y_nd_ = new std::normal_distribution<double>(0, odom_trans_error_m_.y);
 
         node_->get_parameter_or("/locator/odom_trans_error_z", odom_trans_error_m_.z, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_trans_error_z:" << odom_trans_error_m_.z);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_z:" << odom_trans_error_m_.z);
         odom_trans_error_z_nd_ = new std::normal_distribution<double>(0, odom_trans_error_m_.z);
 
         node_->get_parameter_or("/locator/odom_trans_error_yaw", odom_yaw_error_r_, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_trans_error_yaw:" << odom_yaw_error_r_);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_yaw:" << odom_yaw_error_r_);
         odom_trans_error_yaw_nd_ = new std::normal_distribution<double>(0, odom_yaw_error_r_);
 
         node_->get_parameter_or("/locator/odom_dropout_prob", odom_dropout_prob_, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_dropout_prob:" << odom_dropout_prob_);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_dropout_prob:" << odom_dropout_prob_);
 
         node_->get_parameter_or("/locator/odom_hyperspace_prob", odom_hyperspace_prob_, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_hyperspace_prob:" << odom_hyperspace_prob_);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_prob:" << odom_hyperspace_prob_);
 
         node_->get_parameter_or("/locator/odom_hyperspace_count", odom_hyperspace_count_, -1);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_hyperspace_count:" << odom_hyperspace_count_);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_count:" << odom_hyperspace_count_);
 
         node_->get_parameter_or("/locator/odom_hyperspace_offset_x", odom_hyperspace_trans_offset_m_.x, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_hyperspace_offset_x:" << odom_hyperspace_trans_offset_m_.x);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_x:" << odom_hyperspace_trans_offset_m_.x);
 
         node_->get_parameter_or("/locator/odom_hyperspace_offset_y", odom_hyperspace_trans_offset_m_.y, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_hyperspace_offset_y:" << odom_hyperspace_trans_offset_m_.y);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_y:" << odom_hyperspace_trans_offset_m_.y);
 
         node_->get_parameter_or("/locator/odom_hyperspace_offset_z", odom_hyperspace_trans_offset_m_.z, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_hyperspace_offset_z:" << odom_hyperspace_trans_offset_m_.z);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_z:" << odom_hyperspace_trans_offset_m_.z);
 
         node_->get_parameter_or("/locator/odom_hyperspace_offset_yaw", odom_hyperspace_yaw_offset_r_, 0.0);
-        RCLCPP_INFO_STREAM(node_->get_logger(),"CurrentENUKinematics: odom_hyperspace_offset_yaw:" << odom_hyperspace_yaw_offset_r_);
+        ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_yaw:" << odom_hyperspace_yaw_offset_r_);
 }
 }
 
@@ -160,7 +160,7 @@ bool CurrentENUKinematics::getPoseStamped(std::string frame, geometry_msgs::msg:
     {
     	if (!transformer_.getTransform(frame, parent_frame_, ts))
     	{
-    		RCLCPP_ERROR(node_->get_logger(), "CurrentENUKinematics::getPoseStamped: Cant find transform target[%s] source[%s]", drone_ENU, parent_frame_.c_str());
+    		ROS_ERROR("CurrentENUKinematics::getPoseStamped: Cant find transform target[%s] source[%s]", drone_ENU, parent_frame_.c_str());
     		return false;
     	}
         tf2::doTransform(ps, pose, ts);
@@ -236,12 +236,12 @@ void CurrentENUKinematics::publishOD() {
                   // if a count is set
                   if(odom_hyperspace_count_ >= 0)
                   {
-                    RCLCPP_INFO_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "CurrentENUKinematics:hyperspace counter: %d", odom_hyperspace_counter_);
+                    ROS_INFO_THROTTLE(1.0, "CurrentENUKinematics:hyperspace counter: %d", odom_hyperspace_counter_);
 
                     // apply the offset just once when the counter matches desired count
                     if(++odom_hyperspace_counter_ == odom_hyperspace_count_)
                     {
-                      RCLCPP_INFO(node_->get_logger(), "CurrentENUKinematics:hyperspacing on counter: %d", odom_hyperspace_counter_);
+                      ROS_INFO("CurrentENUKinematics:hyperspacing on counter: %d", odom_hyperspace_counter_);
                       od.pose.pose.position.x += odom_hyperspace_trans_offset_m_.x;
                       od.pose.pose.position.y += odom_hyperspace_trans_offset_m_.y;
                       od.pose.pose.position.z += odom_hyperspace_trans_offset_m_.z;
@@ -251,7 +251,7 @@ void CurrentENUKinematics::publishOD() {
                   // else, add offset if random prob is less than threshold
                   else if(odom_prob_ud_(odom_gen_) < odom_hyperspace_prob_)
                   {
-                    RCLCPP_INFO_STREAM_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "CurrentENUKinematics:hyperspacing on probability");
+                    ROS_INFO_STREAM_THROTTLE(1.0, "CurrentENUKinematics:hyperspacing on probability");
                     od.pose.pose.position.x += odom_hyperspace_trans_offset_m_.x;
                     od.pose.pose.position.y += odom_hyperspace_trans_offset_m_.y;
                     od.pose.pose.position.z += odom_hyperspace_trans_offset_m_.z;
@@ -261,7 +261,7 @@ void CurrentENUKinematics::publishOD() {
 		}
 		else
 		{
-                  RCLCPP_INFO_STREAM_THROTTLE(node_->get_logger(), *node_->get_clock(), 1000, "CurrentENUKinematics:dropping message");
+                  ROS_INFO_STREAM_THROTTLE(1.0, "CurrentENUKinematics:dropping message");
 		}
 	}
 }
@@ -281,14 +281,14 @@ void CurrentENUKinematics::addYaw(geometry_msgs::msg::Quaternion &msg_q, double 
 void CurrentENUKinematics::publishOD_Enable(bool enable, std::string& topic, bool ned_frame) {
 	if (od_pub_enable_)
 	{
-		RCLCPP_INFO(node_->get_logger(), "CurrentENUKinematics:publishOD_Enable Shutting down existing publisher");
+		ROS_INFO("CurrentENUKinematics:publishOD_Enable Shutting down existing publisher");
 	    //od_pub_->shutdown();
 	    od_pub_enable_ = false;
 	}
 
 	if (enable)
 	{
-		RCLCPP_INFO(node_->get_logger(),"CurrentENUKinematics:publishOD_Enable Enabling new publisher");
+		ROS_INFO("CurrentENUKinematics:publishOD_Enable Enabling new publisher");
 		od_pub_topic_ = topic;
 		od_pub_ = nh_->create_publisher<nav_msgs::msg::Odometry>(od_pub_topic_, 5);
 		od_pub_enable_ = true;

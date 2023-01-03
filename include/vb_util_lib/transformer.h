@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2_ros/transform_broadcaster.h>
@@ -29,7 +29,7 @@ namespace am
 class Transformer
 {
 public:
-    Transformer(rclcpp::Node::SharedPtr node);
+    Transformer();
     virtual ~Transformer();
 
     tf2_ros::Buffer& tfBuffer();
@@ -59,8 +59,6 @@ private:
     // later make this a static to save space and make more efficient
     tf2_ros::Buffer *tfBuffer_instance_ {NULL};
     tf2_ros::TransformListener *tfListener_instance_;
-
-    rclcpp::Node::SharedPtr node_;
 };
 
 } /* namespace am */
