@@ -14,28 +14,28 @@
 
 using std::placeholders::_1;
 
-Kinematics::Kinematics(rclcpp::Node::SharedPtr node) : nh_(node), transformer_(node)
+Kinematics::Kinematics(rclcpp::Node::SharedPtr node) : nh_(node), transformer_()
 {
 	_init();
 }
 
 Kinematics::Kinematics(rclcpp::Node::SharedPtr n, std::string topic, std::string frame_id,
         bool pub_on_change, double pub_rate) :  nh_(n),
-        topic_(topic), frame_id_(frame_id), pub_on_change_(pub_on_change), pub_rate_(pub_rate), transformer_(n)
+        topic_(topic), frame_id_(frame_id), pub_on_change_(pub_on_change), pub_rate_(pub_rate), transformer_()
 {
     _init();
     initROS(n);
 }
 
 Kinematics::Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p) : nh_(node),
-		frame_id_(p.header.frame_id), transformer_(node)
+		frame_id_(p.header.frame_id), transformer_()
 {
 	_init();
 	setPose(p);
 }
 
 Kinematics::Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p, const std::string id) :
-		frame_id_(p.header.frame_id), nh_(node), transformer_(node) {
+		frame_id_(p.header.frame_id), nh_(node), transformer_() {
 	_init();
 	setPose(p);
 	object_id_ = id;

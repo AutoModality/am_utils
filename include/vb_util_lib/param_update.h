@@ -107,7 +107,7 @@ private:
 	bool publisher_ {false};
 
     void addParam(std::string key, KeyValueType type, bool save_default, std::vector<KeyValueStamped>& param_list) {
-    	KeyValueStamped kv(nh_, key, type);
+    	KeyValueStamped kv(key, type);
     	addParam(kv, save_default, param_list);
     }
     void addParam(KeyValueStamped& kv, bool save_default, std::vector<KeyValueStamped>& param_list);

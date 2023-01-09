@@ -14,7 +14,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/unordered_map.hpp>
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 #include <brain_box_msgs/msg/key_value.hpp>
 
 // Currently limited number of parameter types handled
@@ -24,34 +24,34 @@ extern const boost::unordered_map<KeyValueType, std::string> param_type_2_string
 
 class KeyValueStamped {
 public:
-	KeyValueStamped(rclcpp::Node::SharedPtr node): node_(node) {};
+    KeyValueStamped() {};
 
-	KeyValueStamped(rclcpp::Node::SharedPtr node, const brain_box_msgs::msg::KeyValue::SharedPtr msg);
+	KeyValueStamped(const brain_box_msgs::msg::KeyValue::SharedPtr msg);
 
-	KeyValueStamped(rclcpp::Node::SharedPtr node, std::string key, KeyValueType type);
+	KeyValueStamped(std::string key, KeyValueType type);
 
-	KeyValueStamped(rclcpp::Node::SharedPtr node, std::string key) : node_(node), key_(key), type_(KeyValueType::STRING) {
-		stamp_ = node_->get_clock()->now();
+	KeyValueStamped(std::string key) : key_(key), type_(KeyValueType::STRING) {
+		stamp_ = am::ClockNow();
 	};
 
 	KeyValueStamped(std::string key, std::string val) : key_(key), type_(KeyValueType::STRING) {
 		setValue(val);
-		stamp_ = node_->get_clock()->now();
+		stamp_ = am::ClockNow();
 	};
 
 	KeyValueStamped(std::string key, bool val) : key_(key), type_(KeyValueType::BOOL), bool_value_(val) {
 		setValue(val);
-		stamp_ = node_->get_clock()->now();
+		stamp_ = am::ClockNow();
 	};
 
 	KeyValueStamped(std::string key, int val) : key_(key), type_(KeyValueType::INT), int_value_(val) {
 		setValue(val);
-		stamp_ = node_->get_clock()->now();
+		stamp_ = am::ClockNow();
 	};
 
 	KeyValueStamped(std::string key, double val) : key_(key), type_(KeyValueType::DOUBLE), double_value_(val) {
 		setValue(val);
-		stamp_ = node_->get_clock()->now();
+		am::ClockNow();
 	};
 
 	virtual ~KeyValueStamped() {};
@@ -138,8 +138,6 @@ public:
 	bool saveDefault(rclcpp::Node::SharedPtr node);
 
 private:
-
-	rclcpp::Node::SharedPtr node_;
 
 	std::string key_ {""};
 

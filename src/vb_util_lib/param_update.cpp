@@ -15,7 +15,7 @@ using std::placeholders::_1;
 //
 //}
 
-ParamUpdate::ParamUpdate(rclcpp::Node::SharedPtr n, bool publisher) : nh_(n), latest_update_(n), publisher_(publisher) {
+ParamUpdate::ParamUpdate(rclcpp::Node::SharedPtr n, bool publisher) : nh_(n), latest_update_(), publisher_(publisher) {
 	// Create ros publishers and subscribers
 	if (publisher)
 	{
@@ -67,7 +67,7 @@ bool ParamUpdate::updateDefaultParams() {
 }
 
 void ParamUpdate::paramUpdateCB(const brain_box_msgs::msg::KeyValue::SharedPtr msg) {
-	KeyValueStamped kv(nh_, msg);
+	KeyValueStamped kv(msg);
 
 	setParam(kv, true);
 }

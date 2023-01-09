@@ -27,23 +27,21 @@ const boost::unordered_map<uint8_t, KeyValueType> param_msg_2_type = map_list_of
 		(2, KeyValueType::DOUBLE)
 		(3, KeyValueType::STRING);
 
-KeyValueStamped::KeyValueStamped(rclcpp::Node::SharedPtr node, const brain_box_msgs::msg::KeyValue::SharedPtr msg):
-		node_(node)
+KeyValueStamped::KeyValueStamped(const brain_box_msgs::msg::KeyValue::SharedPtr msg)
 {
 	brain_box_msgs::msg::KeyValue p = *msg;
 	key_ = p.key;
 	type_ = param_msg_2_type.at(p.type);
 	if (!setValue(p.value))
 	{
-		RCLCPP_ERROR(node_->get_logger(), "KeyValueStamped::KeyValueStamped invalid format for param[%s] type[%d] value[%s]", key_.c_str(), (int)p.type, p.value.c_str());
+		ROS_ERROR("KeyValueStamped::KeyValueStamped invalid format for param[%s] type[%d] value[%s]", key_.c_str(), (int)p.type, p.value.c_str());
 	}
-	stamp_ = node_->now();
+	stamp_ = am::ClockNow();
 }
 
-KeyValueStamped::KeyValueStamped(rclcpp::Node::SharedPtr node, std::string key, KeyValueType type) :
-		node_(node),key_(key), type_(type) {
+KeyValueStamped::KeyValueStamped(std::string key, KeyValueType type) : key_(key), type_(type) {
 	// Check to see if this value is in the parameter DB and if so initialize it to that value
-	stamp_ = node_->now();
+	stamp_ = am::ClockNow();
 
 	std::string s;
 	int i;
@@ -51,42 +49,42 @@ KeyValueStamped::KeyValueStamped(rclcpp::Node::SharedPtr node, std::string key, 
 	double d;
 
 	rclcpp::Parameter key_p;
-	if (!node->get_parameter(key, key_p))
+	if (!am::Node::node->get_parameter(key, key_p))
 	{
-		RCLCPP_WARN(node_->get_logger(), "KeyValueStamped::KeyValueStamped no param[%s] in param server", key.c_str());
+		ROS_WARN("KeyValueStamped::KeyValueStamped no param[%s] in param server", key.c_str());
 		return;
 	}
 
 	switch (type_)
 	{
 	case KeyValueType::INT:
-		if (!node->get_parameter(key, i))
+		if (!am::Node::node->get_parameter(key, i))
 		{
-			RCLCPP_ERROR(node_->get_logger(), "KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for INT", key_.c_str());
+			ROS_ERROR("KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for INT", key_.c_str());
 			return;
 		}
 		setValue(i);
 		break;
 	case KeyValueType::BOOL:
-		if (!node->get_parameter(key, b))
+		if (!am::Node::node->get_parameter(key, b))
 		{
-			RCLCPP_ERROR(node_->get_logger(),"KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for BOOL", key_.c_str());
+			ROS_ERROR("KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for BOOL", key_.c_str());
 			return;
 		}
 		setValue(b);
 		break;
 	case KeyValueType::DOUBLE:
-		if (!node->get_parameter(key, d))
+		if (!am::Node::node->get_parameter(key, d))
 		{
-			RCLCPP_ERROR(node_->get_logger(), "KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for DOUBLE", key_.c_str());
+			ROS_ERROR("KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for DOUBLE", key_.c_str());
 			return;
 		}
 		setValue(d);
 		break;
 	case KeyValueType::STRING:
-		if (!node->get_parameter(key, s))
+		if (!am::Node::node->get_parameter(key, s))
 		{
-			RCLCPP_ERROR(node_->get_logger(), "KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for DOUBLE", key_.c_str());
+			ROS_ERROR("KeyValueStamped::KeyValueStamped type mismatch for parameter[%s] looking for DOUBLE", key_.c_str());
 			setValue(s);
 			return;
 		}
@@ -141,7 +139,7 @@ bool KeyValueStamped::setValue(bool value) {
 	bool_value_ = value;
 	int_value_ = value;
 	double_value_ = value;
-	stamp_ = node_->now();
+	stamp_ = am::ClockNow();
 	updated_ = true;
 	return true;
 }
@@ -151,7 +149,7 @@ bool KeyValueStamped::setValue(int value) {
 	bool_value_ = value != 0;
 	int_value_ = value;
 	double_value_ = value;
-	stamp_ = node_->now();
+	stamp_ = am::ClockNow();
 	updated_ = true;
 	return true;
 }
@@ -161,7 +159,7 @@ bool KeyValueStamped::setValue(double value) {
 	bool_value_ = value != 0.0;
 	int_value_ = value;
 	double_value_ = value;
-	stamp_ = node_->now();
+	stamp_ = am::ClockNow();
 	updated_ = true;
 	return true;
 }
@@ -171,7 +169,7 @@ bool KeyValueStamped::setValue(KeyValueStamped& kv) {
 	bool_value_ = kv.bool_value_;
 	int_value_ = kv.int_value_;
 	double_value_ = kv.double_value_;
-	stamp_ = node_->now();
+	stamp_ = am::ClockNow();
 	updated_ = true;
 	return true;
 }
@@ -182,17 +180,17 @@ void KeyValueStamped::sendParam(rclcpp::Publisher<brain_box_msgs::msg::KeyValue>
 	kvm.key = key_;
 	kvm.value = string_value_;
 	kvm.type = param_type_2_msg.at(type_);
-	RCLCPP_INFO(node_->get_logger(), "      KeyValueStamped::sendParam %s", toString().c_str());
+	ROS_INFO("      KeyValueStamped::sendParam %s", toString().c_str());
 	pub->publish(kvm);
 }
 
 void KeyValueStamped::print(std::string prefix) {
-//	std::cout << prefix+"param[" << key_ << "]  type[" << param_type_2_string.at(type_) << "]  value[" << string_value_ << "]" << std::endl;
+//	std::cout << preRCLCPP_INFOfix+"param[" << key_ << "]  type[" << param_type_2_string.at(type_) << "]  value[" << string_value_ << "]" << std::endl;
 	std::cout << prefix+toString() << std::endl;
 }
 
 bool KeyValueStamped::saveDefault(rclcpp::Node::SharedPtr nh) {
-	RCLCPP_INFO(nh->get_logger(), "    KeyValueStamped::saveDefault saving defaults for %s", toString().c_str());
+	ROS_WARN("    KeyValueStamped::saveDefault saving defaults for %s", toString().c_str());
 
 	int int_val;
 	double double_val;
@@ -202,7 +200,7 @@ bool KeyValueStamped::saveDefault(rclcpp::Node::SharedPtr nh) {
 	rclcpp::Parameter param;
 	if (!nh->get_parameter(getKey(), param))
 	{
-		RCLCPP_WARN(nh->get_logger(), "KeyValueStamped::saveDefault: NO DEFAULT VALUE FOUND FOR %s", toString().c_str());
+		ROS_WARN("KeyValueStamped::saveDefault: NO DEFAULT VALUE FOUND FOR %s", toString().c_str());
 		db_init_ = false;
 		return false;
 	}
@@ -243,7 +241,7 @@ bool KeyValueStamped::saveDefault(rclcpp::Node::SharedPtr nh) {
 
 	if (!ret_val)
 	{
-		RCLCPP_WARN(nh->get_logger(), "KeyValueStamped::saveDefault: UNABLE TO GET THE PARAM DB VALUE FOR %s", toString().c_str());
+		ROS_WARN("KeyValueStamped::saveDefault: UNABLE TO GET THE PARAM DB VALUE FOR %s", toString().c_str());
 		db_init_ = false;
 		return false;
 	}

@@ -12,7 +12,7 @@
 namespace am
 {
 
-Transformer::Transformer(rclcpp::Node::SharedPtr node) : node_(node)
+Transformer::Transformer()
 {
     // TODO Auto-generated constructor stub
 
@@ -25,7 +25,7 @@ Transformer::~Transformer() {
 tf2_ros::Buffer& Transformer::tfBuffer() {
     if (!tfBuffer_instance_)
     {
-        tfBuffer_instance_ = new tf2_ros::Buffer(node_->get_clock());
+        tfBuffer_instance_ = new tf2_ros::Buffer(am::getClock());
         tfListener_instance_ = new tf2_ros::TransformListener(*tfBuffer_instance_);
     }
     return *tfBuffer_instance_;
@@ -43,7 +43,8 @@ bool Transformer::getTransform(const std::string target, const std::string sourc
         transform = tfBuffer().lookupTransform(target, source, rclcpp::Time(0), rclcpp::Duration(wait, 0));
     }
     catch (tf2::TransformException &ex) {
-        RCLCPP_ERROR_STREAM(node_->get_logger(), "Transformer::getTransform TRANSFORM ERROR source[" << source << "], target[" << target << "]  ERROR: " << ex.what());
+        ROS_ERROR_STREAM("Transformer::getTransform TRANSFORM ERROR source[" << source << "], target[" << target << "]  ERROR: " << ex.what());
+        // ROS_ERROR_STREAM("Transformer::getTransform TRANSFORM ERROR source[" << "source" << "], target[" << "target" << "]  ERROR: " << ex.what());
         return false;
     }
 
@@ -92,7 +93,7 @@ void Transformer::rotateOrientation(geometry_msgs::msg::Quaternion& orientation,
         double orig_yaw = am::Rotate::getYaw(q_orig) * 180.0 / 3.14159;
         double rot_yaw = am::Rotate::getYaw(q_rot) * 180.0 / 3.14159;
         double new_yaw =  am::Rotate::getYaw(q_new) * 180.0 / 3.14159;
-        RCLCPP_INFO(node_->get_logger(), "Transformer::rotateOrientation orientation[%0.3f] rotation[%0.3f] new[%0.3f]\n", orig_yaw, rot_yaw, new_yaw);
+        ROS_INFO("Transformer::rotateOrientation orientation[%0.3f] rotation[%0.3f] new[%0.3f]\n", orig_yaw, rot_yaw, new_yaw);
     }
 }
 
@@ -103,7 +104,7 @@ bool Transformer::rotateVector(const std::string target_frame,
 	geometry_msgs::msg::TransformStamped ts;
 	if (!getTransform(target_frame, source_frame, ts, true))
 	{
-		RCLCPP_ERROR(node_->get_logger(), "Kinematics::getLinearVelocity : No transform from[%s] to[%s]", source_frame.c_str(), target_frame.c_str());
+		ROS_ERROR("Kinematics::getLinearVelocity : No transform from[%s] to[%s]", source_frame.c_str(), target_frame.c_str());
 		return false;
 	}
 
