@@ -19,8 +19,15 @@ public:
 
   static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
         pcl::PointCloud<pcl::PointXYZIR> &pcl);
+
+  static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2 &pc2,
+          pcl::PointCloud<pcl::PointXYZIR> &pcl);
+
   static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
          pcl::PointCloud<pcl::PointXYZ> &pcl);
+
+  static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2 &pc2,
+           pcl::PointCloud<pcl::PointXYZ> &pcl);
 
   static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
 

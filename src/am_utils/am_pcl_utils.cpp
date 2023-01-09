@@ -74,6 +74,29 @@ void AMPCLUtils::convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::Shared
 		index++;
 	}
 }
+
+void AMPCLUtils::convertToPointXYZIR(const sensor_msgs::msg::PointCloud2 &pc2,
+          pcl::PointCloud<pcl::PointXYZIR> &pcl)
+{
+	pcl.header = pcl_conversions::toPCL(pc2.header);
+	pcl.resize(pc2.height * pc2.width);
+	pcl.height = pc2.height;
+	pcl.width = pc2.width;
+	int index = 0;
+	for (sensor_msgs::PointCloud2ConstIterator<float> it(pc2, "x"); it != it.end(); ++it) {
+		float x = it[0];
+		float y = it[1];
+		float z = it[2];
+		float intensity = it[4];
+		pcl.points[index].x = x;
+		pcl.points[index].y = y;
+		pcl.points[index].z = z;
+		pcl.points[index].intensity = intensity;
+		pcl.points[index].range = std::sqrt(x * x + y * y + z * z);
+		index++;
+	}
+
+}
 void AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
          pcl::PointCloud<pcl::PointXYZ> &pcl)
 {
@@ -83,6 +106,27 @@ void AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPt
 	pcl.width = pc2->width;
 	int index = 0;
 	for (sensor_msgs::PointCloud2ConstIterator<float> it(*pc2, "x"); it != it.end(); ++it) {
+		float x = it[0];
+		float y = it[1];
+		float z = it[2];
+		float intensity = it[4];
+		pcl.points[index].x = x;
+		pcl.points[index].y = y;
+		pcl.points[index].z = z;
+		index++;
+	}
+}
+
+void AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2 &pc2,
+           pcl::PointCloud<pcl::PointXYZ> &pcl)
+{
+
+	pcl.header = pcl_conversions::toPCL(pc2.header);
+	pcl.resize(pc2.height * pc2.width);
+	pcl.height = pc2.height;
+	pcl.width = pc2.width;
+	int index = 0;
+	for (sensor_msgs::PointCloud2ConstIterator<float> it(pc2, "x"); it != it.end(); ++it) {
 		float x = it[0];
 		float y = it[1];
 		float z = it[2];
