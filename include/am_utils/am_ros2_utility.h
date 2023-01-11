@@ -20,6 +20,9 @@ class Node
 {
 public:
   Node() {}
+  Node(std::shared_ptr<rclcpp::Node> n) {
+    node = n;
+  }
 
   virtual ~Node() {}
 
