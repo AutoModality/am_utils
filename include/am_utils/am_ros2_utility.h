@@ -43,7 +43,14 @@ void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, T& pa
 {
   if (with_declaration)
   {
-	node->declare_parameter(param_name, initial_value);
+	try
+	{
+		node->declare_parameter(param_name, initial_value);
+	}
+	catch(rclcpp::exceptions::ParameterAlreadyDeclaredException &e)
+	{
+		;
+	}
   }
 
   node->get_parameter_or(param_name, param, initial_value);
