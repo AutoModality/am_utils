@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
+#include <any>
 
 namespace am
 {
@@ -37,23 +38,34 @@ std::chrono::duration<T, std::ratio<1>> toDuration(T seconds)
   return std::chrono::duration<T, std::ratio<1>>(seconds);
 }
 
-template <class T>
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, T& param, const T& initial_value,
-			  bool with_declaration = true)
+template<class T>
+void declare_parameter(rclcpp::Node::SharedPtr node, const std::string &param_name, const T &param)
 {
-  if (with_declaration)
-  {
 	try
 	{
-		node->declare_parameter(param_name, initial_value);
+		node->declare_parameter(param_name, param);
 	}
 	catch(rclcpp::exceptions::ParameterAlreadyDeclaredException &e)
 	{
 		;
 	}
-  }
+}
+void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<int>& param,
+		const std::vector<int>& initial_value);
+void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<uint8_t>& param,
+		const std::vector<uint8_t>& initial_value);
+void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<bool>& param,
+		const std::vector<bool>& initial_value);
+void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<double>& param,
+		const std::vector<double>& initial_value);
+void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<std::string>& param,
+		const std::vector<std::string>& initial_value);
 
-  node->get_parameter_or(param_name, param, initial_value);
+template <class T>
+void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, T& param, const T& initial_value)
+{
+	am::declare_parameter(node, param_name, initial_value);
+	node->get_parameter_or(param_name, param, initial_value);
 }
 
 template <class T>
@@ -80,7 +92,18 @@ T getRandom(T min, T max, bool reset = false)
   return (min + 1) + (((T)rand()) / (T)RAND_MAX) * (max - (min + 1));
 }
 
-std::vector<std::string> toVector(const std::string& raw_str, char del);
+
+template <class T>
+std::vector<T> toVector(const std::string& raw_str, char del)
+{
+	std::string line;
+	std::vector<T> vec;
+	std::stringstream ss(raw_str);
+	while(std::getline(ss, line, del)) {
+		vec.push_back(std::any_cast<T>(line));
+	}
+	return vec;
+}
 
 std::string vectToStr(const std::vector<std::string>& vect);
 
