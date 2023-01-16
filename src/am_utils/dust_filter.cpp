@@ -14,7 +14,7 @@ float DEFAULT_MAX_RANGE_M        {7.5};
 namespace am
 {
 
-DustFilter::DustFilter(rclcpp::Node::SharedPtr node, std::string name_space) : node_(node), name_space_(name_space)
+DustFilter::DustFilter(std::string name_space) :name_space_(name_space)
 {
   getParams();
   //debug_pcl_pub_ = this->create_publisher<pcl::PointCloud<pcl::PointXYZIR>>("/debug/" + name_space_ + "/dust_filter/pcl", 10);
@@ -30,57 +30,57 @@ void DustFilter::getParams()
 
 
   //this->get_parameter_or(name_space_ + "/range_threshold_m", range_threshold_m_, DEFAULT_RANGE_THRESHHOLD_M);
-  am::getParam(node_, name_space_ + "/range_threshold_m", range_threshold_m_, DEFAULT_RANGE_THRESHHOLD_M);
+  am::getParam<float>("range_threshold_m", range_threshold_m_, DEFAULT_RANGE_THRESHHOLD_M);
 
   //this->get_parameter_or(name_space_ + "/min_neighbors", min_neighbors_, DEFAULT_MIN_NEIGHBORS);
-  am::getParam(node_, name_space_ + "/min_neighbors", min_neighbors_, DEFAULT_MIN_NEIGHBORS);
+  am::getParam<int>("min_neighbors", min_neighbors_, DEFAULT_MIN_NEIGHBORS);
 
 
   //this->get_parameter_or(name_space_ + "/max_range_m", max_range_m_, DEFAULT_MAX_RANGE_M);
-  am::getParam(node_, name_space_ + "/max_range_m", max_range_m_, DEFAULT_MAX_RANGE_M);
+  am::getParam<float>("max_range_m", max_range_m_, DEFAULT_MAX_RANGE_M);
 
 
   //this->get_parameter_or(name_space_ + "/inside_min_x_m", inside_min_x_m_, static_cast<float>(-0.7));
-  am::getParam(node_, name_space_ + "/inside_min_x_m", inside_min_x_m_, static_cast<float>(-0.7));
+  am::getParam<float>("inside_min_x_m", inside_min_x_m_, static_cast<float>(-0.7));
 
   //this->get_parameter_or(name_space_ + "/inside_max_x_m", inside_max_x_m_, static_cast<float>(0.7));
-  am::getParam(node_, name_space_ + "/inside_max_x_m", inside_max_x_m_, static_cast<float>(0.7));
+  am::getParam<float>("inside_max_x_m", inside_max_x_m_, static_cast<float>(0.7));
 
   //this->get_parameter_or(name_space_ + "/inside_min_y_m", inside_min_y_m_, static_cast<float>(-0.7));
-  am::getParam(node_, name_space_ + "/inside_min_y_m", inside_min_y_m_, static_cast<float>(-0.7));
+  am::getParam<float>("inside_min_y_m", inside_min_y_m_, static_cast<float>(-0.7));
 
 //  this->get_parameter_or(name_space_ + "/inside_max_y_m", inside_max_y_m_, static_cast<float>(0.7));
-  am::getParam(node_, name_space_ + "/inside_max_y_m", inside_max_y_m_, static_cast<float>(0.7));
+  am::getParam<float>("inside_max_y_m", inside_max_y_m_, static_cast<float>(0.7));
 
   //this->get_parameter_or(name_space_ + "/inside_min_z_m", inside_min_z_m_, static_cast<float>(-0.5));
-  am::getParam(node_, name_space_ + "/inside_min_z_m", inside_min_z_m_, static_cast<float>(-0.5));
+  am::getParam<float>("inside_min_z_m", inside_min_z_m_, static_cast<float>(-0.5));
 
   //this->get_parameter_or(name_space_ + "/inside_max_z_m", inside_max_z_m_, static_cast<float>(0.5));
-  am::getParam(node_, name_space_ + "/inside_max_z_m", inside_max_z_m_, static_cast<float>(0.5));
+  am::getParam<float>("inside_max_z_m", inside_max_z_m_, static_cast<float>(0.5));
 
   //this->get_parameter_or(name_space_ + "/outside_min_x_m", outside_min_x_m_, std::numeric_limits<float>::lowest());
-  am::getParam(node_, name_space_ + "/outside_min_x_m", outside_min_x_m_, std::numeric_limits<float>::lowest());
+  am::getParam<float>("outside_min_x_m", outside_min_x_m_, std::numeric_limits<float>::lowest());
 
   //this->get_parameter_or(name_space_ + "/outside_max_x_m", outside_max_x_m_, std::numeric_limits<float>::max());
-  am::getParam(node_, name_space_ + "/outside_max_x_m", outside_max_x_m_, std::numeric_limits<float>::max());
+  am::getParam<float>("outside_max_x_m", outside_max_x_m_, std::numeric_limits<float>::max());
 
   //this->get_parameter_or(name_space_ + "/outside_min_y_m", outside_min_y_m_, std::numeric_limits<float>::lowest());
-  am::getParam(node_, name_space_ + "/outside_min_y_m", outside_min_y_m_, std::numeric_limits<float>::lowest());
+  am::getParam<float>("outside_min_y_m", outside_min_y_m_, std::numeric_limits<float>::lowest());
 
   //this->get_parameter_or(name_space_ + "/outside_max_y_m", outside_max_y_m_, std::numeric_limits<float>::max());
-  am::getParam(node_, name_space_ + "/outside_max_y_m", outside_max_y_m_, std::numeric_limits<float>::max());
+  am::getParam<float>("outside_max_y_m", outside_max_y_m_, std::numeric_limits<float>::max());
 
   //this->get_parameter_or(name_space_ + "/outside_min_z_m", outside_min_z_m_, std::numeric_limits<float>::lowest());
-  am::getParam(node_, name_space_ + "/outside_min_z_m", outside_min_z_m_, std::numeric_limits<float>::lowest());
+  am::getParam<float>("outside_min_z_m", outside_min_z_m_, std::numeric_limits<float>::lowest());
 
   //this->get_parameter_or(name_space_ + "/outside_max_z_m", outside_max_z_m_, std::numeric_limits<float>::max());
-  am::getParam(node_, name_space_ + "/outside_max_z_m", outside_max_z_m_, std::numeric_limits<float>::max());
+  am::getParam<float>("outside_max_z_m", outside_max_z_m_, std::numeric_limits<float>::max());
 
   if (first_run)
   {
     first_run = false;
-    RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/range_threshold_m = " << range_threshold_m_);
-    RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/neighbors = " << min_neighbors_);
+    ROS_INFO_STREAM(name_space_ + "/range_threshold_m = " << range_threshold_m_);
+    ROS_INFO_STREAM(name_space_ + "/neighbors = " << min_neighbors_);
     printInsideParams();
     printOutsideParams();
   }
@@ -88,22 +88,22 @@ void DustFilter::getParams()
 
 void DustFilter::printInsideParams()
 {
-	RCLCPP_INFO_STREAM(node_->get_logger(), name_space_ + "/inside_min_x_m = " << inside_min_x_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/inside_max_x_m = " << inside_max_x_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/inside_min_y_m = " << inside_min_y_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/inside_max_y_m = " << inside_max_y_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/inside_min_z_m = " << inside_min_z_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/inside_max_z_m = " << inside_max_z_m_);
+	ROS_INFO_STREAM(name_space_ + "/inside_min_x_m = " << inside_min_x_m_);
+	ROS_INFO_STREAM(name_space_ + "/inside_max_x_m = " << inside_max_x_m_);
+	ROS_INFO_STREAM(name_space_ + "/inside_min_y_m = " << inside_min_y_m_);
+	ROS_INFO_STREAM(name_space_ + "/inside_max_y_m = " << inside_max_y_m_);
+	ROS_INFO_STREAM(name_space_ + "/inside_min_z_m = " << inside_min_z_m_);
+	ROS_INFO_STREAM(name_space_ + "/inside_max_z_m = " << inside_max_z_m_);
 }
 
 void DustFilter::printOutsideParams()
 {
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/outside_min_x_m = " << outside_min_x_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/outside_max_x_m = " << outside_max_x_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/outside_min_y_m = " << outside_min_y_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/outside_max_y_m = " << outside_max_y_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/outside_min_z_m = " << outside_min_z_m_);
-	RCLCPP_INFO_STREAM(node_->get_logger(),name_space_ + "/outside_max_z_m = " << outside_max_z_m_);
+	ROS_INFO_STREAM(name_space_ + "/outside_min_x_m = " << outside_min_x_m_);
+	ROS_INFO_STREAM(name_space_ + "/outside_max_x_m = " << outside_max_x_m_);
+	ROS_INFO_STREAM(name_space_ + "/outside_min_y_m = " << outside_min_y_m_);
+	ROS_INFO_STREAM(name_space_ + "/outside_max_y_m = " << outside_max_y_m_);
+	ROS_INFO_STREAM(name_space_ + "/outside_min_z_m = " << outside_min_z_m_);
+	ROS_INFO_STREAM(name_space_ + "/outside_max_z_m = " << outside_max_z_m_);
 }
 
 int DustFilter::process(pcl::PointCloud<pcl::PointXYZIR> &pcl, bool skip_dust_filter)

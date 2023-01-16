@@ -11,7 +11,7 @@
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
 #include <any>
-
+#include <vb_util_lib/utility.h>
 namespace am
 {
 //
@@ -38,34 +38,43 @@ std::chrono::duration<T, std::ratio<1>> toDuration(T seconds)
   return std::chrono::duration<T, std::ratio<1>>(seconds);
 }
 
+//declare parameter is for all datatypes.
+//this function is called by all instances of getParam
+//and therefore, you do not need to call this function
 template<class T>
-void declare_parameter(rclcpp::Node::SharedPtr node, const std::string &param_name, const T &param)
+void declare_parameter(const std::string &param_name, const T &param)
 {
 	try
 	{
-		node->declare_parameter(param_name, param);
+		am::Node::node->declare_parameter(param_name, param);
 	}
 	catch(rclcpp::exceptions::ParameterAlreadyDeclaredException &e)
 	{
 		;
 	}
 }
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<int>& param,
-		const std::vector<int>& initial_value);
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<uint8_t>& param,
-		const std::vector<uint8_t>& initial_value);
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<bool>& param,
-		const std::vector<bool>& initial_value);
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<double>& param,
-		const std::vector<double>& initial_value);
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, std::vector<std::string>& param,
-		const std::vector<std::string>& initial_value);
 
+//get parameter for vector of integers
+void getParam(const std::string& param_name, std::vector<int>& param, const std::vector<int>& initial_value);
+
+//get parameter for vector of bytes
+void getParam(const std::string& param_name, std::vector<uint8_t>& param, const std::vector<uint8_t>& initial_value);
+
+//get parameter for vector of booleans
+void getParam(const std::string& param_name, std::vector<bool>& param, const std::vector<bool>& initial_value);
+
+//get parameter for vector of doubles
+void getParam(const std::string& param_name, std::vector<double>& param, const std::vector<double>& initial_value);
+
+//get parameter for vector of strings
+void getParam(const std::string& param_name, std::vector<std::string>& param, const std::vector<std::string>& initial_value);
+
+//get parameters for all basic datatypes except arrays
 template <class T>
-void getParam(rclcpp::Node::SharedPtr node, const std::string& param_name, T& param, const T& initial_value)
+void getParam(const std::string& param_name, T& param, const T& initial_value)
 {
-	am::declare_parameter(node, param_name, initial_value);
-	node->get_parameter_or(param_name, param, initial_value);
+	am::declare_parameter(param_name, initial_value);
+	am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
 
 template <class T>
@@ -81,6 +90,7 @@ std::string getMessageName()
   return rosidl_generator_traits::name<MessageT>();
 }
 
+//returns a random number between two min and max limit
 template <class T>
 T getRandom(T min, T max, bool reset = false)
 {
@@ -92,7 +102,7 @@ T getRandom(T min, T max, bool reset = false)
   return (min + 1) + (((T)rand()) / (T)RAND_MAX) * (max - (min + 1));
 }
 
-
+//this will split a string to array of strings with the given key
 template <class T>
 std::vector<T> toVector(const std::string& raw_str, char del)
 {
@@ -105,6 +115,7 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 	return vec;
 }
 
+//this will convert a vector to a string
 std::string vectToStr(const std::vector<std::string>& vect);
 
 inline rclcpp::Time ClockNow() {return am::Node::node->now();}; 

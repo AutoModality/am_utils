@@ -33,12 +33,9 @@ private:
   void printInsideParams();
   void printOutsideParams();
 
-  rclcpp::Node::SharedPtr node_;
-
-
 
 public:
-  DustFilter(rclcpp::Node::SharedPtr node, std::string name_space);
+  DustFilter(std::string name_space);
   ~DustFilter();
 
   int process(pcl::PointCloud<pcl::PointXYZIR> &pc, bool skip_dust_filter = false);
