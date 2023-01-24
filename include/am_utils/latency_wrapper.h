@@ -66,47 +66,47 @@ public:
     // ===== PoseStamped
     void subscribe(std::string topic, PoseStamped_Func callback);
     PoseStamped_Func pose_stamped_cb_ {NULL};
-    void poseStamped_CB(const brain_box_msgs::msg::Latency_PoseStamped::SharedPtr& msg);
+    void poseStamped_CB(const brain_box_msgs::msg::Latency_PoseStamped::SharedPtr msg);
 
     // ===== PoseWithCovarianceStamped
     void subscribe(std::string topic, PoseWithCovarianceStamped_Func callback);
     PoseWithCovarianceStamped_Func pose_with_covariance_stamped_cb_ {NULL};
-    void poseWithCovarianceStamped_CB(const brain_box_msgs::Latency_PoseWithCovarianceStamped::ConstPtr& msg);
+    void poseWithCovarianceStamped_CB(const brain_box_msgs::msg::Latency_PoseWithCovarianceStamped::SharedPtr msg);
 
     // ===== TwistStamped
     void subscribe(std::string topic, TwistStamped_Func callback);
     TwistStamped_Func twist_stamped_cb_ {NULL};
-    void twistStamped_CB(const brain_box_msgs::Latency_TwistStamped::ConstPtr& msg);
+    void twistStamped_CB(const brain_box_msgs::msg::Latency_TwistStamped::msg::SharedPtr msg);
 
     // ===== TwistWithCovarianceStamped
     void subscribe(std::string topic, TwistWithCovarianceStamped_Func callback);
     TwistWithCovarianceStamped_Func twist_with_covariance_stamped_cb_ {NULL};
-    void twistWithCovarianceStamped_CB(const brain_box_msgs::Latency_TwistWithCovarianceStamped::ConstPtr& msg);
+    void twistWithCovarianceStamped_CB(const brain_box_msgs::msg::Latency_TwistWithCovarianceStamped::SharedPtr msg);
 
     // ===== Odometry
     void subscribe(std::string topic, Odometry_Func callback);
     Odometry_Func odometry_cb_ {NULL};
-    void odometry_CB(const brain_box_msgs::Latency_Odometry::ConstPtr& msg);
+    void odometry_CB(const brain_box_msgs::msg::Latency_Odometry::SharedPtr msg);
 
     // ===== Image
     void subscribe(std::string topic, Image_Func callback);
     Image_Func image_cb_ {NULL};
-    void image_CB(const brain_box_msgs::Latency_Image::ConstPtr& msg);
+    void image_CB(const brain_box_msgs::msg::Latency_Image::msg::SharedPtr msg);
 
     // ===== LaserScan
     void subscribe(std::string topic, LaserScan_Func callback);
     LaserScan_Func laser_scan_cb_ {NULL};
-    void laserScan_CB(const brain_box_msgs::Latency_LaserScan::ConstPtr& msg);
+    void laserScan_CB(const brain_box_msgs::msg::Latency_LaserScan::SharedPtr msg);
 
     // ===== PointCloud
     void subscribe(std::string topic, PointCloud_Func callback);
     PointCloud_Func point_cloud_cb_ {NULL};
-    void pointCloud_CB(const brain_box_msgs::Latency_PointCloud::ConstPtr& msg);
+    void pointCloud_CB(const brain_box_msgs::msg::Latency_PointCloud::SharedPtr msg);
 
     // ===== PointCloud2
     void subscribe(std::string topic, PointCloud2_Func callback);
     PointCloud2_Func point_cloud2_cb_ {NULL};
-    void pointCloud2_CB(const brain_box_msgs::Latency_PointCloud2::ConstPtr& msg);
+    void pointCloud2_CB(const brain_box_msgs::msg::Latency_PointCloud2::SharedPtr msg);
 
 
     // General templates
@@ -123,7 +123,7 @@ public:
     template <typename LT, typename T>
     void publish(const T& message) {
         LT m;
-        ros::Time stamp;
+        rclcpp::Time stamp;
         getLastMessageStamp(stamp);
         updateSendStats(stamp);
         m.header = header_;
@@ -134,7 +134,7 @@ public:
     template <typename LTP, typename LT, typename T>
     void publishPtr(const T& message) {
         LTP m(new LT);
-        ros::Time stamp;
+        rclcpp::Time stamp;
         getLastMessageStamp(stamp);
         updateSendStats(stamp);
         m->header = header_;
@@ -171,7 +171,7 @@ public:
         last_message_stamp_init_ = true;
     }
 
-    void copyStats(const brain_box_msgs::LatencyHeader& header, const ros::Time& stamp);
+    void copyStats(const brain_box_msgs::msg::LatencyHeader& header, const ros::Time& stamp);
 
 private:
     unsigned char node_id_;
@@ -191,14 +191,14 @@ private:
     double max_epoch_time_ {1.0};
 
     // This stores the most recently received set of stats and is updated each time a new message is received.
-    brain_box_msgs::LatencyHeader header_;
+    brain_box_msgs::msg::LatencyHeader header_;
     ros::Time last_msg_stamp_;
     bool last_message_stamp_init_ {false};
     void getLastMessageStamp(ros::Time& t) {
         t = last_message_stamp_init_ ? last_msg_stamp_ : ros::Time::now();
     }
 
-    void updateRecvStats(const brain_box_msgs::LatencyHeader& header, const ros::Time& stamp);
+    void updateRecvStats(const brain_box_msgs::msg::LatencyHeader& header, const ros::Time& stamp);
     void updateSendStats(const ros::Time& stamp);
     void updateStats(am::Statistics& stats, ros::Time& last_epoch_stamp, const ros::Time& stamp);
 
