@@ -9,10 +9,17 @@
 #ifndef INCLUDE_AM_UTILS_AM_ROS2_UTILITY_H_
 #define INCLUDE_AM_UTILS_AM_ROS2_UTILITY_H_
 
+#define BOOST_BIND_NO_PLACEHOLDERS
+
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
 #include <any>
 #include <vb_util_lib/utility.h>
+#include <super_lib/am_life_cycle.h>
+
+// using namespace std::chrono_literals;
+using std::placeholders::_1;
+
 namespace am
 {
 //
@@ -22,13 +29,13 @@ class Node
 {
 public:
   Node() {}
-  Node(std::shared_ptr<rclcpp::Node> n) {
+  Node(std::shared_ptr<am::AMLifeCycle> n) {
     node = n;
   }
 
   virtual ~Node() {}
 
-  static std::shared_ptr<rclcpp::Node> node;
+  static std::shared_ptr<am::AMLifeCycle> node;
 };
 
 // toDuration() can be used whenever a float or double has to be converted to std::chrono::duration datatype
