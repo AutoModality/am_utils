@@ -12,6 +12,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <any>
 #include <vb_util_lib/utility.h>
+#include <ament_index_cpp/get_package_share_directory.hpp>
+
 namespace am
 {
 //
@@ -29,6 +31,9 @@ public:
 
   static std::shared_ptr<rclcpp::Node> node;
 };
+
+std::string getPackagePath(const std::string &package_name);
+
 
 // toDuration() can be used whenever a float or double has to be converted to std::chrono::duration datatype
 // This function is needed when you are create a timer
