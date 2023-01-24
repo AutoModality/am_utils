@@ -72,16 +72,16 @@ void getParam(const std::string& param_name, std::vector<std::string>& param, co
 
 //get parameters for all basic datatypes except arrays
 template <class T>
-void getParam(const std::string& param_name, T& param, const T& initial_value)
+bool getParam(const std::string& param_name, T& param, const T& initial_value)
 {
 	am::declare_parameter(param_name, initial_value);
-	am::Node::node->get_parameter_or(param_name, param, initial_value);
+	return am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
 
 template <class T>
 void getParameter(const std::string& param_name, T& param, const T& initial_value)
 {
-  am::Node::node->get_parameter_or(param_name, param, initial_value);
+	am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
 
 // a function that returns the string representation of a given ros2 message,
