@@ -23,13 +23,13 @@ CurrentENUKinematics::CurrentENUKinematics(rclcpp::Node::SharedPtr node, std::st
             		odom_prob_ud_(0.0, 1.0) {
 
 	//tfListener_ = new tf2_ros::TransformListener(tfBuffer);
-	tfBuffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+	tfBuffer_ = std::make_shared<tf2_ros::Buffer>(am::getClock());
 	br_ = std::make_shared<tf2_ros::TransformBroadcaster>(node);
 	static_br_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node);
 
     if (isPublisher())
     {
-        node_->get_parameter_or("/locator/publish_enu_transform", publish_transform_, true);
+        am::getParam("/locator/publish_enu_transform", publish_transform_, true);
         ROS_INFO("CurrentENUKinematics: publish_transform_[%s]", publish_transform_ ? "TRUE" : "FALSE");
 
         od_sub_nh_ = node_->create_subscription<nav_msgs::msg::Odometry>("odometry/Asset_ENU", 1000, std::bind(&CurrentENUKinematics::updateODCB, this, _1));
@@ -49,41 +49,41 @@ CurrentENUKinematics::CurrentENUKinematics(rclcpp::Node::SharedPtr node, std::st
         enable_timer_ = false;
 
         // odom error testing
-        node_->get_parameter_or("/locator/odom_trans_error_x", odom_trans_error_m_.x, 0.0);
+        am::getParam("/locator/odom_trans_error_x", odom_trans_error_m_.x, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_x: " << odom_trans_error_m_.x);
         odom_trans_error_x_nd_ = new std::normal_distribution<double>(0, odom_trans_error_m_.x);
 
-        node_->get_parameter_or("/locator/odom_trans_error_y", odom_trans_error_m_.y, 0.0);
+        am::getParam("/locator/odom_trans_error_y", odom_trans_error_m_.y, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_y:" << odom_trans_error_m_.y);
         odom_trans_error_y_nd_ = new std::normal_distribution<double>(0, odom_trans_error_m_.y);
 
-        node_->get_parameter_or("/locator/odom_trans_error_z", odom_trans_error_m_.z, 0.0);
+        am::getParam("/locator/odom_trans_error_z", odom_trans_error_m_.z, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_z:" << odom_trans_error_m_.z);
         odom_trans_error_z_nd_ = new std::normal_distribution<double>(0, odom_trans_error_m_.z);
 
-        node_->get_parameter_or("/locator/odom_trans_error_yaw", odom_yaw_error_r_, 0.0);
+        am::getParam("/locator/odom_trans_error_yaw", odom_yaw_error_r_, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_trans_error_yaw:" << odom_yaw_error_r_);
         odom_trans_error_yaw_nd_ = new std::normal_distribution<double>(0, odom_yaw_error_r_);
 
-        node_->get_parameter_or("/locator/odom_dropout_prob", odom_dropout_prob_, 0.0);
+        am::getParam("/locator/odom_dropout_prob", odom_dropout_prob_, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_dropout_prob:" << odom_dropout_prob_);
 
-        node_->get_parameter_or("/locator/odom_hyperspace_prob", odom_hyperspace_prob_, 0.0);
+        am::getParam("/locator/odom_hyperspace_prob", odom_hyperspace_prob_, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_prob:" << odom_hyperspace_prob_);
 
-        node_->get_parameter_or("/locator/odom_hyperspace_count", odom_hyperspace_count_, -1);
+        am::getParam("/locator/odom_hyperspace_count", odom_hyperspace_count_, -1);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_count:" << odom_hyperspace_count_);
 
-        node_->get_parameter_or("/locator/odom_hyperspace_offset_x", odom_hyperspace_trans_offset_m_.x, 0.0);
+        am::getParam("/locator/odom_hyperspace_offset_x", odom_hyperspace_trans_offset_m_.x, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_x:" << odom_hyperspace_trans_offset_m_.x);
 
-        node_->get_parameter_or("/locator/odom_hyperspace_offset_y", odom_hyperspace_trans_offset_m_.y, 0.0);
+        am::getParam("/locator/odom_hyperspace_offset_y", odom_hyperspace_trans_offset_m_.y, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_y:" << odom_hyperspace_trans_offset_m_.y);
 
-        node_->get_parameter_or("/locator/odom_hyperspace_offset_z", odom_hyperspace_trans_offset_m_.z, 0.0);
+        am::getParam("/locator/odom_hyperspace_offset_z", odom_hyperspace_trans_offset_m_.z, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_z:" << odom_hyperspace_trans_offset_m_.z);
 
-        node_->get_parameter_or("/locator/odom_hyperspace_offset_yaw", odom_hyperspace_yaw_offset_r_, 0.0);
+        am::getParam("/locator/odom_hyperspace_offset_yaw", odom_hyperspace_yaw_offset_r_, 0.0);
         ROS_INFO_STREAM("CurrentENUKinematics: odom_hyperspace_offset_yaw:" << odom_hyperspace_yaw_offset_r_);
 }
 }

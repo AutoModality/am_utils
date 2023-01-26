@@ -78,10 +78,11 @@ void getParam(const std::string& param_name, T& param, const T& initial_value)
 	am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
 
+// Compatible with getParam with different method name
 template <class T>
 void getParameter(const std::string& param_name, T& param, const T& initial_value)
 {
-  am::Node::node->get_parameter_or(param_name, param, initial_value);
+  am::getParam(param_name, param, initial_value);
 }
 
 // a function that returns the string representation of a given ros2 message,
@@ -119,7 +120,9 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 //this will convert a vector to a string
 std::string vectToStr(const std::vector<std::string>& vect);
 
-inline rclcpp::Time ClockNow() {return am::Node::node->now();}; 
+//inline rclcpp::Time ClockNow() {return am::Node::node->now();};
+inline rclcpp::Time ClockNow() {return am::Node::node->get_clock()->now();};
+inline rclcpp::Time clockNow() {return am::Node::node->get_clock()->now();};
 inline rclcpp::Clock::SharedPtr getClock() {return am::Node::node->get_clock();};
 }  // namespace am
 
