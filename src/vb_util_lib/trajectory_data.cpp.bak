@@ -15,15 +15,15 @@ void TrajectoryData::setup(std::string &bag_file_location, std::string &topic, T
     switch (msg_type)
     {
         case TRAJECTORY_MSG_TYPE::GM_POSESTAMPED:
-            br1 = new BagReader<geometry_msgs::msg::PoseStamped>(node_, bag_file_location, topic);
+            br1 = new BagReader<geometry_msgs::msg::PoseStamped>(bag_file_location, topic);
             gpe = new GeometryPoseExtractor(br1->getMessages());
             break;
         case TRAJECTORY_MSG_TYPE::GM_POSEWITHCOVERIANCESTAMPED:
-            br2 = new BagReader<geometry_msgs::msg::PoseWithCovarianceStamped>(node_, bag_file_location, topic);
+            br2 = new BagReader<geometry_msgs::msg::PoseWithCovarianceStamped>(bag_file_location, topic);
             gpe = new GeometryPoseExtractor(br2->getMessages());
             break;
         case TRAJECTORY_MSG_TYPE::NM_ODOMETRY:
-            br3 = new BagReader<nav_msgs::msg::Odometry>(node_, bag_file_location, topic);
+            br3 = new BagReader<nav_msgs::msg::Odometry>(bag_file_location, topic);
             gpe = new GeometryPoseExtractor(br3->getMessages());
             break;
     }
@@ -39,7 +39,7 @@ void TrajectoryData::setup(std::string &bag_file_location, std::string &topic, T
     			pose_msgs_.push_back(*i);
     		}
     	}
-    	RCLCPP_INFO(node_->get_logger(), "TrajectoryData::setup: loaded %d triggered messages", j);
+    	ROS_INFO("TrajectoryData::setup: loaded %d triggered messages", j);
     }
     else
     {
@@ -47,7 +47,7 @@ void TrajectoryData::setup(std::string &bag_file_location, std::string &topic, T
     }
 }
 
-bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, geometry_msgs::msg::PoseStamped& pt, std::vector<geometry_msgs::msg::PoseStamped>& traj,
+bool TrajectoryData::getPose(geometry_msgs::msg::PoseStamped& pt, std::vector<geometry_msgs::msg::PoseStamped>& traj,
                              PointStat& pose, double time_span) {
     double t_sec = pt.header.stamp.sec;
     double closest_dist = 99999999999.0;
@@ -71,7 +71,7 @@ bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, geometry_msgs::msg::P
     	//ROS_INFO_STREAM("traj.size: " << traj.size());
     	//ROS_INFO("traj[0].header.stamp.toSec(): %f", traj[0].header.stamp.toSec());
     	//ROS_INFO("traj[traj.size()-1].header.stamp.toSec(): %f", traj[traj.size()-1].header.stamp.toSec());
-        RCLCPP_WARN(node->get_logger(), "TrajectoryData::getPose1 - specified time not within compare trajectory time span %0.2f   %0.2f   %0.2f",
+        ROS_WARN("TrajectoryData::getPose1 - specified time not within compare trajectory time span %0.2f   %0.2f   %0.2f",
         		traj[0].header.stamp.sec, t_sec, traj[traj.size()-1].header.stamp.sec);
     	//ROS_INFO("t_sec: %f", t_sec);
         return false;
@@ -121,7 +121,7 @@ bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, geometry_msgs::msg::P
     return found_one;
 }
 
-bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, rclcpp::Time &t, std::vector<geometry_msgs::msg::PoseStamped>& traj,
+bool TrajectoryData::getPose(rclcpp::Time &t, std::vector<geometry_msgs::msg::PoseStamped>& traj,
                                     geometry_msgs::msg::PoseStamped& pose) {
     double t_sec = t.seconds();
 //printf("getPose: Looking for t_sec[%0.3f] \n", t_sec);
@@ -135,7 +135,7 @@ bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, rclcpp::Time &t, std:
     	//ROS_INFO_STREAM("traj.size: " << traj.size());
     	//ROS_INFO("traj[0].header.stamp.toSec(): %f", traj[0].header.stamp.toSec());
     	//ROS_INFO("traj[traj.size()-1].header.stamp.toSec(): %f", traj[traj.size()-1].header.stamp.toSec());
-    	RCLCPP_WARN(node->get_logger(), "TrajectoryData::getPose2 - specified time not within compare trajectory time span %0.2f   %0.2f   %0.2d", traj[0].header.stamp.sec, t_sec, traj[traj.size()-1].header.stamp.sec);
+    	ROS_WARN("TrajectoryData::getPose2 - specified time not within compare trajectory time span %0.2f   %0.2f   %0.2d", traj[0].header.stamp.sec, t_sec, traj[traj.size()-1].header.stamp.sec);
     	//ROS_INFO("t_sec: %f", t_sec);
         return false;
     }
@@ -155,7 +155,7 @@ bool TrajectoryData::getPose(rclcpp::Node::SharedPtr node, rclcpp::Time &t, std:
     }
 
     pose = traj[traj.size() - 1];
-    RCLCPP_WARN(node->get_logger(), "TrajectoryData::getPose - off the end");
+    ROS_WARN("TrajectoryData::getPose - off the end");
 
     return true;
 }
@@ -211,7 +211,7 @@ void TrajectoryData::publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::Sha
     }
     nav_msgs::msg::Path path;
 //    ros::Duration time_offset = (ros::Time::now() - pose_msgs_[pose_msgs_.size()-1].header.stamp) + ros::Duration(time_offset_);
-    rclcpp::Duration time_offset = (node_->now() - pose_msgs_[0].header.stamp) + rclcpp::Duration(am::toDuration(time_offset_));
+    rclcpp::Duration time_offset = (am::clockNow() - pose_msgs_[0].header.stamp) + rclcpp::Duration(am::toDuration(time_offset_));
 
     for(int i = 0; i < pose_msgs_.size(); i++)
     {
@@ -231,7 +231,7 @@ void TrajectoryData::publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::Sha
         	}
         	else
         	{
-        		RCLCPP_INFO(node_->get_logger(), "TRIMMED POINT times[%0.3f  %0.3d  %0.3f]", start.seconds(), p.header.stamp.sec, end.seconds());
+        		ROS_INFO("TRIMMED POINT times[%0.3f  %0.3d  %0.3f]", start.seconds(), p.header.stamp.sec, end.seconds());
         	}
         }
         else
@@ -240,7 +240,7 @@ void TrajectoryData::publishRvizPath(rclcpp::Publisher<nav_msgs::msg::Path>::Sha
         }
     }
 
-    path.header.stamp = node_->now();
+    path.header.stamp = am::clockNow()();
 //    path.header.frame_id = Asset_Frame;
     path.header.frame_id = pose_msgs_[0].header.frame_id;
     pub->publish(path);
@@ -254,7 +254,7 @@ void TrajectoryData::compareTrajectory(TrajectoryData& truth,
     // first confirm that there there are elements in the trajectory
     if (truth_vector.size() < 2 || pose_msgs_.size() < 2)
     {
-        RCLCPP_ERROR(node_->get_logger(), "TrajectoryData::compareTrajectory: Not enough points in trajectories");
+        ROS_ERROR("TrajectoryData::compareTrajectory: Not enough points in trajectories");
         return;
     }
     // get the transform from the truth trajectory to this trajectory
@@ -262,7 +262,7 @@ void TrajectoryData::compareTrajectory(TrajectoryData& truth,
                                    truth_vector[0].header.frame_id,
                                    compare_transform_))
     {
-        RCLCPP_ERROR_STREAM(node_->get_logger(), "TrajectoryData::compareTrajectory: No transform from " << truth_vector[0].header.frame_id << " to " << pose_msgs_[0].header.frame_id);
+        ROS_ERROR_STREAM("TrajectoryData::compareTrajectory: No transform from " << truth_vector[0].header.frame_id << " to " << pose_msgs_[0].header.frame_id);
         return;
     }
 
@@ -286,10 +286,10 @@ void TrajectoryData::compareTrajectory(TrajectoryData& truth,
         compare_trajectory_.push_back(pt);
     }
 
-    calculateStats(node_, pose_msgs_, compare_trajectory_, trajectory_stats_, stats_);
+    calculateStats(pose_msgs_, compare_trajectory_, trajectory_stats_, stats_);
 }
 
-void TrajectoryData::calculateStats(rclcpp::Node::SharedPtr node, std::vector<geometry_msgs::msg::PoseStamped>& traj,
+void TrajectoryData::calculateStats(std::vector<geometry_msgs::msg::PoseStamped>& traj,
                   std::vector<geometry_msgs::msg::PoseStamped>& truth,
                   std::vector<TrajectoryPointStats>& stats_vector, TrajectoryStats& stat_data) {
 
@@ -303,7 +303,7 @@ void TrajectoryData::calculateStats(rclcpp::Node::SharedPtr node, std::vector<ge
 
     if (traj.size() == 0)
     {
-        RCLCPP_WARN(node->get_logger(), "TrajectoryData::calculateStats: trajectory empty");
+        ROS_WARN("TrajectoryData::calculateStats: trajectory empty");
         return;
     }
 
@@ -326,7 +326,7 @@ void TrajectoryData::calculateStats(rclcpp::Node::SharedPtr node, std::vector<ge
 
         // Find the point in the truth vector closest in time
         rclcpp::Time t = it->header.stamp;
-        if (getPose(node, t, truth, pt))
+        if (getPose(t, truth, pt))
         {
             // Fill in all the details concernding the point found on the trajecgtory
             stat.closest_time.stamp = stat.location.stamp;
@@ -343,7 +343,7 @@ void TrajectoryData::calculateStats(rclcpp::Node::SharedPtr node, std::vector<ge
         }
 
         // Find the point in the truth vector  closest in distance
-        if (!getPose(node, *it, truth, stat.closest_distance, 0.5))
+        if (!getPose(*it, truth, stat.closest_distance, 0.5))
         {
             stats_vector.push_back(stat);
             continue;
@@ -482,7 +482,7 @@ void TrajectoryData::test(double x_off, double y_off, double z_off, double t_off
             it != pose_msgs_.end(); it++)
     {
     	rclcpp::Time t = it->header.stamp;
-        if (!getPose(node_, t, compare_trajectory_, p))
+        if (!getPose(t, compare_trajectory_, p))
         {
             printf("    ERROR - could not find point in compare trajectory at time[%d]  XYZ[%0.2f,  %0.2f, %0.2f]\n",
                    it->header.stamp.sec, it->pose.position.x, it->pose.position.y, it->pose.position.z);
@@ -499,7 +499,7 @@ void TrajectoryData::test(double x_off, double y_off, double z_off, double t_off
 //        bool TrajectoryData::getPose(geometry_msgs::PoseStamped& pt, std::vector<geometry_msgs::PoseStamped>& traj,
 //                                     PointStat& pose, double time_span) {
         PointStat pstat;
-        if (!getPose(node_, *it, compare_trajectory_, pstat, 1.5))
+        if (!getPose(*it, compare_trajectory_, pstat, 1.5))
         {
             printf("    ERROR - could not find point in compare trajectory at time\n");
             continue;

@@ -540,7 +540,7 @@ void Kinematics::updateCB(const nav_msgs::msg::Odometry::SharedPtr msg) {
 }
 
 void Kinematics::watchdogTimerCB() {
-	rclcpp::Duration d = nh_->get_clock()->now() - update_time_;
+	// rclcpp::Duration d = am::clockNow() - update_time_;
     update_stale_ = last_update_cnt_ == update_cnt_;
     if (update_stale_)
     {

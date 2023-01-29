@@ -8,7 +8,7 @@
 #ifndef VISBOX_PACKAGES_VISION_AM_VISION_LIB_INCLUDE_AM_VISION_LIB_TRAJECTORY_H_
 #define VISBOX_PACKAGES_VISION_AM_VISION_LIB_INCLUDE_AM_VISION_LIB_TRAJECTORY_H_
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
@@ -63,13 +63,13 @@ struct TrajectoryStats {
 class TrajectoryData
 {
 public:
-    TrajectoryData(rclcpp::Node::SharedPtr node): node_(node), transformer_(node_){
+    TrajectoryData() {
     	coord_offset_[0] = 0.0;
     	coord_offset_[1] = 0.0;
     	coord_offset_[2] = 0.0;
     }
-    TrajectoryData(rclcpp::Node::SharedPtr node, std::string &bag_file_location,
-    		std::string &topic, TRAJECTORY_MSG_TYPE msg_type): node_(node), transformer_(node_)
+    TrajectoryData(std::string &bag_file_location,
+    		std::string &topic, TRAJECTORY_MSG_TYPE msg_type)
     {
         setup(bag_file_location, topic, msg_type);
     }
@@ -78,7 +78,7 @@ public:
     }
 
     void setup(std::string &bag_file_location, std::string &topic, TRAJECTORY_MSG_TYPE msg_type) {
-    	rclcpp::Time t = node_->now();
+    	rclcpp::Time t = am::clockNow();
     	setup(bag_file_location, topic, msg_type, false, t);
     }
 
@@ -98,7 +98,7 @@ public:
 
     // Fetch a pose in this trajectory that has the same time stamp as specified by t
     bool getPose(rclcpp::Time &stamp, geometry_msgs::msg::PoseStamped& pose) {
-        return getPose(node_, stamp, pose_msgs_, pose);
+        return getPose(stamp, pose_msgs_, pose);
     }
 
     std::vector<geometry_msgs::msg::PoseStamped> &getPoses() {
@@ -110,7 +110,7 @@ public:
     // Calculate the statistics of this trajectory as compared to a truth trajectory
     void calculateStats() {
         printf("SSSSSSSSS\n");
-        calculateStats(node_, pose_msgs_, compare_trajectory_, trajectory_stats_, stats_);
+        calculateStats(pose_msgs_, compare_trajectory_, trajectory_stats_, stats_);
         printf("EEEEEEEE\n");
     }
 
@@ -165,14 +165,14 @@ public:
 
     // General purpose method that can take any PoseStamped vector trajectory and return
     //   the pose on that trajectory that has the same time stamp as
-    static bool getPose(rclcpp::Node::SharedPtr node, rclcpp::Time &stamp, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
+    static bool getPose(rclcpp::Time &stamp, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
                         geometry_msgs::msg::PoseStamped& pose);
 
     // General purpose method that can take any PoseStamped vector trajectory and return
     //   statistics about the point on that trajectory that is the closest.
     // If time_span != 0.0 then it restricts the search to only points that are within a certain time
     //   of pt.header.stamp
-    static bool getPose(rclcpp::Node::SharedPtr node, geometry_msgs::msg::PoseStamped& pt, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
+    static bool getPose(geometry_msgs::msg::PoseStamped& pt, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
                         PointStat& pose, double time_span=0.0);
 
     // General purpose routine that will return the interpolated position between p1 and p2 based
@@ -183,7 +183,7 @@ public:
     // Takes the trajectory vector and compares it to the truth trajectory to create a vector
     //   of statistics. For each element in the trajectory vector there will be an element in the
     //   stats vector.
-    static void calculateStats(rclcpp::Node::SharedPtr node, std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
+    static void calculateStats(std::vector<geometry_msgs::msg::PoseStamped>& trajectory,
                       std::vector<geometry_msgs::msg::PoseStamped>& truth,
                       std::vector<TrajectoryPointStats>& stats_vector, TrajectoryStats& stats);
 
@@ -192,8 +192,6 @@ public:
     void test(double x_off, double y_off, double z_off, double t_off);
 
 private:
-
-    rclcpp::Node::SharedPtr node_;
 
     am::Transformer transformer_;
     geometry_msgs::msg::TransformStamped compare_transform_;
