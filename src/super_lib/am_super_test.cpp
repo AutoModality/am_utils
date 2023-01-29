@@ -173,6 +173,8 @@ void AMSuperTest::waitUntilMissionState(const uint8_t mission_state, std::string
   {
     rclcpp::spin_some(nh_);
     loop_rate.sleep();
+    // std::string mission_state_string = am::Node::node->getstateToString(mission_state); 
+
     TEST_LOG("[" << error_code << "] waiting to receive mission state: " << mission_state, "08JU");
   }
 }
