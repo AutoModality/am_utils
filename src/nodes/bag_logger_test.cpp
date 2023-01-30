@@ -125,7 +125,7 @@ private:
 };
 
 // ROS2 porting note: Must decleare space for the static handle member of the singleton
-std::shared_ptr<rclcpp::Node> am::Node::node;
+std::shared_ptr<am::AMLifeCycle> am::Node::node;
 
 int main(int argc, char* argv[])
 {
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
 
   // ROS2 porting note: here is where the singleton node handle get created that is used in many places as a
   // convenience.
-  am::Node::node = std::make_shared<rclcpp::Node>("bag_logger_tester");
+  am::Node::node = std::make_shared<am::AMLifeCycle>("bag_logger_tester");
  
   std::shared_ptr<TestClass> tc = std::make_shared<TestClass>(am::Node::node);
 

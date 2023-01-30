@@ -9,11 +9,17 @@
 #ifndef INCLUDE_AM_UTILS_AM_ROS2_UTILITY_H_
 #define INCLUDE_AM_UTILS_AM_ROS2_UTILITY_H_
 
+#define BOOST_BIND_NO_PLACEHOLDERS
+
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
 #include <any>
 #include <vb_util_lib/utility.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <super_lib/am_life_cycle.h>
+
+// using namespace std::chrono_literals;
+using std::placeholders::_1;
 
 namespace am
 {
@@ -24,13 +30,13 @@ class Node
 {
 public:
   Node() {}
-  Node(std::shared_ptr<rclcpp::Node> n) {
+  Node(std::shared_ptr<am::AMLifeCycle> n) {
     node = n;
   }
 
   virtual ~Node() {}
 
-  static std::shared_ptr<rclcpp::Node> node;
+  static std::shared_ptr<am::AMLifeCycle> node;
 };
 
 std::string getPackagePath(const std::string &package_name);
@@ -77,10 +83,10 @@ void getParam(const std::string& param_name, std::vector<std::string>& param, co
 
 //get parameters for all basic datatypes except arrays
 template <class T>
-void getParam(const std::string& param_name, T& param, const T& initial_value)
+bool getParam(const std::string& param_name, T& param, const T& initial_value)
 {
 	am::declare_parameter(param_name, initial_value);
-	am::Node::node->get_parameter_or(param_name, param, initial_value);
+	return am::Node::node->get_parameter_or(param_name, param, initial_value);
 }
 
 // Compatible with getParam with different method name
