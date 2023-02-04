@@ -105,7 +105,8 @@ bool AMLifeCycle::param(const std::string& param_name, T& param_val, const T& de
 
 void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::SharedPtr msg)
 {
-  ROS_DEBUG_STREAM_THROTTLE(1.0, life_cycle_mediator_.commandToString((LifeCycleCommand)msg->command));
+  // ROS_DEBUG_STREAM_THROTTLE(1.0, life_cycle_mediator_.commandToString((LifeCycleCommand)msg->command));
+  ROS_DEBUG_STREAM(life_cycle_mediator_.commandToString((LifeCycleCommand)msg->command));
 
   if (!msg->node_name.compare(AMLifeCycle::BROADCAST_NODE_NAME) || !msg->node_name.compare(node_name_))
   {
@@ -519,6 +520,11 @@ void AMLifeCycle::heartbeatCB()
 LifeCycleState AMLifeCycle::getState() const
 {
   return life_cycle_mediator_.getState(life_cycle_info_);
+}
+
+bool AMLifeCycle::isActive() const
+{
+  return life_cycle_mediator_.getState(life_cycle_info_) == LifeCycleState::ACTIVE;
 }
 
 const std::string_view& AMLifeCycle::getStateName()
