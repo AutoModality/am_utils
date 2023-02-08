@@ -544,7 +544,7 @@ void Kinematics::watchdogTimerCB() {
     update_stale_ = last_update_cnt_ == update_cnt_;
     if (update_stale_)
     {
-    	RCLCPP_ERROR(nh_->get_logger(), "ERROR: KINEMATICS WATCHDOG UPDATE STALE cnt[%ld]", update_cnt_);
+    	ROS_ERROR_THROTTLE(2, "ERROR: KINEMATICS WATCHDOG UPDATE STALE cnt[%ld]", update_cnt_);
     }
     last_update_cnt_ = update_cnt_;
 }
