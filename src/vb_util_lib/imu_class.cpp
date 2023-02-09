@@ -23,10 +23,12 @@ ImuClass::ImuClass(rclcpp::Node::SharedPtr node, const std::string &imu_topic, i
 ImuClass::ImuClass(): imu_cnt_(-1)
 {
 	imu_pot_size_ = 0;
+
 }
 ImuClass::ImuClass(int imu_pot_size): imu_cnt_(-1)
 {
 	imu_pot_size_ = imu_pot_size;
+	imu_pot_ = std::vector<sensor_msgs::msg::Imu>(imu_pot_size);
 }
 ImuClass::~ImuClass()
 {
@@ -65,8 +67,8 @@ int ImuClass::getImu(std::vector<sensor_msgs::msg::Imu> &res, const rclcpp::Time
 	 */
 	for(int i = 0; i < imu_pot_.size(); i++)
 	{
-		double time_diff =  t.seconds() - imu_pot_[i].header.stamp.sec;
-		if(abs(time_diff) <= time_difference && time_diff < 0)
+		double time_diff =  abs((t - rclcpp::Time(imu_pot_[i].header.stamp)).seconds());
+		if(time_diff <= time_difference)
 		{
 			res.push_back(imu_pot_[i]);
 		}
@@ -88,12 +90,11 @@ int ImuClass::getImu(sensor_msgs::msg::Imu &res, const rclcpp::Time &t)
 	 */
 	for(int i = 0; i < imu_pot_.size(); i++)
 	{
-		double time_diff =  abs(t.seconds() - imu_pot_[i].header.stamp.sec);
+		double time_diff =  abs((t - rclcpp::Time(imu_pot_[i].header.stamp)).seconds());
 		if(time_diff <= min_time_diff)
 		{
 			min_time_diff = time_diff;
 			min_imu_index = i;
-
 		}
 	}
 	if(min_imu_index < 0)
