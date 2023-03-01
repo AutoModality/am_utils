@@ -2,7 +2,6 @@
 #include <brain_box_msgs/msg/life_cycle_state.hpp>
 #include <boost/bimap.hpp>
 #include <boost/assign.hpp>
-#include <am_utils/am_ros2_utility.h>
 
 namespace am
 {
@@ -11,14 +10,15 @@ namespace am
 // static constexpr std::string AMLifeCycle::STATE_INVALID_STRING;
 // static constexpr std::string AMLifeCycle::STATE_UNCONFIGURED_STRING;
 
+// TODO: get_clock()-> would ideally use am::clockNow(), but am::Node::node ins't assigne din constructor
 AMLifeCycle::AMLifeCycle(const std::string & node_name, const rclcpp::NodeOptions & options ) : 
-  rclcpp::Node(node_name, options), updater_(this)
+  rclcpp::Node(node_name, options), updater_(this), configure_start_time_(get_clock()->now())
 {
   initialize();  
 };
 
 AMLifeCycle::AMLifeCycle(const std::string & node_name, const std::string & namespace_, const rclcpp::NodeOptions & options ) : 
-  rclcpp::Node(node_name, namespace_, options), updater_(this)
+  rclcpp::Node(node_name, namespace_, options), updater_(this), configure_start_time_(get_clock()->now())
 {
   initialize();  
 }
@@ -29,6 +29,9 @@ AMLifeCycle::~AMLifeCycle()
 
 void AMLifeCycle::initialize()
 {
+  // throwing bad_weak_ptr:
+  // am::Node::node = std::dynamic_pointer_cast<AMLifeCycle>(shared_from_this());
+
   std::string init_state_str;
   //FIXME: This string should come from the enum
   // always prefix with life_cycle in the parent to avoid namespace collisions with child and clarity in definition
@@ -72,8 +75,6 @@ void AMLifeCycle::initialize()
   {
     node_name_ = get_name();
   }
-
-
 
   // subs should always come at the end
   /**
@@ -202,6 +203,7 @@ void AMLifeCycle::doCleanup(bool success)
 
 void AMLifeCycle::onConfigure()
 { 
+
   ROS_INFO("onConfigure called [POMH]");
   if(stats_list_.hasStats())
   {
@@ -249,7 +251,7 @@ void AMLifeCycle::configure()
   //mark the configuration start time once 
   if(getState() != LifeCycleState::CONFIGURING)
   {
-    configure_start_time_= am::ClockNow();
+    configure_start_time_= get_clock()->now();
   }
   transition("configure", LifeCycleState::UNCONFIGURED, LifeCycleState::CONFIGURING, LifeCycleState::INACTIVE,
   std::bind(&AMLifeCycle::onConfigure, this));
@@ -287,7 +289,7 @@ bool AMLifeCycle::withinConfigureTolerance()
   //outside of configuring, we have no tolerance
   if(life_cycle_mediator_.unconfigured(life_cycle_info_))
   {
-    rclcpp::Duration duration_since_configure = am::ClockNow() - configure_start_time_;
+    rclcpp::Duration duration_since_configure = get_clock()->now() - configure_start_time_;
     if (life_cycle_info_.state == LifeCycleState::UNCONFIGURED || duration_since_configure <= rclcpp::Duration(am::toDuration(configure_tolerance_s)) )
     {
       tolerated = true;
