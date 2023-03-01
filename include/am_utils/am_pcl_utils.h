@@ -3,6 +3,7 @@
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <am_utils/point_types.h>
+#include <unordered_set>
 
 namespace am
 {
@@ -32,6 +33,9 @@ public:
   static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
 
   static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
+
+  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR>::Ptr cloud,
+		  const std::unordered_set<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out);
 
   static bool isSetToNaN(pcl::PointXYZIR &point);
 

@@ -148,6 +148,27 @@ void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, se
 	pcl::toROSMsg<pcl::PointXYZIR>(cloud, cloud_out);
 }
 
+void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR>::Ptr cloud,
+		  const std::unordered_set<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out)
+{
+	pcl::PointCloud<pcl::PointXYZIR> cloud_in;
+	cloud_in.points.resize(cloud->size());
+
+	for(int i = 0; i < cloud->size(); i++)
+	{
+		if(valid_indices.find(i) == valid_indices.end())
+		{
+			cloud_in.points[i].x = std::nanf("");
+			cloud_in.points[i].y = std::nanf("");
+			cloud_in.points[i].z = std::nanf("");
+			continue;
+		}
+
+		cloud_in.points[i] = cloud->points[i];
+	}
+	pcl::toROSMsg<pcl::PointXYZIR>(cloud_in, cloud_out);
+}
+
 bool AMPCLUtils::isSetToNaN(pcl::PointXYZIR &point)
 {
   if (std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z) ||
