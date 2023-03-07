@@ -17,6 +17,7 @@
 #include <vb_util_lib/utility.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <super_lib/am_life_cycle.h>
+#include <nav_msgs/msg/odometry.hpp>
 
 // using namespace std::chrono_literals;
 using std::placeholders::_1;
@@ -65,6 +66,8 @@ void declare_parameter(const std::string &param_name, const T &param)
 		;
 	}
 }
+
+bool setCovariances(const std::vector<double> &src, nav_msgs::msg::Odometry &odom);
 
 //get parameter for vector of integers
 void getParam(const std::string& param_name, std::vector<int>& param, const std::vector<int>& initial_value);
