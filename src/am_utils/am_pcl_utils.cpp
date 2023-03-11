@@ -31,7 +31,7 @@ pcl::PointCloud<pcl::PointXYZIR>::ConstPtr AMPCLUtils::convertToPointXYZIR(
   return pcl;
 }
 
-pcl::PointCloud<pcl::PointXYZ>::ConstPtr convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+pcl::PointCloud<pcl::PointXYZ>::ConstPtr AMPCLUtils::convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
         pcl::PointCloud<pcl::PointXYZ>::Ptr &pcl)
 {
 	pcl->header = pcl_conversions::toPCL(pc2->header);

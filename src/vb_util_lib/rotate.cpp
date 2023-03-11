@@ -427,13 +427,7 @@ namespace am
   //Static method to convert from rpy to quaternion message
   geometry_msgs::msg::Quaternion Rotate::toQuaternionMsg(double r, double p, double y)
   {
-	  tf2::Quaternion q = Rotate::toQuaternion(r,p,y);
-	  geometry_msgs::msg::Quaternion q_msg;
-	  //quaternionTFToMsg(q, q_msg);
-
-	  /*std::cout << r << ", " <<  p << ", " << y << std::endl;
-	  std::cout << q_msg.x << ", " <<  q_msg.y << ", " << q_msg.z << ", " << q_msg.w << std::endl;*/
-	  return q_msg;
+	  return tf2::toMsg(Rotate::toQuaternion(r,p,y));
   }
   tf2::Quaternion Rotate::toQuaternion(const std::array<double,3> rpy)
   {
