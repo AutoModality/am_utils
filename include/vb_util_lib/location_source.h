@@ -21,13 +21,13 @@
 //using boost::assign::map_list_of;
 //
 
-enum class PositionSource{GPS=0, RTK, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, FEATURE, FEATURE_ODOM, FUSION, INTEL_VO_POS, INTEL_VO_ODOM, BESPOON, TEST};
+enum class PositionSource{GPS=0, RTK, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, FEATURE, FEATURE_ODOM, FUSION, INTEL_VO_POS, INTEL_VO_ODOM, BESPOON, EKF, TEST};
 #define PositionSourceIdx(src) static_cast<int>(src)
 
-enum class OrientationSource{FCU=0, FCU_ODOM, INTEL_VO, INTEL_VO_ODOM, FEATURE, FEATURE_ODOM};
+enum class OrientationSource{FCU=0, FCU_ODOM, INTEL_VO, INTEL_VO_ODOM, FEATURE, FEATURE_ODOM, EKF};
 #define OrientationSourceIdx(src) static_cast<int>(src)
 
-enum class AltitudeSource{GPS_ALT=0, GPS_AGL, FCU_LAUNCH, ALTIMETER, ALTIMETER_ODOM, FEATURE, FEATURE_ODOM, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, INTEL_VO_POS, INTEL_VO_ODOM};
+enum class AltitudeSource{GPS_ALT=0, GPS_AGL, FCU_LAUNCH, ALTIMETER, ALTIMETER_ODOM, FEATURE, FEATURE_ODOM, FCU_VEL_ODOM, FCU_VO_POS, FCU_VO_ODOM, INTEL_VO_POS, INTEL_VO_ODOM, EKF};
 #define AltitudeSourceIdx(src) static_cast<int>(src)
 
 
@@ -107,7 +107,8 @@ public:
             {OrientationSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"},
             {OrientationSource::INTEL_VO, "INTEL_VO"},
             {OrientationSource::FEATURE_ODOM, "FEATURE_ODOM"},
-            {OrientationSource::FEATURE, "FEATURE"}};
+            {OrientationSource::FEATURE, "FEATURE"},
+            {OrientationSource::EKF, "EKF"}};
 
     std::map<std::string, OrientationSource> string_to_OrientationSource = {
             {"FCU", OrientationSource::FCU},
@@ -115,7 +116,8 @@ public:
             {"INTEL_VO", OrientationSource::INTEL_VO},
             {"INTEL_VO_ODOM", OrientationSource::INTEL_VO_ODOM},
             {"FEATURE_ODOM", OrientationSource::FEATURE_ODOM},
-            {"FEATURE", OrientationSource::FEATURE}};
+            {"FEATURE", OrientationSource::FEATURE},
+            {"EKF", OrientationSource::EKF}};
 
     std::map<PositionSource, std::string> PositionSource_to_string = {
             {PositionSource::GPS, "GPS"},
@@ -127,7 +129,8 @@ public:
             {PositionSource::FEATURE_ODOM, "FEATURE_ODOM"},
             {PositionSource::FUSION, "FUSION"},
             {PositionSource::INTEL_VO_POS, "INTEL_VO_POS"},
-    		{PositionSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"}};
+    		{PositionSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"},
+            {PositionSource::EKF, "EKF"}};
 
     std::map<std::string, PositionSource> string_to_PositionSource = {
             {"GPS", PositionSource::GPS},
@@ -139,7 +142,8 @@ public:
             {"FEATURE_ODOM", PositionSource::FEATURE_ODOM},
             {"FUSION", PositionSource::FUSION},
             {"INTEL_VO_POS", PositionSource::INTEL_VO_POS},
-    		{"INTEL_VO_ODOM", PositionSource::INTEL_VO_ODOM}};
+    		{"INTEL_VO_ODOM", PositionSource::INTEL_VO_ODOM},
+            {"EKF", PositionSource::EKF}};
 
     std::map<AltitudeSource, std::string> AltitudeSource_to_string = {
             {AltitudeSource::ALTIMETER, "ALTIMETER"},
@@ -153,7 +157,8 @@ public:
             {AltitudeSource::GPS_AGL, "GPS_AGL"},
             {AltitudeSource::GPS_ALT, "GPS_ALT"},
             {AltitudeSource::INTEL_VO_POS, "INTEL_VO_POS"},
-            {AltitudeSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"}};
+            {AltitudeSource::INTEL_VO_ODOM, "INTEL_VO_ODOM"},
+            {AltitudeSource::EKF, "EKF"}};
 
     std::map<std::string, AltitudeSource> string_to_AltitudeSource = {
             {"ALTIMETER", AltitudeSource::ALTIMETER},
@@ -167,8 +172,8 @@ public:
             {"GPS_AGL", AltitudeSource::GPS_AGL},
             {"GPS_ALT", AltitudeSource::GPS_ALT},
             {"INTEL_VO_POS", AltitudeSource::INTEL_VO_POS},
-            {"INTEL_VO_ODOM", AltitudeSource::INTEL_VO_ODOM}};
-
+            {"INTEL_VO_ODOM", AltitudeSource::INTEL_VO_ODOM},
+            {"EKF", AltitudeSource::EKF}};
 
     void setAltSrc(const std::string value) {
     	altitude_source_ = string_to_AltitudeSource[value];
