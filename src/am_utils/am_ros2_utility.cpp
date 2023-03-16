@@ -12,6 +12,29 @@
 namespace am
 {
 
+/*
+ * Set Covariances according to the following map
+ * X 0 0 0 0 0
+ * 0 Y 0 0 0 0
+ * 0 0 Z 0 0 0
+ * 0 0 0 R 0 0
+ * 0 0 0 0 P 0
+ * 0 0 0 0 0 Y
+ */
+bool setCovariances(const std::vector<double> &src, nav_msgs::msg::Odometry &odom)
+{
+	if(src.size() != 6)
+	{
+		return false;
+	}
+
+	for(int i = 0; i < src.size(); i++)
+	{
+		odom.pose.covariance[i * 7] = src[i];
+	}
+
+	return true;
+}
 
 void getParam(const std::string& param_name, std::vector<int>& param, const std::vector<int>& initial_value)
 {

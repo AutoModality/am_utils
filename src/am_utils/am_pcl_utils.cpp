@@ -31,7 +31,7 @@ pcl::PointCloud<pcl::PointXYZIR>::ConstPtr AMPCLUtils::convertToPointXYZIR(
   return pcl;
 }
 
-pcl::PointCloud<pcl::PointXYZ>::ConstPtr convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+pcl::PointCloud<pcl::PointXYZ>::ConstPtr AMPCLUtils::convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
         pcl::PointCloud<pcl::PointXYZ>::Ptr &pcl)
 {
 	pcl->header = pcl_conversions::toPCL(pc2->header);
@@ -146,6 +146,19 @@ void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sens
 void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out)
 {
 	pcl::toROSMsg<pcl::PointXYZIR>(cloud, cloud_out);
+}
+
+void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR>::Ptr cloud,
+		  const std::vector<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out)
+{
+	pcl::PointCloud<pcl::PointXYZIR> cloud_in;
+	cloud_in.points.resize(cloud->size());
+
+	for(int idx : valid_indices)
+	{
+		cloud_in.points[idx] = cloud->points[idx];
+	}
+	pcl::toROSMsg<pcl::PointXYZIR>(cloud_in, cloud_out);
 }
 
 bool AMPCLUtils::isSetToNaN(pcl::PointXYZIR &point)

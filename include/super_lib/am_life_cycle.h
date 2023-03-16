@@ -33,6 +33,9 @@ class AMLifeCycle : public rclcpp::Node
     /**Specific parts of the lifecycle where nodes have responsibilities.*/
     LifeCycleState getState() const;
 
+    /**True is current node state is LifeCycleState::ACTIVE.*/
+    bool isActive() const;
+
     /**Simple indication of health */
     LifeCycleStatus getStatus() const;
     
