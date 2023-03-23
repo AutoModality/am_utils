@@ -161,6 +161,9 @@ inline rclcpp::Clock::SharedPtr getClock() {return am::Node::node->get_clock();}
 #define ROS_INFO_STREAM(...) RCLCPP_INFO_STREAM(am::Node::node->get_logger(), __VA_ARGS__)
 #define ROS_INFO_STREAM_THROTTLE(duration, ...) RCLCPP_INFO_STREAM_THROTTLE(am::Node::node->get_logger(), *am::Node::node->get_clock(), (long)((duration) * 1000.0), __VA_ARGS__)
 
+#define ROS_INFO_COND(...) RCLCPP_INFO_EXPRESSION(am::Node::node->get_logger(), __VA_ARGS__)
+#define ROS_INFO_STREAM_COND(...) RCLCPP_INFO_STREAM_EXPRESSION(am::Node::node->get_logger(), __VA_ARGS__)
+
 #define ROS_WARN(...) RCLCPP_WARN(am::Node::node->get_logger(), __VA_ARGS__)
 #define ROS_WARN_THROTTLE(duration, ...) RCLCPP_WARN_THROTTLE(am::Node::node->get_logger(), *am::Node::node->get_clock(), (long)((duration) * 1000.0), __VA_ARGS__)
 #define ROS_WARN_STREAM(...) RCLCPP_WARN_STREAM(am::Node::node->get_logger(), __VA_ARGS__)

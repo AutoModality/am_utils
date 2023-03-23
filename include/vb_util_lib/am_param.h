@@ -15,15 +15,22 @@
 #include <sys/time.h>
 #include <string.h>
 #include <iostream>
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 
 class AMParam {
 public:
 	AMParam();
 	virtual ~AMParam();
 
-	static double getParam(rclcpp::Node::SharedPtr node, std::string prefix, double default_val = 0.0);
-	static void setParam(rclcpp::Node::SharedPtr node, std::string prefix, double param);
+	static double getParam(std::string prefix, double default_val = 0.0) {
+		return getParam(am::Node::node, prefix, default_val);
+	}
+	static double getParam(std::shared_ptr<rclcpp::Node> node, std::string prefix, double default_val = 0.0);
+	
+	static void setParam(std::string prefix, double param) {
+		return setParam(am::Node::node, prefix, param);
+	}
+	static void setParam(std::shared_ptr<rclcpp::Node> node, std::string prefix, double param);
 };
 
 #endif /* AM_PARAM_H_ */

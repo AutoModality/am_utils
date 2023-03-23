@@ -43,7 +43,8 @@ enum class RC_TYPE
 class RC_Controls 
 {
 public:
-    RC_Controls(rclcpp::Node::SharedPtr node);
+    RC_Controls() {};
+    // RC_Controls(rclcpp::Node::SharedPtr node);
     RC_Controls(rclcpp::Node::SharedPtr node, RC_TYPE type = RC_TYPE::UNKNOWN);
 
     virtual ~RC_Controls();

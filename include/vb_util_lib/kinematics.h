@@ -14,7 +14,7 @@
 #include <sys/types.h>
 #include <string.h>
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 #include <std_msgs/msg/header.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
 #include <geometry_msgs/msg/point.hpp>
@@ -63,7 +63,7 @@ public:
 		COMPLETE = 0xf7
 	};
 
-    Kinematics(rclcpp::Node::SharedPtr node);
+    Kinematics(rclcpp::Node::SharedPtr node = am::Node::node);
     Kinematics(rclcpp::Node::SharedPtr node, std::string topic, std::string frame_id,
                bool pub_on_change=false, double pub_rate=0.0);
     Kinematics(rclcpp::Node::SharedPtr node, const geometry_msgs::msg::PoseStamped& p);

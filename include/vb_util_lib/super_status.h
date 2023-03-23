@@ -1,7 +1,7 @@
 #ifndef _SUPER_STATUS_H_
 #define _SUPER_STATUS_H_
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 #include <brain_box_msgs/msg/node_status.hpp>
 #include <unistd.h>
 
@@ -51,7 +51,11 @@ public:
 	{
 		ss_instance_ = new SuperStatus(n);
 	}
-	static int sendStatus(rclcpp::Node::SharedPtr node, const std::string &status, std::string value)
+
+	static int sendStatus(const std::string &status, std::string value) {
+		return sendStatus(am::Node::node, status, value);
+	}
+	static int sendStatus(std::shared_ptr<rclcpp::Node> node, const std::string &status, std::string value)
 	{
 		if (!ss_instance_->isNodeSet)
 		{
