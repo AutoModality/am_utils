@@ -11,17 +11,16 @@
 #include "string.h"
 #include <iostream>
 
-#include <rclcpp/rclcpp.hpp>
+#include <am_utils/am_ros2_utility.h>
 
 #include <brain_box_msgs/msg/target_pose.hpp>
 #include <brain_box_msgs/msg/target_pose_array.hpp>
 
 #include <vb_util_lib/kinematics.h>
-#include <rclcpp/rclcpp.hpp>
 
 class KinematicsList {
 public:
-	KinematicsList(rclcpp::Node::SharedPtr node);
+	KinematicsList(rclcpp::Node::SharedPtr node = am::Node::node);
 	virtual ~KinematicsList();
 
 	Kinematics* updateList(const brain_box_msgs::msg::TargetPoseArray::SharedPtr msg);

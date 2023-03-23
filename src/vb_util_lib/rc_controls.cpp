@@ -48,9 +48,9 @@ using namespace am;
 
 using std::placeholders::_1;
 
-RC_Controls::RC_Controls(rclcpp::Node::SharedPtr node): node_(node)
-{
-}
+// RC_Controls::RC_Controls(rclcpp::Node::SharedPtr node): node_(node)
+// {
+// }
 
 RC_Controls::~RC_Controls() {
     // TODO Auto-generated destructor stub

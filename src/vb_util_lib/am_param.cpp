@@ -16,7 +16,7 @@ AMParam::~AMParam() {
 	// TODO Auto-generated destructor stub
 }
 
-double AMParam::getParam(rclcpp::Node::SharedPtr node, std::string prefix, double default_val)
+double AMParam::getParam(std::shared_ptr<rclcpp::Node> node, std::string prefix, double default_val)
 {
 	double param = 0.0;
 
@@ -32,7 +32,7 @@ double AMParam::getParam(rclcpp::Node::SharedPtr node, std::string prefix, doubl
 	return param;
 }
 
-void AMParam::setParam(rclcpp::Node::SharedPtr node, std::string prefix, double param)
+void AMParam::setParam(std::shared_ptr<rclcpp::Node> node, std::string prefix, double param)
 {
 	node->declare_parameter(prefix, param);
 	RCLCPP_DEBUG(node->get_logger(), "%s = %f", prefix.c_str(), param);
