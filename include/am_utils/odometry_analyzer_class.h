@@ -11,6 +11,7 @@
 #include <am_utils/am_ros2_utility.h>
 #include <nav_msgs/msg/odometry.hpp>
 #include <vb_util_lib/rotate.h>
+#include <vb_util_lib/transformer.h>
 
 
 namespace am
@@ -30,7 +31,6 @@ struct Axis
 	void insert(double a)
 	{
 		//data analysis
-		mean = (components.size() * mean + a)/(components.size() + 1);
 		sum+=a;
 
 		//first insert a to the back of the array
@@ -44,12 +44,36 @@ struct Axis
 		{
 			max_idx = components.size() - 1;
 		}
+	}
 
+	void findMean()
+	{
+		if(components.size() == 0)
+		{
+			return;
+		}
+		mean = sum / components.size();
+	}
+
+	void findDMM()
+	{
+		if(components.size() == 0)
+		{
+			return;
+		}
 		delta_min_max = abs(components[max_idx] - components[min_idx]);
 	}
 
 	void findSD()
 	{
+		if(components.size() == 0)
+		{
+			return;
+		}
+		findMean();
+
+		findDMM();
+
 		for(int a : components)
 		{
 			sd += pow(a - mean,2);
@@ -106,8 +130,11 @@ private:
 	am::Axis y_diff_;
 	am::Axis yaw_diff_;
 
+	std::shared_ptr<am::Transformer> tf_;
 
 	void odomCB(const nav_msgs::msg::Odometry::SharedPtr msg);
+
+	void insertAssetFramePose(const geometry_msgs::msg::Pose &pose);
 
 };
 
