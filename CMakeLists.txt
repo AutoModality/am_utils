@@ -87,11 +87,11 @@ add_library(am_utils
   ${vb_util_lib_cpp_files}
 )
 
-target_link_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(am_utils gtest ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
 ament_target_dependencies(am_utils ${dependencies})
 ament_export_targets(am_utilsTargets HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
-ament_export_libraries(am_utils ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
+ament_export_libraries(am_utils gtest ${OPENCV_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(bag_logger_test src/nodes/bag_logger_test.cpp)
 target_link_libraries(bag_logger_test am_utils)
