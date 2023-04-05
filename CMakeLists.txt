@@ -101,6 +101,11 @@ add_executable(node_killer src/nodes/node_killer.cpp)
 target_link_libraries(node_killer am_utils)
 ament_target_dependencies(node_killer ${dependencies})
 
+add_executable(odometry_reporter src/nodes/odometry_reporter.cpp)
+target_link_libraries(odometry_reporter am_utils)
+ament_target_dependencies(odometry_reporter ${dependencies})
+
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -119,6 +124,7 @@ install(
 install(TARGETS
   bag_logger_test
   node_killer
+  odometry_reporter
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

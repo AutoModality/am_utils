@@ -46,6 +46,47 @@ struct Axis
 		}
 	}
 
+	double getMax()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return components[max_idx];
+	}
+
+	double getMin()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return components[min_idx];
+	}
+
+	double getSD()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return sd;
+	}
+
+	double getMM()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return (components[max_idx] - components[min_idx]);
+	}
+
+	double getMean()
+	{
+		return mean;
+	}
+
 	void findMean()
 	{
 		if(components.size() == 0)
@@ -93,7 +134,7 @@ class OdometryAnalyzer
 {
 public:
 	OdometryAnalyzer(const std::string odom_topic,
-			double x_ref, double y_ref, double yaw_ref);
+			double x_ref, double y_ref, double yaw_ref, bool enabled = true);
 
 	OdometryAnalyzer(double x_ref, double y_ref, double yaw_ref);
 
@@ -109,10 +150,12 @@ public:
 	am::Axis getXDiff();
 	am::Axis getYDiff();
 	am::Axis getYawDiff();
+	std::string getTopic();
 
 	void setGroundTruth(double x, double y, double yaw);
 
-
+	void enable();
+	void disable();
 
 private:
 	std::string odom_topic_;
@@ -122,6 +165,8 @@ private:
 	double x_ref_ {0.0};
 	double y_ref_ {0.0};
 	double yaw_ref_ {0.0};
+
+	bool enabled_ {false};
 
 	am::Axis x_;
 	am::Axis y_;

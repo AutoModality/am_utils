@@ -19,8 +19,11 @@ namespace am
  *
  */
 OdometryAnalyzer::OdometryAnalyzer(const std::string odom_topic,
-		double x_ref, double y_ref, double yaw_ref): odom_topic_(odom_topic)
+		double x_ref, double y_ref, double yaw_ref, bool enabled): odom_topic_(odom_topic)
 {
+
+	enabled_ = enabled;
+
 	tf_ = std::make_shared<am::Transformer>();
 
 	setGroundTruth(x_ref, y_ref, yaw_ref);
@@ -53,6 +56,17 @@ void OdometryAnalyzer::setGroundTruth(double x, double y, double yaw)
 	yaw_ref_ = yaw;
 }
 
+
+void OdometryAnalyzer::enable()
+{
+	enabled_ = true;
+}
+
+void OdometryAnalyzer::disable()
+{
+	enabled_ = false;
+}
+
 void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 {
 	geometry_msgs::msg::Pose pose;
@@ -77,6 +91,10 @@ void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry::SharedPtr odom)
 
 void OdometryAnalyzer::odomCB(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
+	if(!enabled_)
+	{
+		return;
+	}
 	insert(msg);
 }
 
@@ -128,7 +146,9 @@ am::Axis OdometryAnalyzer::getYawDiff()
 	yaw_diff_.findSD();
 	return yaw_diff_;
 }
+
+std::string OdometryAnalyzer::getTopic()
+{
+	return odom_topic_;
 }
-
-
-
+}

@@ -149,6 +149,17 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 //this will convert a vector to a string
 std::string vectToStr(const std::vector<std::string>& vect);
 
+template <class T>
+std::string vectToStr(const std::vector<T>& vect)
+{
+	std::string msg;
+	for(int i = 0; i < vect.size(); i++)
+	{
+		msg += std::to_string(vect[i]) + " ";
+	}
+	return msg;
+}
+
 //inline rclcpp::Time ClockNow() {return am::Node::node->now();};
 inline rclcpp::Time ClockNow() {return am::Node::node->get_clock()->now();};
 inline rclcpp::Time clockNow() {return am::Node::node->get_clock()->now();};
