@@ -6,7 +6,9 @@
  */
 
 #include <am_utils/am_ros2_utility.h>
+#include <vb_util_lib/frame_names.h>
 #include <am_utils/odometry_analyzer_class.h>
+#include <mavros_msgs/msg/gpsraw.hpp>
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <iostream>
@@ -29,6 +31,11 @@ public:
 
 			odom_analyzers_.push_back(oa);
 		}
+
+    	gps_odom_pub_ = am::Node::node->create_publisher<nav_msgs::msg::Odometry>("/gps_odom", 1);
+
+		gps_raw_sub_ = am::Node::node->create_subscription<mavros_msgs::msg::GPSRAW>("/mavros/gpsstatus/gps1/raw",1,
+				std::bind(&OdometryReporter::gpsCB, this, std::placeholders::_1));
 
 		odom_sub_ = am::Node::node->create_subscription<nav_msgs::msg::Odometry>("/odometry/filtered",1,
 				std::bind(&OdometryReporter::odomCB, this, std::placeholders::_1));
@@ -63,7 +70,12 @@ private:
 
 	rclcpp::TimerBase::SharedPtr timer_;
 
+
 	rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+
+	rclcpp::Subscription<mavros_msgs::msg::GPSRAW>::SharedPtr gps_raw_sub_;
+
+	rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr gps_odom_pub_;
 
 	std::vector<std::shared_ptr<am::OdometryAnalyzer>> odom_analyzers_;
 
@@ -76,6 +88,42 @@ private:
 		{
 			timer_is_running = true;
 			timer_->reset();
+		}
+	}
+
+	void calculateXY(double given_latitude, double given_longitude, double& X, double& Y) {
+		const double REFERENCE_LAT = M_PI * 38.012567524 / 180.0;
+		const double REFERENCE_LONG = M_PI * (-122.52803672) / 180.0;
+		const double EARTH = 6365000;
+		const double ENU_TO_ENU_YAW_RAD = M_PI * 11.94181585 / 180.0;
+
+		const double lat_radians = M_PI * given_latitude / 180.0;
+		const double long_radians = M_PI * given_longitude / 180.0;
+		const double radians_delta_latitude = lat_radians - REFERENCE_LAT;
+		const double radians_delta_longitude = long_radians - REFERENCE_LONG;
+
+		double a = sin(radians_delta_latitude / 2) * sin(radians_delta_latitude / 2) + 
+			cos(REFERENCE_LAT) * cos(lat_radians) * sin(radians_delta_longitude / 2) * sin(radians_delta_longitude / 2);
+		double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+		double d = c * EARTH;
+		double bearing = atan2(sin(long_radians - REFERENCE_LONG) * cos(lat_radians), 
+			cos(REFERENCE_LAT) * sin(lat_radians) - sin(REFERENCE_LAT) * cos(lat_radians) * cos(long_radians - REFERENCE_LONG));
+		X = cos(bearing - ENU_TO_ENU_YAW_RAD) * d;
+		Y = -sin(bearing - ENU_TO_ENU_YAW_RAD) * d;
+	}
+
+	void gpsCB(const mavros_msgs::msg::GPSRAW::SharedPtr raw_msg)
+	{
+		if(raw_msg->h_acc <= 14)
+		{
+			double x, y;
+			calculateXY(raw_msg->lat / 10000000.0, raw_msg->lon / 10000000.0, x, y);
+			nav_msgs::msg::Odometry odom_msg;
+			odom_msg.header = raw_msg->header;
+			odom_msg.header.frame_id = Asset_Frame;
+			odom_msg.pose.pose.position.x = x;
+			odom_msg.pose.pose.position.y = y;
+			gps_odom_pub_->publish(odom_msg);
 		}
 	}
 
@@ -148,7 +196,6 @@ private:
 		}
 
 	}
-
 
 	void insert(std::shared_ptr<am::OdometryAnalyzer> oa, const std::string &topic_info)
 	{
