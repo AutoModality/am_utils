@@ -166,10 +166,18 @@ private:
 		{
 			axis[2] = false;
 		}
+		else if(oa->getTopic() == "/ekf/odom/xy")
+		{
+			axis[2] = false;
+			axis[3] = false;
+		}
 
 		am::Axis dx = oa->getXDiff();
+		dx.findSD();
 		am::Axis dy = oa->getYDiff();
+		dy.findSD();
 		am::Axis dyaw = oa->getYawDiff();
+		dyaw.findSD();
 
 		std::string message = topic_info +
 				"," + oa->getTopic() +
@@ -195,7 +203,7 @@ private:
 			double max_v = a.getMax();
 			double min_v = a.getMin();
 			double mean_v = a.getMean();
-			double sd_v = a.getMean();
+			double sd_v = a.getSD();
 			if(heading)
 			{
 				mm = am::Rotate::wrap_pi(mm);
