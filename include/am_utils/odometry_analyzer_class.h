@@ -120,6 +120,8 @@ struct Axis
 			sd += pow(a - mean,2);
 		}
 		sd = sqrt(sd/components.size());
+
+		printf("%d, sum=%f, mean=%f, sd=%f\n", (int)components.size(), sum, mean, sd);
 	}
 
 	void print(const std::string &msg)
