@@ -220,11 +220,8 @@ private:
 		}
 
 		am::Axis dx = oa->getXDiff();
-		dx.findSD();
 		am::Axis dy = oa->getYDiff();
-		dy.findSD();
 		am::Axis dyaw = oa->getYawDiff();
-		dyaw.findSD();
 
 		std::string message = topic_info +
 				"," + oa->getTopic() +

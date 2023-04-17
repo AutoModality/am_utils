@@ -31,7 +31,7 @@ struct Axis
 	void insert(double a)
 	{
 		//data analysis
-		sum+=a;
+		sum+=abs(a);
 
 		//first insert a to the back of the array
 		//the index of the a is now components.size() - 1
@@ -115,9 +115,12 @@ struct Axis
 
 		findDMM();
 
-		for(int a : components)
+		printf("%d, sum=%f, mean=%f, sd=%f\n", (int)components.size(), sum, mean, sd);
+
+		for(double a : components)
 		{
-			sd += pow(a - mean,2);
+			double diff = abs(a) - mean;
+			sd += diff * diff;
 		}
 		sd = sqrt(sd/components.size());
 
@@ -146,9 +149,6 @@ public:
 
 	void insert(const nav_msgs::msg::Odometry::SharedPtr odom);
 
-	am::Axis getX();
-	am::Axis getY();
-	am::Axis getYaw();
 	am::Axis getXDiff();
 	am::Axis getYDiff();
 	am::Axis getYawDiff();
@@ -170,9 +170,6 @@ private:
 
 	bool enabled_ {false};
 
-	am::Axis x_;
-	am::Axis y_;
-	am::Axis yaw_;
 	am::Axis x_diff_;
 	am::Axis y_diff_;
 	am::Axis yaw_diff_;
