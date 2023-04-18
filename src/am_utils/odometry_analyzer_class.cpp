@@ -67,6 +67,11 @@ void OdometryAnalyzer::disable()
 	enabled_ = false;
 }
 
+std::vector<geometry_msgs::msg::Pose> &OdometryAnalyzer::getPoses()
+{
+	return poses_;
+}
+
 void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 {
 	geometry_msgs::msg::Pose pose;
@@ -81,6 +86,7 @@ void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 	tf2::doTransform(pose, pose, transform);
 
 	insertAssetFramePose(pose);
+	poses_.push_back(pose);
 
 }
 

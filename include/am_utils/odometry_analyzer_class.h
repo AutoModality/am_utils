@@ -154,10 +154,13 @@ public:
 	am::Axis getYawDiff();
 	std::string getTopic();
 
+
 	void setGroundTruth(double x, double y, double yaw);
 
 	void enable();
 	void disable();
+
+	std::vector<geometry_msgs::msg::Pose> &getPoses();
 
 private:
 	std::string odom_topic_;
@@ -167,7 +170,7 @@ private:
 	double x_ref_ {0.0};
 	double y_ref_ {0.0};
 	double yaw_ref_ {0.0};
-
+	std::vector<geometry_msgs::msg::Pose> poses_;
 	bool enabled_ {false};
 
 	am::Axis x_diff_;

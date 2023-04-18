@@ -175,6 +175,12 @@ std::string vectToStr(const std::vector<std::string> &vect)
 	return res;
 }
 
+std::string toString(bool flag)
+{
+	return (flag?"True":"False");
+}
+
+
 std::string getPackagePath(const std::string &package_name)
 {
 	return ament_index_cpp::get_package_share_directory(package_name);

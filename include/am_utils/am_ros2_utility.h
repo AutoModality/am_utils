@@ -146,6 +146,8 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 	return vec;
 }
 
+std::string toString(bool flag);
+
 //this will convert a vector to a string
 std::string vectToStr(const std::vector<std::string>& vect);
 

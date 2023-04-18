@@ -17,6 +17,7 @@ std::string NODE_NAME_ = "odometry_reporter";
 
 std::shared_ptr<am::AMLifeCycle> am::Node::node;
 
+
 class OdometryReporter
 {
 public:
@@ -30,6 +31,7 @@ public:
 					ground_truth_[0], ground_truth_[1], ground_truth_[3], false);
 
 			odom_analyzers_.push_back(oa);
+
 		}
 
     	gps_odom_pub_ = am::Node::node->create_publisher<nav_msgs::msg::Odometry>("/gps_odom", 1);
@@ -40,7 +42,7 @@ public:
 		odom_sub_ = am::Node::node->create_subscription<nav_msgs::msg::Odometry>("/odometry/filtered",1,
 				std::bind(&OdometryReporter::odomCB, this, std::placeholders::_1));
 
-		write("odometry_source, topic, count, dx_min, dx_max, dx_mm, dx_mean, dx_sd, dy_min, dy_max, dy_mm, dy_mean, dy_sd, dyaw_min, dyaw_max, dyaw_mm, dyaw_mean, dyaw_sd\n", false);
+		write(output_path_+"/"+report_file_name_,"odometry_source, topic, count, dx_min, dx_max, dx_mm, dx_mean, dx_sd, dy_min, dy_max, dy_mm, dy_mean, dy_sd, dyaw_min, dyaw_max, dyaw_mm, dyaw_mean, dyaw_sd\n", false);
 
 
 		timer_ = am::Node::node->create_wall_timer(am::toDuration(0.1), std::bind(&OdometryReporter::dataCollectCB, this));
@@ -67,9 +69,9 @@ private:
 	int test_id_ = 1;
 	double record_time_ {20.0};
 	double wait_time_ {10.0};
+	bool with_details_ {false};
 
 	rclcpp::TimerBase::SharedPtr timer_;
-
 
 	rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
@@ -127,16 +129,16 @@ private:
 		}
 	}
 
-	void write(const std::string &line, bool append = true)
+	void write(const std::string file_path, const std::string &line, bool append = true)
 	{
 		std::ofstream output;
 		if(append)
 		{
-			output.open(output_path_+"/"+report_file_name_, std::ios::app);
+			output.open(file_path, std::ios::app);
 		}
 		else
 		{
-			output.open(output_path_+"/"+report_file_name_);
+			output.open(file_path);
 		}
 
 		output << line << std::endl;
@@ -185,7 +187,7 @@ private:
 				//insert the reference points
 				std::string reference_point = "reference_point, x=" +std::to_string(ground_truth_[0]) + ", y=" +
 						std::to_string(ground_truth_[1]) + ",yaw=" + std::to_string(ground_truth_[3])+ "\n";
-				write(reference_point);
+				write(output_path_+"/"+report_file_name_, reference_point);
 			}
 		}
 		else if(record_time_is_over && wait_time_is_over)
@@ -229,7 +231,38 @@ private:
 				"," + getLine(dx, axis[0]) +
 				"," + getLine(dy, axis[1]) +
 				"," + getLine(dyaw, axis[3], true) + "\n";
-		write(message);
+		write(output_path_+"/"+report_file_name_, message);
+
+
+		if(with_details_)
+		{
+			std::string file_path = output_path_+"/" + location_nickname_+"_"+std::to_string(test_id_) + topic_to_str(oa->getTopic()) + ".csv";
+			ROS_INFO(CYAN "Writing Details For %s in %s" COLOR_RESET, oa->getTopic().c_str(), file_path.c_str());
+
+			write(file_path, "x,y,yaw\n", false);
+			std::vector<geometry_msgs::msg::Pose> poses = oa->getPoses();
+
+			for(const geometry_msgs::msg::Pose &pose : poses)
+			{
+				std::string message = std::to_string(pose.position.x) + "," + std::to_string(pose.position.y) + "," +
+				std::to_string(am::Rotate::getYaw(pose.orientation)) + "\n";
+				write(file_path, message);
+			}
+		}
+	}
+
+	std::string topic_to_str(const std::string &str)
+	{
+		std::string result = str;
+
+		for(int i = 0; i < result.size(); i++)
+		{
+			if(result[i] == '/')
+			{
+				result[i] = '_';
+			}
+		}
+		return result;
 	}
 
 	std::string getLine(am::Axis &a, bool valid, bool heading = false)
@@ -318,6 +351,9 @@ private:
 
 		am::getParam<double>("record_time", record_time_, record_time_);
 		ROS_INFO(CYAN "record_time: %f" COLOR_RESET, record_time_);
+
+		am::getParam<bool>("with_details", with_details_, with_details_);
+		ROS_INFO(CYAN "with_details: %s" COLOR_RESET, am::toString(with_details_).c_str());
 
 
 		report_file_name_ = location_nickname_+"_"+std::to_string(test_id_) + ".csv";
