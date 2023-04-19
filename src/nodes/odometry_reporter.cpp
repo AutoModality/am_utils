@@ -10,6 +10,7 @@
 #include <am_utils/odometry_analyzer_class.h>
 #include <mavros_msgs/msg/gpsraw.hpp>
 #include <boost/filesystem.hpp>
+#include <vb_util_lib/am_geometry.h>
 #include <fstream>
 #include <iostream>
 
@@ -116,10 +117,17 @@ private:
 
 	void gpsCB(const mavros_msgs::msg::GPSRAW::SharedPtr raw_msg)
 	{
+		static double reference_lat = 38.012567524;
+		static double reference_long = -122.52803672;
+		static double enu_to_asset_frame_yaw = 11.94181585;
+		static double EARTH = 6365000;
+
 		if(raw_msg->h_acc <= 14)
 		{
 			double x, y;
-			calculateXY(raw_msg->lat / 10000000.0, raw_msg->lon / 10000000.0, x, y);
+			//calculateXY(raw_msg->lat / 10000000.0, raw_msg->lon / 10000000.0, x, y);
+			AM::latLon_to_XY(reference_lat, reference_long, enu_to_asset_frame_yaw,
+					raw_msg->lat / 10000000.0, raw_msg->lon / 10000000.0, x,y, EARTH);
 			nav_msgs::msg::Odometry odom_msg;
 			odom_msg.header = raw_msg->header;
 			odom_msg.header.frame_id = Asset_Frame;

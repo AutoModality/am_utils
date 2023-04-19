@@ -209,6 +209,10 @@ void latLon_to_XY_origin(double lat_from, double lon_from,
 // Calculate the x, y coordinates from the GPS coordinates lat_from, lon_from to lat_tp, lon_to.
 void latLon_to_XY(double lat_from, double lon_from, double lat_to, double lon_to, double& x, double& y);
 
+// Version 2 of latLong_to_XY function
+void latLon_to_XY(double ref_latitude, double ref_longitude, double enu_to_asset_frame_yaw,
+		double given_latitude, double given_longitude, double& X, double& Y, double earth_radius = 6365000);
+
 //==================================
 // Rotating coordinates
 //==================================
