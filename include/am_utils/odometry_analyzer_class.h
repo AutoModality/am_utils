@@ -31,7 +31,7 @@ struct Axis
 	void insert(double a)
 	{
 		//data analysis
-		sum+=a;
+		sum+=abs(a);
 
 		//first insert a to the back of the array
 		//the index of the a is now components.size() - 1
@@ -44,6 +44,47 @@ struct Axis
 		{
 			max_idx = components.size() - 1;
 		}
+	}
+
+	double getMax()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return components[max_idx];
+	}
+
+	double getMin()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return components[min_idx];
+	}
+
+	double getSD()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return sd;
+	}
+
+	double getMM()
+	{
+		if(components.size() == 0)
+		{
+			return 0.0;
+		}
+		return (components[max_idx] - components[min_idx]);
+	}
+
+	double getMean()
+	{
+		return mean;
 	}
 
 	void findMean()
@@ -74,11 +115,16 @@ struct Axis
 
 		findDMM();
 
-		for(int a : components)
+		printf("%d, sum=%f, mean=%f, sd=%f\n", (int)components.size(), sum, mean, sd);
+
+		for(double a : components)
 		{
-			sd += pow(a - mean,2);
+			double diff = abs(a) - mean;
+			sd += diff * diff;
 		}
 		sd = sqrt(sd/components.size());
+
+		printf("%d, sum=%f, mean=%f, sd=%f\n", (int)components.size(), sum, mean, sd);
 	}
 
 	void print(const std::string &msg)
@@ -93,7 +139,7 @@ class OdometryAnalyzer
 {
 public:
 	OdometryAnalyzer(const std::string odom_topic,
-			double x_ref, double y_ref, double yaw_ref);
+			double x_ref, double y_ref, double yaw_ref, bool enabled = true);
 
 	OdometryAnalyzer(double x_ref, double y_ref, double yaw_ref);
 
@@ -103,16 +149,18 @@ public:
 
 	void insert(const nav_msgs::msg::Odometry::SharedPtr odom);
 
-	am::Axis getX();
-	am::Axis getY();
-	am::Axis getYaw();
 	am::Axis getXDiff();
 	am::Axis getYDiff();
 	am::Axis getYawDiff();
+	std::string getTopic();
+
 
 	void setGroundTruth(double x, double y, double yaw);
 
+	void enable();
+	void disable();
 
+	std::vector<geometry_msgs::msg::Pose> &getPoses();
 
 private:
 	std::string odom_topic_;
@@ -122,10 +170,9 @@ private:
 	double x_ref_ {0.0};
 	double y_ref_ {0.0};
 	double yaw_ref_ {0.0};
+	std::vector<geometry_msgs::msg::Pose> poses_;
+	bool enabled_ {false};
 
-	am::Axis x_;
-	am::Axis y_;
-	am::Axis yaw_;
 	am::Axis x_diff_;
 	am::Axis y_diff_;
 	am::Axis yaw_diff_;

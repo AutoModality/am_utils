@@ -272,6 +272,29 @@ void projectPosition(AM::Point from, double direction, double distance, AM::Poin
     return;
 }
 
+void latLon_to_XY(double ref_latitude, double ref_longitude, double given_latitude, double enu_to_asset_frame_yaw,
+		double given_longitude, double& X, double& Y, double earth_radius)
+{
+	double REFERENCE_LAT = M_PI * ref_latitude / 180.0;
+	double REFERENCE_LONG = M_PI * (ref_longitude) / 180.0;
+	const double EARTH = earth_radius;
+	const double ENU_TO_ENU_YAW_RAD = M_PI * enu_to_asset_frame_yaw / 180.0;
+
+	const double lat_radians = M_PI * given_latitude / 180.0;
+	const double long_radians = M_PI * given_longitude / 180.0;
+	const double radians_delta_latitude = lat_radians - REFERENCE_LAT;
+	const double radians_delta_longitude = long_radians - REFERENCE_LONG;
+
+	double a = sin(radians_delta_latitude / 2) * sin(radians_delta_latitude / 2) +
+			cos(REFERENCE_LAT) * cos(lat_radians) * sin(radians_delta_longitude / 2) * sin(radians_delta_longitude / 2);
+	double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+	double d = c * EARTH;
+	double bearing = atan2(sin(long_radians - REFERENCE_LONG) * cos(lat_radians),
+			cos(REFERENCE_LAT) * sin(lat_radians) - sin(REFERENCE_LAT) * cos(lat_radians) * cos(long_radians - REFERENCE_LONG));
+	X = cos(bearing - ENU_TO_ENU_YAW_RAD) * d;
+	Y = -sin(bearing - ENU_TO_ENU_YAW_RAD) * d;
+}
+
 
 void latLon_to_XY(double lat_from, double lon_from, double lat_to, double lon_to, double& x, double& y) {
     double d_lat = lat_to - lat_from;

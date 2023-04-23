@@ -19,8 +19,11 @@ namespace am
  *
  */
 OdometryAnalyzer::OdometryAnalyzer(const std::string odom_topic,
-		double x_ref, double y_ref, double yaw_ref): odom_topic_(odom_topic)
+		double x_ref, double y_ref, double yaw_ref, bool enabled): odom_topic_(odom_topic)
 {
+
+	enabled_ = enabled;
+
 	tf_ = std::make_shared<am::Transformer>();
 
 	setGroundTruth(x_ref, y_ref, yaw_ref);
@@ -53,6 +56,22 @@ void OdometryAnalyzer::setGroundTruth(double x, double y, double yaw)
 	yaw_ref_ = yaw;
 }
 
+
+void OdometryAnalyzer::enable()
+{
+	enabled_ = true;
+}
+
+void OdometryAnalyzer::disable()
+{
+	enabled_ = false;
+}
+
+std::vector<geometry_msgs::msg::Pose> &OdometryAnalyzer::getPoses()
+{
+	return poses_;
+}
+
 void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 {
 	geometry_msgs::msg::Pose pose;
@@ -67,6 +86,7 @@ void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 	tf2::doTransform(pose, pose, transform);
 
 	insertAssetFramePose(pose);
+	poses_.push_back(pose);
 
 }
 
@@ -77,6 +97,10 @@ void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry::SharedPtr odom)
 
 void OdometryAnalyzer::odomCB(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
+	if(!enabled_)
+	{
+		return;
+	}
 	insert(msg);
 }
 
@@ -84,33 +108,12 @@ void OdometryAnalyzer::insertAssetFramePose(const geometry_msgs::msg::Pose &pose
 {
 	double yaw = am::Rotate::getYaw(pose.orientation);
 
-
-	x_.insert(pose.position.x);
-	y_.insert(pose.position.y);
-	yaw_.insert(yaw);
-
 	x_diff_.insert(x_ref_ - pose.position.x);
 	y_diff_.insert(y_ref_ - pose.position.y);
 	yaw_diff_.insert(yaw_ref_ - yaw);
 }
 
-am::Axis OdometryAnalyzer::getX()
-{
-	x_.findSD();
-	return x_;
-}
 
-am::Axis OdometryAnalyzer::getY()
-{
-	y_.findSD();
-	return y_;
-}
-
-am::Axis OdometryAnalyzer::getYaw()
-{
-	yaw_.findSD();
-	return yaw_;
-}
 am::Axis OdometryAnalyzer::getXDiff()
 {
 	x_diff_.findSD();
@@ -128,7 +131,9 @@ am::Axis OdometryAnalyzer::getYawDiff()
 	yaw_diff_.findSD();
 	return yaw_diff_;
 }
+
+std::string OdometryAnalyzer::getTopic()
+{
+	return odom_topic_;
 }
-
-
-
+}
