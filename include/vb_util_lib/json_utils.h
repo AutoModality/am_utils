@@ -8,7 +8,7 @@
 #ifndef AMJSONUTILS_H_
 #define AMJSONUTILS_H_
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+// #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <std_msgs/msg/float64.hpp>
@@ -39,6 +39,8 @@
 #include <vb_util_lib/ftp_response.h>
 #include <vb_util_lib/message.h>
 
+#include <nav_msgs/msg/odometry.hpp>
+
 using namespace std;
 
 class AMJSONUtils {
@@ -58,45 +60,52 @@ public:
 	static void jsonToRemoteCtrlVxMission(Json::Value &value, brain_box_msgs::msg::VxMissionExecCmd &msg);
 	static void jsonToLogControl(Json::Value &value, brain_box_msgs::msg::LogControl &msg);
 
-    static void poseStampedToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string messageName, std::string sender, const geometry_msgs::msg::PoseStamped &msg);
-    static void bbPoseToJson(Json::Value &value, const brain_box_msgs::msg::TargetPose &msg);
-    static void throttleToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string messageName, std::string sender, const std_msgs::msg::Float64 &msg);
+    // static void poseStampedToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string messageName, std::string sender, const geometry_msgs::msg::PoseStamped &msg);
+    // static void bbPoseToJson(Json::Value &value, const brain_box_msgs::msg::TargetPose &msg);
+    // static void throttleToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string messageName, std::string sender, const std_msgs::msg::Float64 &msg);
 
 	static bool stringToFTPRequest(std::string jsonString, FTPRequest &request);
 	static void ftpResponseToString(FTPResponse response, std::string &jsonString);
 
-    static Json::Value statusC2ToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::C2Status &msg);
-    static Json::Value statusCommsToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::CommsStatus &msg);
-    static Json::Value statusDepthToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::DepthStatus &msg);
-    static Json::Value statusFTPToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::FTPStatus &msg);
-    static Json::Value statusSuperToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::SuperStatus &msg);
-    static Json::Value statusVideoToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::VideoStatus &msg);
-    static Json::Value statusVisionToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::VisionStatus &msg);
-    static Json::Value statusVisLogToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::VisLogStatus &msg);
+	static Json::Value odometryToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
+		std::string sender, const nav_msgs::msg::Odometry::SharedPtr msg);
 
-    static Json::Value heartbeatToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // static Json::Value statusC2ToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::C2Status &msg);
+    // static Json::Value statusCommsToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::CommsStatus &msg);
+    // static Json::Value statusDepthToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::DepthStatus &msg);
+    // static Json::Value statusFTPToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::FTPStatus &msg);
+    // static Json::Value statusSuperToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::SuperStatus &msg);
+    // static Json::Value statusVideoToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::VideoStatus &msg);
+    // static Json::Value statusVisionToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::VisionStatus &msg);
+    // static Json::Value statusVisLogToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::VisLogStatus &msg);
+
+    // static Json::Value heartbeatToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender);
+    static Json::Value heartbeatToJson(std::string vehicleId, uint16_t sequence, int64_t timestamp,
     		std::string sender);
-    static Json::Value snsrCamTrgtActToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::TargetPoseArray &msg);
-    static Json::Value ctrlVxMissionMessageToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::OperatorMsg &msg);
-    static Json::Value rosoutToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const rcl_interfaces::msg::Log &msg);
-    static Json::Value vstateSummaryToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
-    		std::string sender, const brain_box_msgs::msg::VxState &msg);
+    // static Json::Value snsrCamTrgtActToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::TargetPoseArray &msg);
+    // static Json::Value ctrlVxMissionMessageToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::OperatorMsg &msg);
+    // static Json::Value rosoutToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const rcl_interfaces::msg::Log &msg);
+    // static Json::Value vstateSummaryToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string sender, const brain_box_msgs::msg::VxState &msg);
 
 private:
-    static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string messageName, std::string sende, std::string type);
+    static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, int64_t timestamp,
     		std::string messageName, std::string sende, std::string type);
 };
 #endif /* AMJSONUTILS_H_ */

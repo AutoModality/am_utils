@@ -15,7 +15,7 @@
 
 #include <am_utils/am_network_utils.h>
 
-namespace brain_box {
+namespace am {
 
 AMNetworkUtils::AMNetworkUtils() {
 	// TODO Auto-generated constructor stub

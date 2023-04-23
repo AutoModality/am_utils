@@ -36,10 +36,12 @@ public:
 	static const std::string NAME_STATUS_COMMS;
 	static const std::string NAME_STATUS_DEPTH;
 	static const std::string NAME_LOG_CONTROL;
+	static const std::string NAME_ODOMETRY;
 
 	static const std::string TYPE_AUTOMOD;
 	static const std::string TYPE_MAVLINK;
 	static const std::string TYPE_MAVLINK_RAW;
+	static const std::string TYPE_ROS2;
 
 	inline AMMsgHead* getHead() {
 		return &head_;
