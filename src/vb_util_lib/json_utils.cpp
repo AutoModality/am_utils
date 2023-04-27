@@ -590,6 +590,40 @@ void AMJSONUtils::jsonToLogControl(
 	msg.name = value["data"]["name"].asString();
 }
 
+void AMJSONUtils::jsonToOdometry(Json::Value &value, nav_msgs::Odometry &msg)
+{
+	static uint32_t seq = 0;
+
+	msg.header.seq = seq++;
+	msg.header.stamp.sec = value["data"]["head"]["stamp"]["sec"].asUInt();
+	msg.header.stamp.nsec = value["data"]["head"]["stamp"]["nsec"].asUInt();
+	msg.header.frame_id = value["data"]["head"]["frame"].asString();
+	msg.child_frame_id = value["data"]["child"].asString();
+
+	msg.pose.pose.position.x = value["data"]["pose"]["pose"]["pos"]["x"].asDouble();
+	msg.pose.pose.position.y = value["data"]["pose"]["pose"]["pos"]["y"].asDouble();
+	msg.pose.pose.position.z = value["data"]["pose"]["pose"]["pos"]["z"].asDouble();
+	msg.pose.pose.orientation.x = value["data"]["pose"]["pose"]["orien"]["x"].asDouble();
+	msg.pose.pose.orientation.y = value["data"]["pose"]["pose"]["orien"]["y"].asDouble();
+	msg.pose.pose.orientation.z = value["data"]["pose"]["pose"]["orien"]["z"].asDouble();
+	msg.pose.pose.orientation.w = value["data"]["pose"]["pose"]["orien"]["w"].asDouble();
+	for(int i = 0; i < 36; i++)
+	{
+		msg.pose.covariance[i] = value["data"]["pose"]["covar"][i].asDouble();
+	}
+
+	msg.twist.twist.linear.x = value["data"]["twist"]["twist"]["lin"]["x"].asDouble();
+	msg.twist.twist.linear.y = value["data"]["twist"]["twist"]["lin"]["y"].asDouble();
+	msg.twist.twist.linear.z = value["data"]["twist"]["twist"]["lin"]["z"].asDouble();
+	msg.twist.twist.angular.x = value["data"]["twist"]["twist"]["ang"]["x"].asDouble();
+	msg.twist.twist.angular.y = value["data"]["twist"]["twist"]["ang"]["y"].asDouble();
+	msg.twist.twist.angular.z = value["data"]["twist"]["twist"]["ang"]["z"].asDouble();
+	for(int i = 0; i < 36; i++)
+	{
+		msg.twist.covariance[i] = value["data"]["twist"]["covar"][i].asDouble();
+	}
+}
+
 bool AMJSONUtils::jsonToAMMessageHead(Json::Value &value, AMMessage &msg)
 {
 	AMMsgHead *msgHead = msg.getHead();
