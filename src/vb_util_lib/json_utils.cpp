@@ -598,6 +598,7 @@ void AMJSONUtils::jsonToOdometry(Json::Value &value, nav_msgs::Odometry &msg)
 	msg.header.stamp.sec = value["data"]["head"]["stamp"]["sec"].asUInt();
 	msg.header.stamp.nsec = value["data"]["head"]["stamp"]["nsec"].asUInt();
 	msg.header.frame_id = value["data"]["head"]["frame"].asString();
+
 	msg.child_frame_id = value["data"]["child"].asString();
 
 	msg.pose.pose.position.x = value["data"]["pose"]["pose"]["pos"]["x"].asDouble();
@@ -621,6 +622,28 @@ void AMJSONUtils::jsonToOdometry(Json::Value &value, nav_msgs::Odometry &msg)
 	for(int i = 0; i < 36; i++)
 	{
 		msg.twist.covariance[i] = value["data"]["twist"]["covar"][i].asDouble();
+	}
+}
+
+void AMJSONUtils::jsonToVxFeaturePose(Json::Value &value, brain_box_msgs::VxFeaturePose &msg)
+{
+	static uint32_t seq = 0;
+
+	msg.header.seq = seq++;
+	msg.header.stamp.sec = value["data"]["head"]["stamp"]["sec"].asUInt();
+	msg.header.stamp.nsec = value["data"]["head"]["stamp"]["nsec"].asUInt();
+	msg.header.frame_id = value["data"]["head"]["frame"].asString();
+
+	msg.feature_id = value["data"]["feature_id"].asString();
+	msg.position.x = value["data"]["position"]["x"].asDouble();
+	msg.position.y = value["data"]["position"]["y"].asDouble();
+	msg.position.z = value["data"]["position"]["z"].asDouble();
+	msg.yaw_angle = value["data"]["yaw_angle"].asDouble();
+	msg.perceived = value["data"]["perceived"].asBool();
+	msg.feature_end = value["data"]["feature_end"].asBool();
+	for(int i = 0; i < 4; i++)
+	{
+		msg.confidence[i] = value["data"]["confidence"][i].asDouble();
 	}
 }
 

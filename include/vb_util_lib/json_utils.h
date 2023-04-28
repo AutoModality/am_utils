@@ -13,6 +13,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/Float64.h>
 #include <nav_msgs/Odometry.h>
+#include <brain_box_msgs/VxFeaturePose.h>
 #include <rosgraph_msgs/Log.h>
 
 #include <brain_box_msgs/C2Status.h>
@@ -59,6 +60,7 @@ public:
 	static void jsonToRemoteCtrlVxMission(Json::Value &value, brain_box_msgs::VxMissionExecCmd &msg);
 	static void jsonToLogControl(Json::Value &value, brain_box_msgs::LogControl &msg);
 	static void jsonToOdometry(Json::Value &value, nav_msgs::Odometry &msg);
+	static void jsonToVxFeaturePose(Json::Value &value, brain_box_msgs::VxFeaturePose &msg);
 
     static void poseStampedToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string messageName, std::string sender, const geometry_msgs::PoseStamped &msg);
