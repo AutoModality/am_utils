@@ -905,6 +905,59 @@ Json::Value AMJSONUtils::odometryToJson(
 	 return value;
 }
 
+// header:
+//   stamp:
+//     sec: 1682638776
+//     nanosec: 775860224
+//   frame_id: Asset_ENU
+// feature_id: Asset_ENU
+// position:
+//   x: -0.09929207898676087
+//   y: -0.039304064592709076
+//   z: 0.13110816089508914
+// yaw_angle: -0.033249409100654805
+// perceived: true
+// feature_end: false
+// confidence:
+// - 1.0
+// - 1.0
+// - 1.0
+// - 1.0
+
+Json::Value AMJSONUtils::vxFeaturePoseToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const brain_box_msgs::msg::VxFeaturePose::SharedPtr msg)
+{
+	 Json::Value value;
+	 value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_VX_FEATURE_POSE, sender, AMMessage::TYPE_ROS2);
+
+    // uint64_t seconds = timestamp / NANOSECS_IN_SEC;
+    // uint64_t nanoseconds = timestamp - seconds * NANOSECS_IN_SEC;
+	value["data"]["head"]["stamp"]["sec"] = msg->header.stamp.sec;
+	value["data"]["head"]["stamp"]["nsec"] = msg->header.stamp.nanosec;
+	value["data"]["head"]["frame"] = msg->header.frame_id;
+	value["data"]["feature_id"] = msg->feature_id;
+	value["data"]["position"]["x"] = msg->position.x;
+	value["data"]["position"]["y"] = msg->position.y;
+	value["data"]["position"]["z"] = msg->position.z;
+	value["data"]["yaw_angle"] = msg->yaw_angle;
+	value["data"]["perceived"] = msg->perceived;
+	value["data"]["feature_end"] = msg->feature_end;
+	Json::Value& poseCovarianceArray = value["data"]["confidence"];
+	for(int i = 0; i < 4; i++)
+	{
+		Json::Value elementValue = msg->confidence[i];
+		poseCovarianceArray.append(elementValue);
+	}
+
+	 return value;
+}
+
 // Json::Value AMJSONUtils::statusVisionToJson(
 // 		std::string vehicleId,
 // 		uint16_t sequence,

@@ -28,6 +28,7 @@
 #include <brain_box_msgs/msg/vision_cmnd.hpp>
 #include <brain_box_msgs/msg/video_cmnd.hpp>
 #include <brain_box_msgs/msg/operator_msg.hpp>
+#include <brain_box_msgs/msg/vx_feature_pose.hpp>
 #include <brain_box_msgs/msg/vx_mission_exec_cmd.hpp>
 #include <brain_box_msgs/msg/vx_state.hpp>
 #include <brain_box_msgs/msg/pid_param.hpp>
@@ -71,6 +72,8 @@ public:
 
 	static Json::Value odometryToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
 		std::string sender, const nav_msgs::msg::Odometry::SharedPtr msg);
+	static Json::Value vxFeaturePoseToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
+		std::string sender, const brain_box_msgs::msg::VxFeaturePose::SharedPtr msg);
 
     // static Json::Value statusC2ToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     // 		std::string sender, const brain_box_msgs::msg::C2Status &msg);
