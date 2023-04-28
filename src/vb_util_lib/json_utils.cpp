@@ -747,7 +747,7 @@ void AMJSONUtils::ftpResponseToString(FTPResponse response, std::string &jsonStr
     	break;
     }
     value["vxID"] = response.getVxId();
-    value["date"] = TimeUtil::printTime(response.getDate());
+    //value["date"] = TimeUtil::printTime(response.getDate());
     int i = 0;
     for(std::vector<FileSpec>::const_iterator it = response.getFileSpecs().begin();
     	it != response.getFileSpecs().end(); it++, i++)
@@ -799,7 +799,7 @@ void AMJSONUtils::ftpResponseToString(FTPResponse response, std::string &jsonStr
     	}
     	value["fileSpecs"][i]["name"] = it->getName();
     	value["fileSpecs"][i]["md5"] = it->getMd5();
-    	value["fileSpecs"][i]["date"] = TimeUtil::printTime(it->getDate());
+    	//value["fileSpecs"][i]["date"] = TimeUtil::printTime(it->getDate());
     	value["fileSpecs"][i]["size"] = it->getSize();
     }
 
