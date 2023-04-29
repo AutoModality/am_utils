@@ -647,6 +647,20 @@ void AMJSONUtils::jsonToVxFeaturePose(Json::Value &value, brain_box_msgs::VxFeat
 	}
 }
 
+void AMJSONUtils::jsonToRCIn(Json::Value &value, mavros_msgs::RCIn &msg)
+{
+	static uint32_t seq = 0;
+
+	msg.header.seq = seq++;
+	msg.header.stamp.sec = value["data"]["head"]["stamp"]["sec"].asUInt();
+	msg.header.stamp.nsec = value["data"]["head"]["stamp"]["nsec"].asUInt();
+	msg.header.frame_id = value["data"]["head"]["frame"].asString();
+	for(Json::Value channel_value: value["data"]["channels"])
+	{
+		msg.channels.push_back(channel_value.asUInt());
+	}
+}
+
 bool AMJSONUtils::jsonToAMMessageHead(Json::Value &value, AMMessage &msg)
 {
 	AMMsgHead *msgHead = msg.getHead();
