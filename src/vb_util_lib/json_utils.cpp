@@ -958,6 +958,34 @@ Json::Value AMJSONUtils::vxFeaturePoseToJson(
 	 return value;
 }
 
+
+Json::Value AMJSONUtils::rcInToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const mavros_msgs::msg::RCIn::SharedPtr msg)
+{
+	 Json::Value value;
+	 value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_RC_IN, sender, AMMessage::TYPE_ROS2);
+
+    // uint64_t seconds = timestamp / NANOSECS_IN_SEC;
+    // uint64_t nanoseconds = timestamp - seconds * NANOSECS_IN_SEC;
+	value["data"]["head"]["stamp"]["sec"] = msg->header.stamp.sec;
+	value["data"]["head"]["stamp"]["nsec"] = msg->header.stamp.nanosec;
+	value["data"]["head"]["frame"] = msg->header.frame_id;
+ 	Json::Value& channelsArray = value["data"]["channels"];
+	for(uint16_t channel_value: msg->channels)
+	{
+		Json::Value elementValue = channel_value;
+		channelsArray.append(elementValue);
+	}
+	
+	return value;
+}
+
 // Json::Value AMJSONUtils::statusVisionToJson(
 // 		std::string vehicleId,
 // 		uint16_t sequence,

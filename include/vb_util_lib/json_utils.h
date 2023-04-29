@@ -12,6 +12,7 @@
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <std_msgs/msg/float64.hpp>
+#include <mavros_msgs/msg/rc_in.hpp>
 
 #include <brain_box_msgs/msg/c2_status.hpp>
 #include <brain_box_msgs/msg/comms_status.hpp>
@@ -74,6 +75,8 @@ public:
 		std::string sender, const nav_msgs::msg::Odometry::SharedPtr msg);
 	static Json::Value vxFeaturePoseToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
 		std::string sender, const brain_box_msgs::msg::VxFeaturePose::SharedPtr msg);
+	static Json::Value rcInToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
+		std::string sender, const mavros_msgs::msg::RCIn::SharedPtr msg);
 
     // static Json::Value statusC2ToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     // 		std::string sender, const brain_box_msgs::msg::C2Status &msg);
