@@ -382,7 +382,8 @@ void AMJSONUtils::headerToJson(
 		Json::Value &value,
 		std::string vehicleId,
 		uint16_t sequence,
-		boost::posix_time::ptime timestamp,
+		// boost::posix_time::ptime timestamp,
+		int64_t timestamp,
 		std::string messageName,
 		std::string sender,
 		std::string type)
@@ -391,7 +392,8 @@ void AMJSONUtils::headerToJson(
     value["head"]["seq"] = sequence;
 
     // TODO: make this local time (with timezone offset) for easier reading
-    value["head"]["time"] = TimeUtil::printTime(timestamp);
+    // value["head"]["time"] = TimeUtil::printTime(timestamp);
+    value["head"]["time"] = (Json::Value::Int64)timestamp;
 
     value["head"]["name"] = messageName;
 
@@ -701,7 +703,7 @@ void AMJSONUtils::poseStampedToJson(
 		const geometry_msgs::PoseStamped &msg)
 {
 
-	headerToJson(value, vehicleId, sequence, timestamp, messageName, sender, AMMessage::TYPE_AUTOMOD);
+	// headerToJson(value, vehicleId, sequence, timestamp, messageName, sender, AMMessage::TYPE_AUTOMOD);
 
     value["data"]["position"]["x"] = msg.pose.position.x;
     value["data"]["position"]["y"] = msg.pose.position.y;
@@ -763,11 +765,75 @@ void AMJSONUtils::throttleToJson(
 		std::string sender,
 		const std_msgs::Float64 &msg)
 {
-	headerToJson(value, vehicleId, sequence, timestamp, messageName, sender, AMMessage::TYPE_AUTOMOD);
+	// headerToJson(value, vehicleId, sequence, timestamp, messageName, sender, AMMessage::TYPE_AUTOMOD);
 
     value["data"]["throttle"] = msg.data;
 }
 
+Json::Value AMJSONUtils::imuToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const sensor_msgs::Imu &msg)
+{
+	Json::Value value;
+	value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_IMU, sender, AMMessage::TYPE_ROS1);
+
+	value["data"]["orien"]["x"] = msg.orientation.x;
+	value["data"]["orien"]["y"] = msg.orientation.y;
+	value["data"]["orien"]["z"] = msg.orientation.z;
+	value["data"]["orien"]["w"] = msg.orientation.w;
+	Json::Value& OrientationCovarianceArray = value["data"]["orien_covar"];
+	for(int i = 0; i < 9; i++)
+	{
+		Json::Value elementValue = msg.orientation_covariance[i];
+		OrientationCovarianceArray.append(elementValue);
+	}
+
+	value["data"]["ang"]["x"] = msg.angular_velocity.x;
+	value["data"]["ang"]["y"] = msg.angular_velocity.y;
+	value["data"]["ang"]["z"] = msg.angular_velocity.z;
+	Json::Value& AngularCovarianceArray = value["data"]["ang_covar"];
+	for(int i = 0; i < 9; i++)
+	{
+		Json::Value elementValue = msg.angular_velocity_covariance[i];
+		AngularCovarianceArray.append(elementValue);
+	}
+
+	value["data"]["lin"]["x"] = msg.linear_acceleration.x;
+	value["data"]["lin"]["y"] = msg.linear_acceleration.y;
+	value["data"]["lin"]["z"] = msg.linear_acceleration.z;
+	Json::Value& LinearCovarianceArray = value["data"]["lin_covar"];
+	for(int i = 0; i < 9; i++)
+	{
+		Json::Value elementValue = msg.linear_acceleration_covariance[i];
+		LinearCovarianceArray.append(elementValue);
+	}
+
+	return value;
+}
+
+Json::Value AMJSONUtils::logCtrlToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const brain_box_msgs::LogControl &msg)
+{
+	Json::Value value;
+	value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_LOG_CONTROL, sender, AMMessage::TYPE_ROS1);
+
+	value["data"]["enable"] = msg.enable;
+	value["data"]["level"]= msg.level;
+	value["data"]["name"] = msg.name;
+
+	return value;
+}
 
 bool AMJSONUtils::stringToFTPRequest(std::string jsonString, FTPRequest &request)
 {
@@ -903,8 +969,8 @@ Json::Value AMJSONUtils::statusVisionToJson(
 	Json::Value value;
 	value.clear();
 
-	headerToJson(value, vehicleId, sequence, timestamp,
-		AMMessage::NAME_STATUS_VISION, sender, AMMessage::TYPE_AUTOMOD);
+	// headerToJson(value, vehicleId, sequence, timestamp,
+	// 	AMMessage::NAME_STATUS_VISION, sender, AMMessage::TYPE_AUTOMOD);
 
 	value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	value["data"]["fps_ave"] = msg.fps_ave;
@@ -967,7 +1033,7 @@ Json::Value AMJSONUtils::ctrlVxMissionMessageToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_CTRL_VX_MISSION_MESSAGE, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_CTRL_VX_MISSION_MESSAGE, sender, AMMessage::TYPE_AUTOMOD);
 
 	 value["data"]["type"] = operatorMsgTypeToString(msg.type);
 	 value["data"]["message"] = msg.message;
@@ -1003,7 +1069,7 @@ Json::Value AMJSONUtils::rosoutToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_ROSOUT, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_ROSOUT, sender, AMMessage::TYPE_AUTOMOD);
 
 	 if(msg.level >= rosgraph_msgs::Log::INFO)
 	 {
@@ -1024,7 +1090,7 @@ Json::Value AMJSONUtils::vstateSummaryToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_VSTATE_SUMMARY, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_VSTATE_SUMMARY, sender, AMMessage::TYPE_AUTOMOD);
 
 	 value["data"]["gps_latitude"] = msg.gps_latitude;
 	 value["data"]["gps_longitude"] = msg.gps_longitude;
@@ -1062,7 +1128,7 @@ Json::Value AMJSONUtils::statusVideoToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_VIDEO, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_VIDEO, sender, AMMessage::TYPE_AUTOMOD);
 
     value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
     value["data"]["fps_ave"] = msg.fps_ave;
@@ -1089,7 +1155,7 @@ Json::Value AMJSONUtils::statusSuperToJson(
 	Json::Value value;
 	value.clear();
 
-	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_SUPER, sender, AMMessage::TYPE_AUTOMOD);
+	// headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_SUPER, sender, AMMessage::TYPE_AUTOMOD);
 
 	 	value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	value["data"]["status"]["lastContact"] = TimeUtil::printTime(msg.status.last_contact.toBoost());
@@ -1131,7 +1197,7 @@ Json::Value AMJSONUtils::statusC2ToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_C2, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_C2, sender, AMMessage::TYPE_AUTOMOD);
 
 	 value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 
@@ -1148,7 +1214,7 @@ Json::Value AMJSONUtils::statusVisLogToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_VISLOG, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_VISLOG, sender, AMMessage::TYPE_AUTOMOD);
 
 	 value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	 value["data"]["enabled"] = msg.enabled == 0 ? false : true;
@@ -1185,7 +1251,7 @@ Json::Value AMJSONUtils::statusFTPToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_FTP, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_FTP, sender, AMMessage::TYPE_AUTOMOD);
 
 	 value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	 value["data"]["opens"]["summary"] = msg.opens;
@@ -1207,7 +1273,7 @@ Json::Value AMJSONUtils::statusDepthToJson(
 	Json::Value value;
 	value.clear();
 
-	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_DEPTH, sender, AMMessage::TYPE_AUTOMOD);
+	// headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_DEPTH, sender, AMMessage::TYPE_AUTOMOD);
 
 	value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	value["data"]["simulation"] = msg.simulation;
@@ -1248,7 +1314,7 @@ Json::Value AMJSONUtils::statusCommsToJson(
 	 Json::Value value;
 	 value.clear();
 
-	 headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_COMMS, sender, AMMessage::TYPE_AUTOMOD);
+	//  headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_STATUS_COMMS, sender, AMMessage::TYPE_AUTOMOD);
 
 	 value["data"]["status"]["summary"] = MessageUtil::statusIntToString(msg.status.summary);
 	 value["data"]["logging"] = msg.logging;
@@ -1259,7 +1325,7 @@ Json::Value AMJSONUtils::statusCommsToJson(
 Json::Value AMJSONUtils::heartbeatToJson(
 		std::string vehicleId,
 		uint16_t sequence,
-		boost::posix_time::ptime timestamp,
+		uint64_t timestamp,
 		std::string sender)
 {
 	Json::Value value;
@@ -1276,7 +1342,7 @@ Json::Value AMJSONUtils::snsrCamTrgtActToJson(std::string vehicleId, uint16_t se
 	Json::Value value;
 	value.clear();
 
-	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_SNSR_CAM_TRGT_ACT, sender, AMMessage::TYPE_AUTOMOD);
+	// headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_SNSR_CAM_TRGT_ACT, sender, AMMessage::TYPE_AUTOMOD);
 	if(msg.poses.size() == 0)
 	{
 		value["data"]["poses"] = Json::Value(Json::arrayValue);

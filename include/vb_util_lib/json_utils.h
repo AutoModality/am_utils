@@ -11,12 +11,12 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <geometry_msgs/PoseStamped.h>
-#include <std_msgs/Float64.h>
-#include <nav_msgs/Odometry.h>
-#include <brain_box_msgs/VxFeaturePose.h>
-#include <rosgraph_msgs/Log.h>
 #include <mavros_msgs/RCIn.h>
- 
+#include <nav_msgs/Odometry.h>
+#include <rosgraph_msgs/Log.h>
+#include <std_msgs/Float64.h>
+#include <sensor_msgs/Imu.h>
+
 #include <brain_box_msgs/C2Status.h>
 #include <brain_box_msgs/CommsStatus.h>
 #include <brain_box_msgs/DepthStatus.h>
@@ -32,6 +32,7 @@
 #include <brain_box_msgs/VisionCmnd.h>
 #include <brain_box_msgs/VideoCmnd.h>
 #include <brain_box_msgs/OperatorMsg.h>
+#include <brain_box_msgs/VxFeaturePose.h>
 #include <brain_box_msgs/VxMissionExecCmd.h>
 #include <brain_box_msgs/VxState.h>
 #include <brain_box_msgs/PIDParam.h>
@@ -90,7 +91,7 @@ public:
     static Json::Value statusVisLogToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string sender, const brain_box_msgs::VisLogStatus &msg);
 
-    static Json::Value heartbeatToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    static Json::Value heartbeatToJson(std::string vehicleId, uint16_t sequence, uint64_t timestamp,
     		std::string sender);
     static Json::Value snsrCamTrgtActToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string sender, const brain_box_msgs::TargetPoseArray &msg);
@@ -101,8 +102,15 @@ public:
     static Json::Value vstateSummaryToJson(std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string sender, const brain_box_msgs::VxState &msg);
 
+	static Json::Value imuToJson(std::string vehicleId, uint16_t sequence, int64_t timestamp,
+    		std::string sender, const sensor_msgs::Imu &msg);
+	static Json::Value logCtrlToJson(std::string vehicleId, uint16_t sequence, int64_t timestamp,
+    		std::string sender, const brain_box_msgs::LogControl &msg);
+
 private:
-    static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
+    // 		std::string messageName, std::string sende, std::string type);
+    static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, int64_t timestamp,
     		std::string messageName, std::string sende, std::string type);
 };
 #endif /* AMJSONUTILS_H_ */
