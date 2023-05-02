@@ -11,8 +11,10 @@
 // #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#include <std_msgs/msg/float64.hpp>
 #include <mavros_msgs/msg/rc_in.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <sensor_msgs/msg/imu.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 #include <brain_box_msgs/msg/c2_status.hpp>
 #include <brain_box_msgs/msg/comms_status.hpp>
@@ -41,7 +43,6 @@
 #include <vb_util_lib/ftp_response.h>
 #include <vb_util_lib/message.h>
 
-#include <nav_msgs/msg/odometry.hpp>
 
 using namespace std;
 
@@ -60,7 +61,8 @@ public:
 	static void jsonToCtrlVideoCmnd(Json::Value &value, brain_box_msgs::msg::VideoCmnd &msg);
 	static void jsonToCtrlVisionCmnd(Json::Value &value, brain_box_msgs::msg::VisionCmnd &msg);
 	static void jsonToRemoteCtrlVxMission(Json::Value &value, brain_box_msgs::msg::VxMissionExecCmd &msg);
-	static void jsonToLogControl(Json::Value &value, brain_box_msgs::msg::LogControl &msg);
+	static void jsonToLogCtrl(Json::Value &value, brain_box_msgs::msg::LogControl &msg);
+	static void jsonToImu(Json::Value &value, sensor_msgs::msg::Imu  &msg);
 
     // static void poseStampedToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     // 		std::string messageName, std::string sender, const geometry_msgs::msg::PoseStamped &msg);

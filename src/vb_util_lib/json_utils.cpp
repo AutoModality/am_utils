@@ -563,35 +563,70 @@ void AMJSONUtils::jsonToRemoteCtrlVxMission(
 
 }
 
-void AMJSONUtils::jsonToLogControl(
+void AMJSONUtils::jsonToLogCtrl(
 		Json::Value &value,
 		brain_box_msgs::msg::LogControl &msg)
 {
 	// TODO: figure way to do reverse mapping in mission_cmd_type.cpp
 	msg.enable = value["data"]["enable"].asBool();
+	msg.level = value["data"]["level"].asUInt();
 
-	if(value["data"]["level"] == "OFF")
-	{
-//		msg.level = BagLogger::BagLoggerLevel::OFF;
-	}
-	else if(value["data"]["level"] == "NORM")
-	{
-//			msg.level = BagLogger::BagLoggerLevel::NORM;
-	}
-	else if(value["data"]["level"] == "FINE")
-	{
-//			msg.level = BagLogger::BagLoggerLevel::FINE;
-	}
-	else if(value["data"]["level"] == "EXTRA")
-	{
-//			msg.level = BagLogger::BagLoggerLevel::EXTRA;
-	}
-	else if(value["data"]["level"] == "ALL")
-	{
-//			msg.level = BagLogger::BagLoggerLevel::ALL;
-	}
+// 	if(value["data"]["level"] == "OFF")
+// 	{
+// //		msg.level = BagLogger::BagLoggerLevel::OFF;
+// 	}
+// 	else if(value["data"]["level"] == "NORM")
+// 	{
+// //			msg.level = BagLogger::BagLoggerLevel::NORM;
+// 	}
+// 	else if(value["data"]["level"] == "FINE")
+// 	{
+// //			msg.level = BagLogger::BagLoggerLevel::FINE;
+// 	}
+// 	else if(value["data"]["level"] == "EXTRA")
+// 	{
+// //			msg.level = BagLogger::BagLoggerLevel::EXTRA;
+// 	}
+// 	else if(value["data"]["level"] == "ALL")
+// 	{
+// //			msg.level = BagLogger::BagLoggerLevel::ALL;
+// 	}
 
 	msg.name = value["data"]["name"].asString();
+}
+
+void AMJSONUtils::jsonToImu(
+		Json::Value &value,
+		sensor_msgs::msg::Imu &msg)
+{
+	msg.header.stamp.sec = value["data"]["head"]["stamp"]["sec"].asUInt();
+	msg.header.stamp.nanosec = value["data"]["head"]["stamp"]["nsec"].asUInt();
+	msg.header.frame_id = value["data"]["head"]["frame"].asString();
+ 
+	msg.orientation.x = value["data"]["orien"]["x"].asDouble();
+	msg.orientation.y = value["data"]["orien"]["y"].asDouble();
+	msg.orientation.z = value["data"]["orien"]["z"].asDouble();
+	msg.orientation.w = value["data"]["orien"]["w"].asDouble();
+	for(int i = 0; i < 9; i++)
+	{
+		msg.angular_velocity_covariance[i] = value["data"]["orien_covar"][i].asDouble();
+	}
+
+	msg.angular_velocity.x = value["data"]["ang"]["x"].asDouble();
+	msg.angular_velocity.y = value["data"]["ang"]["y"].asDouble();
+	msg.angular_velocity.z = value["data"]["ang"]["z"].asDouble();
+	for(int i = 0; i < 9; i++)
+	{
+		msg.angular_velocity_covariance[i] = value["data"]["ang_covar"][i].asDouble();
+	}
+
+	msg.linear_acceleration.x = value["data"]["lin"]["x"].asDouble();
+	msg.linear_acceleration.y = value["data"]["lin"]["y"].asDouble();
+	msg.linear_acceleration.z = value["data"]["lin"]["z"].asDouble();
+	for(int i = 0; i < 9; i++)
+	{
+		msg.angular_velocity_covariance[i] = value["data"]["lin_covar"][i].asDouble();
+	}
 }
 
 bool AMJSONUtils::jsonToAMMessageHead(Json::Value &value, AMMessage &msg)
@@ -966,8 +1001,8 @@ Json::Value AMJSONUtils::rcInToJson(
 		std::string sender,
 		const mavros_msgs::msg::RCIn::SharedPtr msg)
 {
-	 Json::Value value;
-	 value.clear();
+	Json::Value value;
+	value.clear();
 
 	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_RC_IN, sender, AMMessage::TYPE_ROS2);
 
@@ -982,7 +1017,7 @@ Json::Value AMJSONUtils::rcInToJson(
 		Json::Value elementValue = channel_value;
 		channelsArray.append(elementValue);
 	}
-	
+
 	return value;
 }
 

@@ -39,6 +39,7 @@ public:
 	static const std::string NAME_ODOMETRY;
 	static const std::string NAME_VX_FEATURE_POSE;
 	static const std::string NAME_RC_IN;
+	static const std::string NAME_IMU;
 
 	static const std::string TYPE_AUTOMOD;
 	static const std::string TYPE_MAVLINK;

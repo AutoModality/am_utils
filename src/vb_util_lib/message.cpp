@@ -30,6 +30,7 @@ const std::string AMMessage::NAME_LOG_CONTROL = "LogControl";
 const std::string AMMessage::NAME_ODOMETRY = "Odometry";
 const std::string AMMessage::NAME_VX_FEATURE_POSE = "VxFeaturePose";
 const std::string AMMessage::NAME_RC_IN = "RCIn";
+const std::string AMMessage::NAME_IMU = "Imu";
 
 const std::string AMMessage::TYPE_AUTOMOD = "A";
 const std::string AMMessage::TYPE_MAVLINK = "M";
