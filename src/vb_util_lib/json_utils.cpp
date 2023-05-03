@@ -782,6 +782,10 @@ Json::Value AMJSONUtils::imuToJson(
 
 	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_IMU, sender, AMMessage::TYPE_ROS1);
 
+	value["data"]["head"]["stamp"]["sec"] = msg.header.stamp.sec;
+	value["data"]["head"]["stamp"]["nsec"] = msg.header.stamp.nsec;
+	value["data"]["head"]["frame"] = msg.header.frame_id ;
+
 	value["data"]["orien"]["x"] = msg.orientation.x;
 	value["data"]["orien"]["y"] = msg.orientation.y;
 	value["data"]["orien"]["z"] = msg.orientation.z;
