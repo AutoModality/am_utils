@@ -27,10 +27,15 @@ const std::string AMMessage::NAME_VSTATE_SUMMARY = "VStateSummary";
 const std::string AMMessage::NAME_STATUS_COMMS = "StatusComms";
 const std::string AMMessage::NAME_STATUS_DEPTH = "StatusDepth";
 const std::string AMMessage::NAME_LOG_CONTROL = "LogControl";
+const std::string AMMessage::NAME_ODOMETRY = "Odometry";
+const std::string AMMessage::NAME_VX_FEATURE_POSE = "VxFeaturePose";
+const std::string AMMessage::NAME_RC_IN = "RCIn";
+const std::string AMMessage::NAME_IMU = "Imu";
 
 const std::string AMMessage::TYPE_AUTOMOD = "A";
 const std::string AMMessage::TYPE_MAVLINK = "M";
 const std::string AMMessage::TYPE_MAVLINK_RAW = "R";
+const std::string AMMessage::TYPE_ROS1 = "1";
 
 AMMessage::AMMessage() {
 }
