@@ -15,6 +15,7 @@
 #include <nav_msgs/Odometry.h>
 #include <rosgraph_msgs/Log.h>
 #include <std_msgs/Float64.h>
+#include <sensor_msgs/NavSatFix.h>
 #include <sensor_msgs/Imu.h>
 
 #include <brain_box_msgs/C2Status.h>
@@ -64,6 +65,8 @@ public:
 	static void jsonToOdometry(Json::Value &value, nav_msgs::Odometry &msg);
 	static void jsonToVxFeaturePose(Json::Value &value, brain_box_msgs::VxFeaturePose &msg);
 	static void jsonToRCIn(Json::Value &value, mavros_msgs::RCIn &msg);
+	static void jsonToGPS(Json::Value &value, sensor_msgs::NavSatFix &msg);
+	static void jsonToHeading(Json::Value &value, std_msgs::Float64 &msg);
 
     static void poseStampedToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,
     		std::string messageName, std::string sender, const geometry_msgs::PoseStamped &msg);
@@ -106,6 +109,7 @@ public:
     		std::string sender, const sensor_msgs::Imu &msg);
 	static Json::Value logCtrlToJson(std::string vehicleId, uint16_t sequence, int64_t timestamp,
     		std::string sender, const brain_box_msgs::LogControl &msg);
+
 
 private:
     // static void headerToJson(Json::Value &value, std::string vehicleId, uint16_t sequence, boost::posix_time::ptime timestamp,

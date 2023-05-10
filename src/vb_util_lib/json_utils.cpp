@@ -663,6 +663,27 @@ void AMJSONUtils::jsonToRCIn(Json::Value &value, mavros_msgs::RCIn &msg)
 	}
 }
 
+	static void jsonToGPS(Json::Value &value, sensor_msgs::NavSatFix &msg);
+	static void jsonToHeading(Json::Value &value, std_msgs::Float64 &msg);
+
+void AMJSONUtils::jsonToGPS(Json::Value &value, sensor_msgs::NavSatFix &msg)
+{
+	static uint32_t seq = 0;
+
+	msg.header.seq = seq++;
+	msg.header.stamp.sec = value["data"]["head"]["stamp"]["sec"].asUInt();
+	msg.header.stamp.nsec = value["data"]["head"]["stamp"]["nsec"].asUInt();
+	msg.header.frame_id = value["data"]["head"]["frame"].asString();
+	msg.latitude = value["data"]["lat"].asDouble();
+	msg.longitude = value["data"]["lon"].asDouble();
+}
+
+void AMJSONUtils::jsonToHeading(Json::Value &value, std_msgs::Float64 &msg)
+{
+	msg.data = value["data"]["data"].asDouble();
+}
+
+
 bool AMJSONUtils::jsonToAMMessageHead(Json::Value &value, AMMessage &msg)
 {
 	AMMsgHead *msgHead = msg.getHead();
