@@ -629,6 +629,7 @@ void AMJSONUtils::jsonToImu(
 	}
 }
 
+
 bool AMJSONUtils::jsonToAMMessageHead(Json::Value &value, AMMessage &msg)
 {
 	AMMsgHead *msgHead = msg.getHead();
@@ -1070,6 +1071,42 @@ Json::Value AMJSONUtils::rcInToJson(
 
 	return value;
 }
+
+Json::Value AMJSONUtils::gpsToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const sensor_msgs::msg::NavSatFix::SharedPtr msg)
+{
+	Json::Value value;
+	value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_GPS, sender, AMMessage::TYPE_ROS2);
+
+	value["data"]["lat"] = msg->latitude;
+	value["data"]["lon"] = msg->longitude;
+
+	return value;
+}
+
+Json::Value AMJSONUtils::headingToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const std_msgs::msg::Float64::SharedPtr msg)
+{
+	Json::Value value;
+	value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_HEADING, sender, AMMessage::TYPE_ROS2);
+
+	value["data"]["data"] = msg->data;
+
+	return value;
+}
+
 
 // Json::Value AMJSONUtils::statusVisionToJson(
 // 		std::string vehicleId,
