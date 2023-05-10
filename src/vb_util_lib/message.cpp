@@ -28,6 +28,7 @@ const std::string AMMessage::NAME_STATUS_COMMS = "StatusComms";
 const std::string AMMessage::NAME_STATUS_DEPTH = "StatusDepth";
 const std::string AMMessage::NAME_LOG_CONTROL = "LogControl";
 const std::string AMMessage::NAME_ODOMETRY = "Odometry";
+const std::string AMMessage::NAME_ODOMETRY_VO = "OdometryVo";
 const std::string AMMessage::NAME_VX_FEATURE_POSE = "VxFeaturePose";
 const std::string AMMessage::NAME_RC_IN = "RCIn";
 const std::string AMMessage::NAME_IMU = "Imu";

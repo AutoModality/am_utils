@@ -940,6 +940,56 @@ Json::Value AMJSONUtils::odometryToJson(
 	 return value;
 }
 
+
+Json::Value AMJSONUtils::odometryVoToJson(
+		std::string vehicleId,
+		uint16_t sequence,
+		int64_t timestamp,
+		std::string sender,
+		const nav_msgs::msg::Odometry::SharedPtr msg)
+{
+	 Json::Value value;
+	 value.clear();
+
+	headerToJson(value, vehicleId, sequence, timestamp, AMMessage::NAME_ODOMETRY_VO, sender, AMMessage::TYPE_ROS2);
+
+    // uint64_t seconds = timestamp / NANOSECS_IN_SEC;
+    // uint64_t nanoseconds = timestamp - seconds * NANOSECS_IN_SEC;
+	value["data"]["head"]["stamp"]["sec"] = msg->header.stamp.sec;
+	value["data"]["head"]["stamp"]["nsec"] = msg->header.stamp.nanosec;
+	value["data"]["head"]["frame"] = msg->header.frame_id;
+	value["data"]["child"] = msg->child_frame_id;
+
+	value["data"]["pose"]["pose"]["pos"]["x"] = msg->pose.pose.position.x;
+	value["data"]["pose"]["pose"]["pos"]["y"] = msg->pose.pose.position.y;
+	value["data"]["pose"]["pose"]["pos"]["z"] = msg->pose.pose.position.z;
+	value["data"]["pose"]["pose"]["orien"]["x"] = msg->pose.pose.orientation.x;
+	value["data"]["pose"]["pose"]["orien"]["y"] = msg->pose.pose.orientation.y;
+	value["data"]["pose"]["pose"]["orien"]["z"] = msg->pose.pose.orientation.z;
+	value["data"]["pose"]["pose"]["orien"]["w"] = msg->pose.pose.orientation.w;
+	Json::Value& poseCovarianceArray = value["data"]["pose"]["covar"];
+	for(int i = 0; i < 36; i++)
+	{
+		Json::Value elementValue = msg->pose.covariance[i];
+		poseCovarianceArray.append(elementValue);
+	}
+
+	value["data"]["twist"]["twist"]["lin"]["x"] = msg->twist.twist.linear.x;
+	value["data"]["twist"]["twist"]["lin"]["y"] = msg->twist.twist.linear.y;
+	value["data"]["twist"]["twist"]["lin"]["z"] = msg->twist.twist.linear.z;
+	value["data"]["twist"]["twist"]["ang"]["x"] = msg->twist.twist.angular.x;
+	value["data"]["twist"]["twist"]["ang"]["y"] = msg->twist.twist.angular.y;
+	value["data"]["twist"]["twist"]["ang"]["z"] = msg->twist.twist.angular.z;
+	Json::Value& twistCovarianceArray = value["data"]["twist"]["covar"];
+	for(int i = 0; i < 36; i++)
+	{
+		Json::Value elementValue = msg->twist.covariance[i];
+		twistCovarianceArray.append(elementValue);
+	}
+
+	 return value;
+}
+
 // header:
 //   stamp:
 //     sec: 1682638776

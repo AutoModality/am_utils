@@ -75,6 +75,9 @@ public:
 
 	static Json::Value odometryToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
 		std::string sender, const nav_msgs::msg::Odometry::SharedPtr msg);
+	static Json::Value odometryVoToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
+			std::string sender, const nav_msgs::msg::Odometry::SharedPtr msg);
+
 	static Json::Value vxFeaturePoseToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
 		std::string sender, const brain_box_msgs::msg::VxFeaturePose::SharedPtr msg);
 	static Json::Value rcInToJson( std::string vehicleId, uint16_t sequence, int64_t timestamp,
