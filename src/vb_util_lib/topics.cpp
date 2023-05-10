@@ -205,6 +205,8 @@ constexpr char am_topics::MAVROS_IMU_DATA[];
 constexpr char am_topics::ACSL_VO_VELOCITY[];
 
 constexpr char am_topics::AMIGA_VELOCITY[];
+constexpr char am_topics::AMIGA_STATE[];
+constexpr char am_topics::AMIGA_EXTENDED_STATE[];
 
 
 std::string am_topics::addBodySuffix(const char *topic)
