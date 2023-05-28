@@ -5,13 +5,14 @@
  *      Author: dan
  */
 
-#ifndef BRAIN_BOX_MSGS_SRC_AM_NETWORK_UTILS_H_
-#define BRAIN_BOX_MSGS_SRC_AM_NETWORK_UTILS_H_
+#ifndef AM_UTILS_SRC_AM_NETWORK_UTILS_H_
+#define AM_UTILS_SRC_AM_NETWORK_UTILS_H_
 
 #include <sys/socket.h>
+#include <string>
 #include <unistd.h>
 
-namespace brain_box {
+namespace am {
 
 class AMNetworkUtils {
 public:
@@ -25,6 +26,6 @@ public:
 	static void closeSocket(int sockfp);
 };
 
-} /* namespace brain_box */
+} /* namespace am */
 
-#endif /* BRAIN_BOX_MSGS_SRC_AM_NETWORK_UTILS_H_ */
+#endif /* AM_UTILS_SRC_AM_NETWORK_UTILS_H_ */

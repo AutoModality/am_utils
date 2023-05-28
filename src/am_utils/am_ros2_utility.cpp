@@ -7,10 +7,13 @@
 
 #include <am_utils/am_ros2_utility.h>
 #include <iostream>
-
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/input.h>
 
 namespace am
 {
+
 
 /*
  * Set Covariances according to the following map
@@ -174,6 +177,12 @@ std::string vectToStr(const std::vector<std::string> &vect)
 
 	return res;
 }
+
+std::string toString(bool flag)
+{
+	return (flag?"True":"False");
+}
+
 
 std::string getPackagePath(const std::string &package_name)
 {

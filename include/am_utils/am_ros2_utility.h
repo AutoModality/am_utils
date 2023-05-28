@@ -18,7 +18,7 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <super_lib/am_life_cycle.h>
 #include <nav_msgs/msg/odometry.hpp>
-
+#include <random>
 // using namespace std::chrono_literals;
 using std::placeholders::_1;
 
@@ -125,12 +125,10 @@ std::string getMessageName()
 template <class T>
 T getRandom(T min, T max, bool reset = false)
 {
-  if (reset)
-  {
-	srand((unsigned)time(0));
-  }
-
-  return (min + 1) + (((T)rand()) / (T)RAND_MAX) * (max - (min + 1));
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<T> dis(min, max);
+	return dis(gen);
 }
 
 //this will split a string to array of strings with the given key
@@ -145,6 +143,8 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 	}
 	return vec;
 }
+
+std::string toString(bool flag);
 
 //this will convert a vector to a string
 std::string vectToStr(const std::vector<std::string>& vect);

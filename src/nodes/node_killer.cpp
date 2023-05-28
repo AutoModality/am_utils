@@ -55,6 +55,8 @@ void signalHandler( int signum )
 
 	kill_process_with_name("ros2");
 
+	kill_process_with_name("python3");
+
 	system("ros2 daemon stop");
 
 	printf("\n");

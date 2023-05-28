@@ -67,6 +67,11 @@ void OdometryAnalyzer::disable()
 	enabled_ = false;
 }
 
+std::vector<geometry_msgs::msg::Pose> &OdometryAnalyzer::getPoses()
+{
+	return poses_;
+}
+
 void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 {
 	geometry_msgs::msg::Pose pose;
@@ -81,6 +86,7 @@ void OdometryAnalyzer::insert(const nav_msgs::msg::Odometry &odom)
 	tf2::doTransform(pose, pose, transform);
 
 	insertAssetFramePose(pose);
+	poses_.push_back(pose);
 
 }
 
@@ -102,33 +108,12 @@ void OdometryAnalyzer::insertAssetFramePose(const geometry_msgs::msg::Pose &pose
 {
 	double yaw = am::Rotate::getYaw(pose.orientation);
 
-
-	x_.insert(pose.position.x);
-	y_.insert(pose.position.y);
-	yaw_.insert(yaw);
-
 	x_diff_.insert(x_ref_ - pose.position.x);
 	y_diff_.insert(y_ref_ - pose.position.y);
 	yaw_diff_.insert(yaw_ref_ - yaw);
 }
 
-am::Axis OdometryAnalyzer::getX()
-{
-	x_.findSD();
-	return x_;
-}
 
-am::Axis OdometryAnalyzer::getY()
-{
-	y_.findSD();
-	return y_;
-}
-
-am::Axis OdometryAnalyzer::getYaw()
-{
-	yaw_.findSD();
-	return yaw_;
-}
 am::Axis OdometryAnalyzer::getXDiff()
 {
 	x_diff_.findSD();
