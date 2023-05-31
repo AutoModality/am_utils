@@ -225,6 +225,8 @@ public:
 	static constexpr char ACSL_VO_VELOCITY[] = "/mavros/local_position/velocity_body";
 
 	static constexpr char AMIGA_VELOCITY[] = "/amiga/velocity";
+	static constexpr char AMIGA_STATE[] = "/amiga/state";
+	static constexpr char AMIGA_EXTENDED_STATE[] = "/amiga/extended_state";
 
 	static std::string addBodySuffix(const char *topic);
 	static std::string addBodySuffix(std::string topic);
