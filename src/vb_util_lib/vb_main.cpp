@@ -51,7 +51,7 @@ int kbhit(void)
  
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
   fcntl(STDIN_FILENO, F_SETFL, oldf);
- ROS_INFO_THROTTLE(0.5, "  GGG getch %d", ch);
+  // ROS_INFO_THROTTLE(0.5, "  GGG getch %d", ch);
  
   if(ch != EOF)
   {
