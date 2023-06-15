@@ -5,8 +5,6 @@
 
 namespace am
 {
-  
-
 // static constexpr std::string AMLifeCycle::STATE_INVALID_STRING;
 // static constexpr std::string AMLifeCycle::STATE_UNCONFIGURED_STRING;
 
@@ -513,6 +511,19 @@ void AMLifeCycle::heartbeatCB()
 
   double throttle_s = getThrottle();
   ROS_INFO_STREAM_THROTTLE( throttle_s, "LifeCycle heartbeat: " << ss.str());
+
+  switch(life_cycle_info_.status)
+  {
+  case am::LifeCycleStatus::OK:
+      ROS_INFO_STREAM_THROTTLE(throttle_s, ss.str());
+      break;
+  case am::LifeCycleStatus::WARN:
+      ROS_WARN_STREAM_THROTTLE(throttle_s, ss.str());
+      break;
+  case am::LifeCycleStatus::ERROR:
+      ROS_ERROR_STREAM_THROTTLE(throttle_s, ss.str());
+      break;
+  }
 
   stats_list_.reset();
 
