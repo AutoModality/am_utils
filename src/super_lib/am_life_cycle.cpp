@@ -45,6 +45,8 @@ void AMLifeCycle::initialize()
   param<int>("configure_tolerance_s", configure_tolerance_s, 10);
   param<int>(param_prefix + "configure_tolerance_s", configure_tolerance_s, configure_tolerance_s);
 
+  // TODO: Introduce parameter for tolerant vs. aggressive mode. Tolerant does not act on node status, aggressive does.
+
   LifeCycleState init_state;
   if (life_cycle_mediator_.stringToState(init_state_str, init_state))
   {
@@ -283,6 +285,8 @@ void AMLifeCycle::doDestroy(bool success)
 
 bool AMLifeCycle::withinConfigureTolerance()
 {
+  // TODO: use tolerant/aggressive mode parameter to set lifecycle behavior to tolerate errors indefinitely
+
   bool tolerated = false;
   //outside of configuring, we have no tolerance
   if(life_cycle_mediator_.unconfigured(life_cycle_info_))
@@ -303,6 +307,8 @@ void AMLifeCycle::error(std::string error_code, bool forced)
 
 void AMLifeCycle::error(std::string message, std::string error_code, bool forced)
 {
+  // TODO: Ensure that while in the new tolerant mode, "ignoring error" output is kept to a minimum
+
   std::string error_code_message = "Error[" + error_code + "] ";
   if(withinConfigureTolerance() && !forced)
   {
