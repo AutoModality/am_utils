@@ -347,7 +347,7 @@ void AMLifeCycle::errorTerminal(std::string message, std::string error_code)
 
 void AMLifeCycle::errorTolerant(std::string message, std::string error_code)
 {
-  error(message,error_code,false);
+  //error(message,error_code,false);
 }
 
 void AMLifeCycle::onError()
@@ -365,7 +365,7 @@ void AMLifeCycle::doError(bool success)
   }
   else
   {
-    life_cycle_info_.state = LifeCycleState::FINALIZED;
+    //life_cycle_info_.state = LifeCycleState::FINALIZED;
   }
   sendNodeUpdate();
 }
