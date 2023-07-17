@@ -287,8 +287,11 @@ bool AMLifeCycle::withinConfigureTolerance()
 {
   // TODO: use tolerant/aggressive mode parameter to set lifecycle behavior to tolerate errors indefinitely
 
-  bool tolerated = false;
+
+  //bool tolerated = false;
+  bool tolerated = true;
   //outside of configuring, we have no tolerance
+  /*
   if(life_cycle_mediator_.unconfigured(life_cycle_info_))
   {
     rclcpp::Duration duration_since_configure = get_clock()->now() - configure_start_time_;
@@ -297,6 +300,8 @@ bool AMLifeCycle::withinConfigureTolerance()
       tolerated = true;
     }
   }
+  */
+  //return tolerated;
   return tolerated;
 }
 
@@ -321,9 +326,9 @@ void AMLifeCycle::error(std::string message, std::string error_code, bool forced
     //only change the state if 
     if(!life_cycle_mediator_.redundantError(life_cycle_info_))
     {
-      setState(LifeCycleState::ERROR_PROCESSING);
-      setStatus(LifeCycleStatus::ERROR);
-      onError();
+      //setState(LifeCycleState::ERROR_PROCESSING);
+      //setStatus(LifeCycleStatus::ERROR);
+      //onError();
     }
     else
     {
@@ -406,11 +411,12 @@ void AMLifeCycle::addStatistics(diagnostic_updater::DiagnosticStatusWrapper& dsw
   else
   {
     //only report status if not already errored
+    /*
     if(!life_cycle_mediator_.redundantError(life_cycle_info_))
     {
       setStatus(status);
     }
-
+    */
     //configuring is a special case where tolerance for errors is allowed
     if(getState() == LifeCycleState::CONFIGURING)
     {
