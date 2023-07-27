@@ -39,6 +39,8 @@ public:
   ~DustFilter();
 
   int process(pcl::PointCloud<pcl::PointXYZIR> &pc, bool skip_dust_filter = false);
+  int process(pcl::PointCloud<pcl::PointXYZ> &pc, bool skip_dust_filter = false);
+
   void getParams();
   void setInsideFilter(float min_x_m_, float max_x_m_, float min_y_m_, float max_y_m_, float min_z_m_, float max_z_m_);
   void setOutsideFilter(float min_x_m_, float max_x_m_, float min_y_m_, float max_y_m_, float min_z_m_, float max_z_m_);
