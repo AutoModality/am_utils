@@ -31,7 +31,7 @@ pcl::PointCloud<pcl::PointXYZIR>::ConstPtr AMPCLUtils::convertToPointXYZIR(
   return pcl;
 }
 
-pcl::PointCloud<pcl::PointXYZ>::ConstPtr AMPCLUtils::convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
+pcl::PointCloud<pcl::PointXYZ>::ConstPtr AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
         pcl::PointCloud<pcl::PointXYZ>::Ptr &pcl)
 {
 	pcl->header = pcl_conversions::toPCL(pc2->header);
@@ -179,6 +179,23 @@ void AMPCLUtils::setNaN(pcl::PointXYZIR &point)
   point.z = std::nanf("");
   point.intensity = std::nanf("");
   point.range = std::nanf("");
+}
+
+bool AMPCLUtils::isSetToNaN(pcl::PointXYZ &point)
+{
+  if (std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z))
+  {
+    setNaN(point);
+    return true;
+  }
+  return false;
+}
+
+void AMPCLUtils::setNaN(pcl::PointXYZ &point)
+{
+  point.x = std::nanf("");
+  point.y = std::nanf("");
+  point.z = std::nanf("");
 }
 
 } // namespace
