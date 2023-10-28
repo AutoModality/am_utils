@@ -235,6 +235,7 @@ public:
 	static constexpr char SYGNAL_MCM_STATE[] = "/sygnal_state";
 	static constexpr char SYGNAL_MCM_FAULT[] = "/sygnal_fault";
 	static constexpr char SYGNAL_MCM_CONNECT_FCU[] = "/sygnal_mcm/connect_fcu";
+	static constexpr char SYGNAL_MCM_FCU_STATUS[] = "/sygnal_mcm/fcu_status";
 
 
 
