@@ -13,7 +13,17 @@
 
 namespace am
 {
+/// @brief 
+/// @param q_size the size of the queue int 
+/// @return 
+rclcpp::QoS getSensorQoS(int q_size)
+{
+	rclcpp::QoS qos = rclcpp::SensorDataQoS();
+	qos.get_rmw_qos_profile().depth = q_size;
 
+
+	return qos;
+}
 
 /*
  * Set Covariances according to the following map

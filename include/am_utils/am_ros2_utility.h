@@ -67,6 +67,8 @@ void declare_parameter(const std::string &param_name, const T &param)
 	}
 }
 
+rclcpp::QoS getSensorQoS(int q_size = 5);
+
 bool setCovariances(const std::vector<double> &src, nav_msgs::msg::Odometry &odom);
 
 //get parameter for vector of integers
