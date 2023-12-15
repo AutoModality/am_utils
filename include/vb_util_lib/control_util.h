@@ -92,7 +92,7 @@ enum class ControlTrigger {timer, targetPoseUpdate, vehiclePoseUpdate};
 /*
  * Control modes of the smart pilot.
  */
-enum class FLIGHT_MODE {LANDED=0, LAUNCHING, LOITER, TRACKING_TARGET, LANDING, TRAJECTORY, RTL, IDLE, WAYPOINT, TERRAIN, SEARCH, ROW, MANUAL};
+enum class FLIGHT_MODE {LANDED=0, LAUNCHING, LOITER, TRACKING_TARGET, LANDING, TRAJECTORY, RTL, IDLE, WAYPOINT, TERRAIN, SEARCH, ROW, MANUAL, PAYLOAD_CONTROL};
 
 // FCU control modes
 enum FCUControlMode:int {NONE=0, ATTITUDE, POSITION, VELOCITY};
