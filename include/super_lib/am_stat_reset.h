@@ -52,6 +52,20 @@ public:
     return *this;
   }
 
+  AMStatReset& operator++()
+  {
+    sample_received_ = true;
+    value_ = value_ + ((uint32_t)1);
+    return *this;
+  }
+
+  AMStatReset& operator+=(uint32_t assignment)
+  {
+    sample_received_ = true;
+    value_ = value_ + assignment;
+    return *this;
+  }
+
 };
 
 
