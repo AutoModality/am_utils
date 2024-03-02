@@ -57,7 +57,7 @@ void AMLifeCycle::initialize()
     life_cycle_info_.state = LifeCycleState::ACTIVE;
   }
   life_cycle_info_.status = LifeCycleStatus::OK;
-  state_pub_ = create_publisher<brain_box_msgs::msg::LifeCycleState>("/node_state", 100);
+  state_pub_ = create_publisher<brain_box_msgs::msg::LifeCycleState>("/node_state", am::getSensorQoS(1));
 
   // updater_ = std::make_shared<diagnostic_updater::Updater>(this);
   updater_.setHardwareID("none");
@@ -80,7 +80,7 @@ void AMLifeCycle::initialize()
   /**
    * node status via LifeCycle
    */
-  lifecycle_sub_ = create_subscription<brain_box_msgs::msg::LifeCycleCommand>("/node_lifecycle", 100,
+  lifecycle_sub_ = create_subscription<brain_box_msgs::msg::LifeCycleCommand>("/node_lifecycle", am::getSensorQoS(1),
 		  std::bind(&AMLifeCycle::lifecycleCB, this, std::placeholders::_1));
 
   heartbeat_timer_ = create_wall_timer(am::toDuration(1.0), std::bind(&AMLifeCycle::heartbeatCB, this));
@@ -116,11 +116,11 @@ void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::Share
     {
       case LifeCycleCommand::ACTIVATE:
         transition("activate", LifeCycleState::INACTIVE, LifeCycleState::ACTIVATING, LifeCycleState::ACTIVE,
-                   std::bind(&AMLifeCycle::onActivate, this));
+                   std::bind(&AMLifeCycle::onActivate, this), true);
         break;
       case LifeCycleCommand::CLEANUP:
         transition("cleanup", LifeCycleState::INACTIVE, LifeCycleState::CLEANING_UP, LifeCycleState::UNCONFIGURED,
-                   std::bind(&AMLifeCycle::onCleanup, this));
+                   std::bind(&AMLifeCycle::onCleanup, this), true);
         break;
       case LifeCycleCommand::CONFIGURE:
         configure();
@@ -130,7 +130,7 @@ void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::Share
         break;
       case LifeCycleCommand::DEACTIVATE:
         transition("deactivate", LifeCycleState::ACTIVE, LifeCycleState::DEACTIVATING, LifeCycleState::INACTIVE,
-                   std::bind(&AMLifeCycle::onDeactivate, this));
+                   std::bind(&AMLifeCycle::onDeactivate, this), true);
         break;
       case LifeCycleCommand::DESTROY:
         destroy();
@@ -142,23 +142,32 @@ void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::Share
   }
 }
 
-void AMLifeCycle::transition(std::string transition_name, LifeCycleState initial_state, LifeCycleState transition_state,
-                             LifeCycleState final_state, std::function<void(void)> on_function)
+void AMLifeCycle::transition(std::string transition_name, LifeCycleState initial_state, 
+                             LifeCycleState transition_state, LifeCycleState final_state, 
+                             std::function<bool(void)> on_function, bool support_failure)
 {
-  if (life_cycle_info_.state == initial_state)
-  {
-    ROS_INFO_STREAM(transition_name << ", current state: " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [ASWU]");
-    setState(transition_state);
-    on_function();
-  }
-  else if (life_cycle_info_.state == transition_state || life_cycle_info_.state == final_state)
-  {
-    ROS_DEBUG_STREAM("ignoring redundant " << transition_name << " [0393]");
-  }
-  else
-  {
-    ROS_WARN_STREAM("received illegal " << transition_name  << " in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [JGV5]");
-  }
+    if (life_cycle_info_.state == initial_state)
+    {
+        ROS_INFO_STREAM(transition_name << ", current state: " 
+            << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [ASWU]");
+        
+        setState(transition_state);
+        bool success = on_function();
+
+        if (!success && support_failure)
+        {
+            setState(initial_state);
+        }
+    }
+    else if (life_cycle_info_.state == transition_state || life_cycle_info_.state == final_state)
+    {
+        ROS_DEBUG_STREAM("ignoring redundant " << transition_name << " [0393]");
+    }
+    else
+    {
+        ROS_WARN_STREAM("received illegal " << transition_name  
+            << " in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [JGV5]");
+    }
 }
 
 void AMLifeCycle::doTransition(std::string transition_name, bool success, LifeCycleState success_state,
@@ -177,10 +186,11 @@ void AMLifeCycle::doTransition(std::string transition_name, bool success, LifeCy
   }
 }
 
-void AMLifeCycle::onActivate()
+bool AMLifeCycle::onActivate()
 {
   logState();
   doActivate(true);
+  return true;
 }
 
 void AMLifeCycle::doActivate(bool success)
@@ -188,10 +198,11 @@ void AMLifeCycle::doActivate(bool success)
   doTransition("activation", success, LifeCycleState::ACTIVE, LifeCycleState::INACTIVE);
 }
 
-void AMLifeCycle::onCleanup()
+bool AMLifeCycle::onCleanup()
 {
   logState();
   doCleanup(true);
+  return true;
 }
 
 void AMLifeCycle::doCleanup(bool success)
@@ -201,7 +212,7 @@ void AMLifeCycle::doCleanup(bool success)
 }
 
 
-void AMLifeCycle::onConfigure()
+bool AMLifeCycle::onConfigure()
 { 
 
   ROS_INFO("onConfigure called [POMH]");
@@ -222,6 +233,7 @@ void AMLifeCycle::onConfigure()
   {
     doConfigure(true);
   }
+  return true;
 }
 
 void AMLifeCycle::doConfigure(bool success)
@@ -230,11 +242,19 @@ void AMLifeCycle::doConfigure(bool success)
   doTransition("configuration", success, LifeCycleState::INACTIVE, LifeCycleState::UNCONFIGURED);
 }
 
-void AMLifeCycle::onDeactivate()
+// void AMLifeCycle::onDeactivate()
+// {
+//   logState();
+//   doDeactivate(true);
+// }
+
+bool AMLifeCycle::onDeactivate()
 {
   logState();
   doDeactivate(true);
+  return true;
 }
+
 
 void AMLifeCycle::logState()
 {
@@ -254,7 +274,7 @@ void AMLifeCycle::configure()
     configure_start_time_= get_clock()->now();
   }
   transition("configure", LifeCycleState::UNCONFIGURED, LifeCycleState::CONFIGURING, LifeCycleState::INACTIVE,
-  std::bind(&AMLifeCycle::onConfigure, this));
+  std::bind(&AMLifeCycle::onConfigure, this), true);
 }
 
 void AMLifeCycle::destroy()
@@ -522,7 +542,6 @@ void AMLifeCycle::heartbeatCB()
      << stats_list_.getStatsStrShort();
 
   double throttle_s = getThrottle();
-  ROS_INFO_STREAM_THROTTLE( throttle_s, "LifeCycle heartbeat: " << ss.str());
 
   switch(life_cycle_info_.status)
   {
