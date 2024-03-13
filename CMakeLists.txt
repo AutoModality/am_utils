@@ -101,6 +101,10 @@ add_executable(node_killer src/nodes/node_killer.cpp)
 target_link_libraries(node_killer am_utils)
 ament_target_dependencies(node_killer ${dependencies})
 
+add_executable(parameter_server src/nodes/parameter_server_node.cpp)
+target_link_libraries(parameter_server am_utils)
+ament_target_dependencies(parameter_server ${dependencies})
+
 add_executable(odometry_reporter src/nodes/odometry_reporter.cpp)
 target_link_libraries(odometry_reporter am_utils)
 ament_target_dependencies(odometry_reporter ${dependencies})
@@ -133,6 +137,7 @@ install(TARGETS
   node_killer
   odometry_reporter
   odometry_gps_validator
+  parameter_server
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
