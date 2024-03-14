@@ -198,7 +198,10 @@ public:
 
     ~ParameterServer()
     {
-
+        if(mFile.is_open())
+        {
+            mFile.close();
+        }
     }
 private:
     std::unordered_map<std::string, std::shared_ptr<am::NodeParam>> nodes_;
@@ -207,7 +210,7 @@ private:
     rclcpp::TimerBase::SharedPtr updateTimer_;
     std::string log_file_name_;
     std::ofstream mFile;
-
+    std::vector<std::string> black_list_ = {"transform_listener", "parameter_server", "ros2cli_daemon"};
 
     void logControlCB(const brain_box_msgs::msg::LogControl::SharedPtr msg)
     {
@@ -218,6 +221,11 @@ private:
             mFile.open(log_file_name_);
             logParameters();    
         }
+        if(!msg->enable)
+        {
+            mFile.close();
+        }
+
     }
 
     void logParameters()
@@ -235,7 +243,7 @@ private:
                 }
             }         
         }
-        mFile.close();
+        
         ROS_INFO(GREEN "Parameters are logged" COLOR_RESET);
     }
 
@@ -282,8 +290,7 @@ private:
         for(std::string &name : node_names)
         {
             //ignoring condition        
-            if(nodes_.find(name) != nodes_.end() || name.find(node_name) != std::string::npos || name.find("transform_listener") != std::string::npos || 
-            name.find("ros2cli_daemon") != std::string::npos)
+            if(nodes_.find(name) != nodes_.end() || name.find(node_name) != std::string::npos || isNodeInBlackList(name))
             {
                 continue;
             }
@@ -292,7 +299,19 @@ private:
             //create a new instance
             nodes_[name] = std::make_shared<am::NodeParam>(name);
         }
-    }   
+    } 
+    bool isNodeInBlackList(const std::string &node_name)
+    {
+        for(std::string &name : black_list_)
+        {
+            if(node_name.find(name) != std::string::npos)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 };    
 }
 

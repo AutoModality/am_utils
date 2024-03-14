@@ -105,6 +105,14 @@ add_executable(parameter_server src/nodes/parameter_server_node.cpp)
 target_link_libraries(parameter_server am_utils)
 ament_target_dependencies(parameter_server ${dependencies})
 
+add_executable(parameter_server_tester src/nodes/parameter_server_tester_node.cpp)
+target_link_libraries(parameter_server_tester am_utils)
+ament_target_dependencies(parameter_server_tester ${dependencies})
+
+add_executable(parameter_receiver_tester src/nodes/parameter_receiver_tester.cpp)
+target_link_libraries(parameter_receiver_tester am_utils)
+ament_target_dependencies(parameter_receiver_tester ${dependencies})
+
 add_executable(odometry_reporter src/nodes/odometry_reporter.cpp)
 target_link_libraries(odometry_reporter am_utils)
 ament_target_dependencies(odometry_reporter ${dependencies})
@@ -138,6 +146,8 @@ install(TARGETS
   odometry_reporter
   odometry_gps_validator
   parameter_server
+  parameter_server_tester
+  parameter_receiver_tester
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
