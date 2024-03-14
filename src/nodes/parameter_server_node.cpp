@@ -44,7 +44,7 @@ public:
 				ROS_ERROR("Interrupted while waiting for the service. Exiting.");
 				exit(-1);
 			}
-			ROS_INFO("list_parameters_srv service not available, waiting again...");
+			ROS_INFO("list_parameters_srv service not available for %s, waiting again...",  node_name_.c_str());
 		}
 
         auto req = std::make_shared<rcl_interfaces::srv::ListParameters::Request>();
@@ -75,7 +75,7 @@ public:
 				ROS_ERROR("Interrupted while waiting for the service. Exiting.");
 				exit(-1);
 			}
-			ROS_INFO("get_parameters_srv service not available, waiting again...");
+			ROS_INFO("get_parameters_srv service not available for %s, waiting again...", node_name_.c_str());
 		}
 
         get_param_req_ = std::make_shared<rcl_interfaces::srv::GetParameters::Request>();
@@ -108,7 +108,7 @@ public:
                     ROS_ERROR("Interrupted while waiting for the service. Exiting.");
                     exit(-1);
                 }
-                ROS_INFO("get_parameters_srv service not available, waiting again...");
+                ROS_INFO("get_parameters_srv service not available for %s, waiting again...",  node_name_.c_str());
             }
 
             auto set_param_req_ = std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
@@ -179,7 +179,7 @@ private:
             parameters_[get_param_req_->names[i]] = parameter;
             std::string full_param_name = node_name_ + "." + get_param_req_->names[i];
 
-            ROS_INFO("%s: %s", full_param_name.c_str(), to_string(parameter).c_str());
+            //ROS_INFO("%s: %s", full_param_name.c_str(), to_string(parameter).c_str());
         }
 
         got_all_parameters_ = true;
@@ -192,6 +192,8 @@ class ParameterServer
 public:
     ParameterServer()
     {
+
+        getParams();
         
         updateTimer_ = am::Node::node->create_wall_timer(am::toDuration(5.0), std::bind(&ParameterServer::updateTimerCB, this));
         log_control_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::LogControl>("/ctrl/log_control", 1, std::bind(&ParameterServer::logControlCB, this, std::placeholders::_1));
@@ -207,14 +209,72 @@ public:
     }
 private:
     std::unordered_map<std::string, std::shared_ptr<am::NodeParam>> nodes_;
+    std::unordered_map<std::string, rclcpp::ParameterValue> global_parameters_;
     rclcpp::Subscription<brain_box_msgs::msg::ParameterArray>::SharedPtr param_sub_;
     rclcpp::Subscription<brain_box_msgs::msg::LogControl>::SharedPtr log_control_sub_;
     rclcpp::TimerBase::SharedPtr updateTimer_;
     std::string log_file_name_;
     std::ofstream mFile;
     std::vector<std::string> black_list_ = {"transform_listener", "parameter_server", "ros2cli_daemon"};
-    
 
+    std::string global_yaml_file_location_ = "/home/ubuntu/ros2_ws/install/am_config/share/am_config/launch/vineyard/vineyard_mockup_amiga.yaml";
+     
+    
+    void getParams()
+    {
+        am::getParam<std::string>("global_yaml", global_yaml_file_location_, global_yaml_file_location_);
+        ROS_INFO("global_yaml: %s", global_yaml_file_location_.c_str());
+        
+        std::ifstream fin;
+        fin.open(global_yaml_file_location_);
+        if (!fin.is_open()) {
+            ROS_ERROR("Failed to open file.");
+            return;
+        }
+
+        // Parse the YAML file
+        YAML::Node config = YAML::Load(fin);
+        printYamlNode(config);
+
+    }
+
+    void printYamlNode(const YAML::Node& node, const std::string& parentKey = "") 
+    {
+        // Check the type of the node
+        switch (node.Type()) {
+            case YAML::NodeType::Scalar: 
+            {
+                if(parentKey.find("/**.ros__parameters.") != std::string::npos)
+                {
+                    std::cout << "Key: " << parentKey.substr(std::string("/**.ros__parameters.").length()) << ", Value: " << node.as<std::string>() << std::endl;
+                    
+                    global_parameters_[parentKey.substr(std::string("/**.ros__parameters.").length())] = rclcpp::ParameterValue();
+                }
+                
+                break;
+            }
+            case YAML::NodeType::Sequence: 
+            {
+                for (std::size_t i = 0; i < node.size(); ++i) {
+                    printYamlNode(node[i], parentKey + "[" + std::to_string(i) + "]");
+                }
+                break;
+            }
+            case YAML::NodeType::Map: 
+            {
+                for (const auto& entry : node) {
+                    std::string key = entry.first.as<std::string>();
+                    printYamlNode(entry.second, parentKey.empty() ? key : parentKey + "." + key);
+                }
+            }
+            case YAML::NodeType::Null: 
+            {
+                break;
+            }
+            default:
+                std::cerr << "Unknown YAML node type" << std::endl;
+        }   
+    }
 
     void logControlCB(const brain_box_msgs::msg::LogControl::SharedPtr msg)
     {
@@ -257,8 +317,25 @@ private:
             std::unordered_map<std::string, rclcpp::ParameterValue>::iterator param_it = it->second->parameters_.begin();
             for(; param_it != it->second->parameters_.end(); ++param_it)
             {
+                //check if this is global parameter
+                std::unordered_map<std::string, rclcpp::ParameterValue>::iterator global_it = global_parameters_.find(param_it->first);
+                if(global_it != global_parameters_.end())
+                {
+                    //ROS_INFO("Found %s", global_it->first.c_str());
+                    global_it->second = param_it->second;
+                    continue;
+                }
                 yaml_data[it->first.substr(1)][ros_str][param_it->first]= to_string(param_it->second);
             }         
+        }
+
+
+        //now log the global parameters
+        std::unordered_map<std::string, rclcpp::ParameterValue>::iterator it2 = global_parameters_.begin();
+        for(; it2 != global_parameters_.end(); ++it2)
+        {
+            //ROS_INFO("recording global parameter: %s : %s", it2->first.c_str(), to_string(it2->second).c_str());
+            yaml_data["/**"][ros_str][it2->first]= to_string(it2->second);
         }
 
         return true;
