@@ -64,12 +64,12 @@ private:
             }
             if(param.name.find("parameter_b") != std::string::npos)
             {
-                parameter_a = param.value.integer_value;
+                parameter_b = param.value.integer_value;
                 ROS_INFO(GREEN "Received a new value for parameter_b: %d" COLOR_RESET, parameter_b);
             }
             if(param.name.find("parameter_c") != std::string::npos)
             {
-                parameter_a = param.value.bool_value;
+                parameter_c = param.value.bool_value;
                 ROS_INFO(GREEN "Received a new value for parameter_c: %s" COLOR_RESET, am::toString(parameter_c).c_str());
             }
         }

@@ -6,6 +6,8 @@
 #include <brain_box_msgs/msg/log_control.hpp>
 #include <vb_util_lib/bag_logger.h>
 #include <vb_util_lib/vb_main.h>
+#include <yaml-cpp/yaml.h>
+
 
 std::shared_ptr<am::AMLifeCycle> am::Node::node = nullptr;
 
@@ -211,12 +213,28 @@ private:
     std::string log_file_name_;
     std::ofstream mFile;
     std::vector<std::string> black_list_ = {"transform_listener", "parameter_server", "ros2cli_daemon"};
+    
+
 
     void logControlCB(const brain_box_msgs::msg::LogControl::SharedPtr msg)
     {
         //start logging
         if(msg->enable && !mFile.is_open())
         {
+            //yaml writer
+            YAML::Node yaml_data;
+            if(!paramtoYaml(yaml_data))
+            {
+                ROS_WARN("faild to convert parameters to yaml file");
+                return;
+            }
+            std::string yaml_file_name = BagLogger::getLogFileName("PM") + ".yaml";
+            // Write YAML node to a file
+            std::ofstream fout(yaml_file_name);
+            fout << yaml_data;
+            fout.close();
+
+            //txt writer
             log_file_name_ = BagLogger::getLogFileName("PM") + ".txt";   
             mFile.open(log_file_name_);
             logParameters();    
@@ -226,6 +244,24 @@ private:
             mFile.close();
         }
 
+    }
+
+    bool paramtoYaml(YAML::Node &yaml_data)
+    {
+        std::string ros_str = "ros__parameters";
+
+        std::unordered_map<std::string, std::shared_ptr<am::NodeParam>>::iterator it = nodes_.begin();
+        for(; it != nodes_.end(); ++it)
+        {
+            
+            std::unordered_map<std::string, rclcpp::ParameterValue>::iterator param_it = it->second->parameters_.begin();
+            for(; param_it != it->second->parameters_.end(); ++param_it)
+            {
+                yaml_data[it->first.substr(1)][ros_str][param_it->first]= to_string(param_it->second);
+            }         
+        }
+
+        return true;
     }
 
     void logParameters()
