@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(am_utils)
 
-set(ROS_BUILD_TYPE Debug)
+#set(ROS_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 if(POLICY CMP0074)
-    cmake_policy(SET CMP0074 NEW)
+  cmake_policy(SET CMP0074 NEW)
 endif()
 
 # Default to C99

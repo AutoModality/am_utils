@@ -274,7 +274,7 @@ void AMLifeCycle::configure()
     configure_start_time_= get_clock()->now();
   }
   transition("configure", LifeCycleState::UNCONFIGURED, LifeCycleState::CONFIGURING, LifeCycleState::INACTIVE,
-  std::bind(&AMLifeCycle::onConfigure, this), true);
+    std::bind(&AMLifeCycle::onConfigure, this), true);
 }
 
 void AMLifeCycle::destroy()
