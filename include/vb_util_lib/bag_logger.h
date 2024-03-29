@@ -21,6 +21,7 @@
 #include <rosbag2_cpp/typesupport_helpers.hpp>
 #include <rosbag2_cpp/writer.hpp>
 #include <rosbag2_cpp/typesupport_helpers.hpp>
+#include <rosbag2_storage/storage_options.hpp>
 
 
 #define DEFAULT_BAG_DIR "/var/log/amros/"
