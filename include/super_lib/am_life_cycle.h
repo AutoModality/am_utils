@@ -56,6 +56,8 @@ class AMLifeCycle : public rclcpp::Node
      * max_configure_seconds_ to allow startup error tolerance.*/
     rclcpp::Time configure_start_time_;
 
+    bool stats_initialized_ = false;
+    
     /** initialization - called by  constructors. 
      */   
     void initialize();

@@ -148,18 +148,22 @@ void AMLifeCycle::transition(std::string transition_name, LifeCycleState initial
 {
     if (life_cycle_info_.state == initial_state)
     {
-        ROS_INFO_STREAM(transition_name << ", current state: " 
-            << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [ASWU]");
-        
-        setState(transition_state);
-        bool success = on_function();
+      ROS_INFO_STREAM(transition_name << ", current state: " 
+          << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [ASWU]");
+      
+      setState(transition_state);
+      bool success = on_function();
 
-        if (!success && support_failure)
-        {
-            setState(initial_state);
-        }
+      if (!success && support_failure)
+      {
+          setState(initial_state);
+      }
     }
-    else if (life_cycle_info_.state == transition_state || life_cycle_info_.state == final_state)
+    else if (life_cycle_info_.state == transition_state)
+    {
+      bool success = on_function();
+    }
+    else if (life_cycle_info_.state == final_state)
     {
         ROS_DEBUG_STREAM("ignoring redundant " << transition_name << " [0393]");
     }
@@ -218,8 +222,13 @@ bool AMLifeCycle::onConfigure()
   ROS_INFO("onConfigure called [POMH]");
   if(stats_list_.hasStats())
   {
-    LifeCycleStatus status = stats_list_.process(throttle_info_.warn_throttle_s, throttle_info_.error_throttle_s);
-    if(status != LifeCycleStatus::ERROR)
+    // LifeCycleStatus status = stats_list_.process(throttle_info_.warn_throttle_s, throttle_info_.error_throttle_s);
+    LifeCycleStatus status = getStatus();
+    if(!stats_initialized_)
+    {
+       ROS_INFO_STREAM_THROTTLE(5, "stats not initialized");     
+    }
+    else if(status != LifeCycleStatus::ERROR)
     {
       doConfigure(true);
     }
@@ -308,8 +317,7 @@ bool AMLifeCycle::withinConfigureTolerance()
   // TODO: use tolerant/aggressive mode parameter to set lifecycle behavior to tolerate errors indefinitely
 
 
-  //bool tolerated = false;
-  bool tolerated = true;
+  bool tolerated = false;
   //outside of configuring, we have no tolerance
   /*
   if(life_cycle_mediator_.unconfigured(life_cycle_info_))
@@ -423,26 +431,24 @@ void AMLifeCycle::doShutdown(bool success)
 void AMLifeCycle::addStatistics(diagnostic_updater::DiagnosticStatusWrapper& dsw)
 {
   stats_list_.addStatistics(dsw);
-  LifeCycleStatus status = stats_list_.process(throttle_info_.warn_throttle_s, throttle_info_.error_throttle_s);
-  if(life_cycle_mediator_.statusError(status))
-  {
-    errorTolerant("Stats reporting error","PQAE");
-  }
-  else
-  {
-    //only report status if not already errored
-    /*
-    if(!life_cycle_mediator_.redundantError(life_cycle_info_))
-    {
-      setStatus(status);
-    }
-    */
-    //configuring is a special case where tolerance for errors is allowed
-    if(getState() == LifeCycleState::CONFIGURING)
-    {
-      onConfigure();
-    }
-  }
+  LifeCycleStatus status = getStatus();
+
+  // else
+  // {
+  //   //only report status if not already errored
+  //   /*
+  //   if(!life_cycle_mediator_.redundantError(life_cycle_info_))
+  //   {
+  //     setStatus(status);
+  //   }
+  //   */
+  //   //configuring is a special case where tolerance for errors is allowed
+  //   if(getState() == LifeCycleState::CONFIGURING)
+  //   {
+  //     onConfigure();
+  //   }
+  // }
+
   dsw.summary((uint8_t)status, "update");
 }
 
@@ -535,7 +541,18 @@ void AMLifeCycle::sendNodeUpdate()
 
 void AMLifeCycle::heartbeatCB()
 {
-  updater_.force_update();
+  LifeCycleState state = getState();
+  if(state != am::LifeCycleState::UNCONFIGURED)
+  {
+    LifeCycleStatus status = stats_list_.process(throttle_info_.warn_throttle_s, throttle_info_.error_throttle_s);
+    stats_initialized_ = true;
+    setStatus(status);
+    if(life_cycle_mediator_.statusError(status))
+    {
+      errorTolerant("Stats reporting error","PQAE");
+    }
+    updater_.force_update();
+  }
 
   std::stringstream ss;
   ss << life_cycle_mediator_.stateToString(life_cycle_info_.state) << "," << life_cycle_mediator_.statusToString(life_cycle_info_.status) << ","
@@ -599,8 +616,7 @@ LifeCycleStatus AMLifeCycle::getStatus() const
 bool AMLifeCycle::setStatus(const LifeCycleStatus status)
 {
   //if we are in error and want to leave it
-  if(life_cycle_info_.status == LifeCycleStatus::ERROR && status != LifeCycleStatus::ERROR)
-  {
+  if(life_cycle_info_.state != LifeCycleState::CONFIGURING && life_cycle_info_.status == LifeCycleStatus::ERROR && status != LifeCycleStatus::ERROR)  {
     ROS_WARN_STREAM_THROTTLE( getThrottle(), "requested to change status from ERROR to " << life_cycle_mediator_.statusToString(status) << " [DFRE]");
   }
   else if (life_cycle_mediator_.setStatus(status, life_cycle_info_))
