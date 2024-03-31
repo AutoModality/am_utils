@@ -171,8 +171,10 @@ void BagLogger::startLogging(std::string prefix, unsigned log_level)
     // bag.open(file_name_, rosbag::bagmode::Write);
     printf("prefix: %s, file_name_: %s\n", prefix.c_str(), file_name_.c_str());
 
+    rosbag2_storage::StorageOptions storage_options;
+    storage_options.uri = /*std::string("sqlite:///") +*/ file_name_;
     writer_ = std::make_unique<rosbag2_cpp::Writer>();
-    writer_->open(file_name_);
+    writer_->open(storage_options);
     printf("Opening bag file %s\n", file_name_.c_str());
     log_level_ = log_level;
     is_logging_ = true;
