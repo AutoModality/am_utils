@@ -208,14 +208,14 @@ constexpr char am_topics::AMIGA_VELOCITY[];
 constexpr char am_topics::AMIGA_STATE[];
 constexpr char am_topics::AMIGA_EXTENDED_STATE[];
 
-constexpr char am_topics::SYGNAL_MCM_CMD[];
-constexpr char am_topics::SYGNAL_MCM_ENABLE[];
-constexpr char am_topics::SYGNAL_MCM_RESET_STATE[];
-constexpr char am_topics::SYGNAL_MCM_ATTITUDE[];
-constexpr char am_topics::SYGNAL_MCM_STATE[];
-constexpr char am_topics::SYGNAL_MCM_FAULT[];
-constexpr char am_topics::SYGNAL_MCM_CONNECT_FCU[];
-constexpr char am_topics::SYGNAL_MCM_FCU_STATUS[];
+constexpr char am_topics::SYGNAL_CMD[];
+constexpr char am_topics::SYGNAL_ENABLE[];
+constexpr char am_topics::SYGNAL_RESET_STATE[];
+constexpr char am_topics::SYGNAL_ATTITUDE[];
+constexpr char am_topics::SYGNAL_STATE[];
+constexpr char am_topics::SYGNAL_FAULT[];
+constexpr char am_topics::SYGNAL_CONNECT_FCU[];
+constexpr char am_topics::SYGNAL_FCU_STATUS[];
 
 
 std::string am_topics::addBodySuffix(const char *topic)
