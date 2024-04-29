@@ -73,6 +73,9 @@ public:
 
     void initROS(rclcpp::Node::SharedPtr node);
 
+    bool getTransform(std::pair<bool, geometry_msgs::msg::TransformStamped> &transform, 
+    const std::string &parent, const std::string &child);
+
     bool isInitializedState(unsigned int mask) const {
     	return (pose_initialized_ & mask) == mask;
     }
@@ -451,7 +454,9 @@ private:
     bool publisher_ {false};
 
     bool ros_init_ {false};
+    std::pair<bool, geometry_msgs::msg::TransformStamped> asset_frame_to_enu_tf_;
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pub_nh_;
+    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr asset_frame_pub_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_nh_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
 
