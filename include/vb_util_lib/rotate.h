@@ -80,6 +80,7 @@ namespace am
     static void rotate(pcl::PointXYZIR &p, const geometry_msgs::msg::Quaternion &q_rot);
 
     static void rotate(pcl::PointXYZ &p, const geometry_msgs::msg::Quaternion &q_rot);
+    static void rotate(pcl::PointXYZRGB &p, const geometry_msgs::msg::Quaternion &q_rot);
 
     /*
      * @brief transforms a point with the passed transformed stamped

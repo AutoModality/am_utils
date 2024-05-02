@@ -12,41 +12,28 @@ class AMPCLUtils
 {
 
 public:
-  static pcl::PointCloud<pcl::PointXYZIR>::ConstPtr convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
-      pcl::PointCloud<pcl::PointXYZIR>::Ptr &pcl);
+  static pcl::PointCloud<pcl::PointXYZIR>::ConstPtr convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2, pcl::PointCloud<pcl::PointXYZIR>::Ptr &pcl);
+  static pcl::PointCloud<pcl::PointXYZ>::ConstPtr convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2, pcl::PointCloud<pcl::PointXYZ>::Ptr &pcl);
 
-  static pcl::PointCloud<pcl::PointXYZ>::ConstPtr convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
-        pcl::PointCloud<pcl::PointXYZ>::Ptr &pcl);
-
-  static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
-        pcl::PointCloud<pcl::PointXYZIR> &pcl);
-
-  static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2 &pc2,
-          pcl::PointCloud<pcl::PointXYZIR> &pcl);
-
-  static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2,
-         pcl::PointCloud<pcl::PointXYZ> &pcl);
-
-  static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2 &pc2,
-           pcl::PointCloud<pcl::PointXYZ> &pcl);
+  static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2::SharedPtr pc2, pcl::PointCloud<pcl::PointXYZIR> &pcl);
+  static void convertToPointXYZIR(const sensor_msgs::msg::PointCloud2 &pc2, pcl::PointCloud<pcl::PointXYZIR> &pcl);
+  static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2::SharedPtr pc2, pcl::PointCloud<pcl::PointXYZ> &pcl);
+  static void convertToPointXYZ(const sensor_msgs::msg::PointCloud2 &pc2, pcl::PointCloud<pcl::PointXYZ> &pcl);
 
   static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
-
+  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZRGB> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
   static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out);
+  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR>::Ptr cloud, const std::vector<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out);
+  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, const std::vector<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out);
 
-  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR>::Ptr cloud,
-		  const std::vector<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out);
-  
-  static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud,
-		  const std::vector<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out);
 
   static bool isSetToNaN(pcl::PointXYZIR &point);
+  static bool isSetToNaN(pcl::PointXYZ &point);
+  static bool isSetToNaN(pcl::PointXYZRGB &point);
 
   static void setNaN(pcl::PointXYZIR &point);
-
-  static bool isSetToNaN(pcl::PointXYZ &point);
-
   static void setNaN(pcl::PointXYZ &point);
+  static void setNaN(pcl::PointXYZRGB &point);
 };
 
 }
