@@ -535,7 +535,7 @@ void Kinematics::sendKinematics() {
     // LOG_MSG(topic_, ms, 2); // TODO (dan) bag_logger
 
     //publish odom in asset_frame
-    if(!getTransform(asset_frame_to_enu_tf_, "Asset_ENU", "Asset_Frame"))
+    if(!getTransform(asset_frame_to_enu_tf_, "Asset_Frame", "Asset_ENU"))
     {
         return;
     }
