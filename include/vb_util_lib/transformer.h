@@ -37,14 +37,14 @@ public:
     /// Used to fetch the latest transform between two frames
     /// Return true if it works and false otherwise
     bool getTransform(const std::string target, const std::string source,
-                      geometry_msgs::msg::TransformStamped& transform,  double wait = -1.0, bool debug = false);
+                      geometry_msgs::msg::TransformStamped& transform,  double wait = 1.0, bool debug = false);
 
     /// Used to fetch the latest transform between two frames
     /// Checks the initialized flag and will not call the lookup if it is true.
     /// Otherwise it attempts to lookup the transform and set the initialized flag appropriately.
     /// Return true if the transform is valid and false otherwise
     bool getTransform(bool& initialized_flag, const std::string target, const std::string source,
-                      geometry_msgs::msg::TransformStamped& transform,  double wait = -1.0, bool debug = false);
+                      geometry_msgs::msg::TransformStamped& transform,  double wait = 1.0, bool debug = false);
 
     /// Used to rotate the "orientation" coordinates by the "rotation" coordinates
     void rotateOrientation(geometry_msgs::msg:: Quaternion& orientation, geometry_msgs::msg::Quaternion& rotation, bool debug = false);
