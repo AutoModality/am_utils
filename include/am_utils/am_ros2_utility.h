@@ -15,6 +15,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <any>
 #include <vb_util_lib/utility.h>
+#include <vb_util_lib/topics.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <super_lib/am_life_cycle.h>
 #include <nav_msgs/msg/odometry.hpp>
