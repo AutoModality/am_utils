@@ -48,6 +48,7 @@ set(dependencies
     tf2_geometry_msgs
     tf2_ros
     visualization_msgs
+    cv_bridge
 )
 
 # find dependencies
