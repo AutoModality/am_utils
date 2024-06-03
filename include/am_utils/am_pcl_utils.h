@@ -45,7 +45,7 @@ public:
       static void toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud,
             const std::vector<int> &valid_indices, sensor_msgs::msg::PointCloud2 &cloud_out);
 
-      static bool convertToPointXYZ(const sensor_msgs::msg::Image::SharedPtr &image, const sensor_msgs::msg::CameraInfo::SharedPtr &cam_info,
+      static bool convertToPointXYZ(const sensor_msgs::msg::Image::ConstSharedPtr &image, const sensor_msgs::msg::CameraInfo::SharedPtr &cam_info,
             pcl::PointCloud<pcl::PointXYZ> &cloud, geometry_msgs::msg::TransformStamped &transform, std::string &error_msg,
             double downsample_factor = 1.0, double depth_factor = 1000.0, double min_distance = 0.5, double max_distance = 6.0);
 

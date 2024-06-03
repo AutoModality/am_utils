@@ -142,7 +142,7 @@ void AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2 &pc2,
 }
 
 
-bool AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::Image::SharedPtr &image, const sensor_msgs::msg::CameraInfo::SharedPtr &cam_info,
+bool AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::Image::ConstSharedPtr &image, const sensor_msgs::msg::CameraInfo::SharedPtr &cam_info,
             pcl::PointCloud<pcl::PointXYZ> &cloud, geometry_msgs::msg::TransformStamped &transform, std::string &error_msg,
             double downsample_factor, double depth_factor, double min_distance, double max_distance)
 {
