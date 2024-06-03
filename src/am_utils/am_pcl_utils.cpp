@@ -5,7 +5,8 @@
 #include <sensor_msgs/point_cloud2_iterator.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-			#include <geometry_msgs/msg/point32.hpp>
+#include <geometry_msgs/msg/point32.hpp>
+#include <am_utils/am_ros2_utility.h>
 
 namespace am
 {
@@ -149,7 +150,7 @@ bool AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::Image::ConstSharedPtr
 	cv_bridge::CvImagePtr cv_ptr;
 	try
 	{
-		cv_ptr = cv_bridge::toCvCopy(image, image->encoding);
+		cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::TYPE_32FC1);
 	}
 	catch(cv_bridge::Exception& e)
 	{
@@ -188,6 +189,7 @@ bool AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::Image::ConstSharedPtr
 			int idx = r * frame.cols + c;
 
 			float z = frame.at<float>(r,c) / depth_factor;
+			//ROS_INFO("z: %f vs raw_z: %f", z, frame.at<float>(r,c));
 
 			if (z == 0 || std::isnan(z) || z < min_distance || z > max_distance)
 			{
@@ -199,6 +201,9 @@ bool AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::Image::ConstSharedPtr
 			p.z = z;
 			p.x = (c - cx) * z / fx;
 			p.y = (r - cy) * z / fy;
+
+			//ROS_INFO("pre tf P[%f, %f, %f]", p.x, p.y, p.z);
+
 			am::AMPCLUtils::doTransform(p, p,transform);
 			cloud.points[cnt] = p;
 		}
