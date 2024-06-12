@@ -218,6 +218,11 @@ void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sens
 	pcl::toROSMsg<pcl::PointXYZ>(cloud, cloud_out);
 }
 
+void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZRGB> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out)
+{
+	pcl::toROSMsg<pcl::PointXYZRGB>(cloud, cloud_out);
+}
+
 void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZIR> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out)
 {
 	pcl::toROSMsg<pcl::PointXYZIR>(cloud, cloud_out);
@@ -279,6 +284,16 @@ bool AMPCLUtils::isSetToNaN(pcl::PointXYZ &point)
   return false;
 }
 
+bool AMPCLUtils::isSetToNaN(pcl::PointXYZRGB &point)
+{
+  if (std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z))
+  {
+    setNaN(point);
+    return true;
+  }
+  return false;
+}
+
 void AMPCLUtils::setNaN(pcl::PointXYZ &point)
 {
   point.x = std::nanf("");
@@ -300,6 +315,12 @@ void AMPCLUtils::doTransform(const pcl::PointXYZIR & t_in, pcl::PointXYZIR & t_o
 	t_out.x = v_out[0];
 	t_out.y = v_out[1];
 	t_out.z = v_out[2];
+}
+void AMPCLUtils::setNaN(pcl::PointXYZRGB &point)
+{
+  point.x = std::nanf("");
+  point.y = std::nanf("");
+  point.z = std::nanf("");
 }
 
 } // namespace
