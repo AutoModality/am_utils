@@ -3,6 +3,10 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <geometry_msgs/msg/point32.hpp>
+#include <am_utils/am_ros2_utility.h>
 
 namespace am
 {
@@ -138,6 +142,77 @@ void AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::PointCloud2 &pc2,
 	}
 }
 
+
+bool AMPCLUtils::convertToPointXYZ(const sensor_msgs::msg::Image::ConstSharedPtr &image, const sensor_msgs::msg::CameraInfo::SharedPtr &cam_info,
+            pcl::PointCloud<pcl::PointXYZ> &cloud, geometry_msgs::msg::TransformStamped &transform, std::string &error_msg,
+            double downsample_factor, double depth_factor, double min_distance, double max_distance)
+{
+	cv_bridge::CvImagePtr cv_ptr;
+	try
+	{
+		cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::TYPE_32FC1);
+	}
+	catch(cv_bridge::Exception& e)
+	{
+		error_msg = std::string(e.what());
+		return false;
+	}
+
+
+	cv::Mat frame = cv_ptr->image;
+
+	//get camera intrinsics
+	float fx = cam_info->k[0];
+	float fy = cam_info->k[4];
+	float cx = cam_info->k[2];
+	float cy = cam_info->k[5];
+
+	pcl::PointXYZ bad_point;
+	am::AMPCLUtils::setNaN(bad_point);
+
+	//setup cloud
+	cloud.width = image->width/downsample_factor; //frame.cols
+	cloud.height = image->height/downsample_factor; //frame.rows
+
+	//RCLCPP_INFO(node_->get_logger(), "cloud[%d, %d]", cloud.width, cloud.height);
+
+	cloud.points.resize(cloud.width * cloud.height);
+	int cnt = -1;
+	for(int r = 0; r < frame.rows; r += downsample_factor)
+	{
+		for(int c = 0; c < frame.cols; c += downsample_factor)
+		{
+
+			cnt++;
+
+			//RCLCPP_INFO(node_->get_logger(), "r:%d c:%d, cnt: %d, cloud.points: %d", r,c, cnt, (int)cloud.points.size());
+			int idx = r * frame.cols + c;
+
+			float z = frame.at<float>(r,c) / depth_factor;
+			//ROS_INFO("z: %f vs raw_z: %f", z, frame.at<float>(r,c));
+
+			if (z == 0 || std::isnan(z) || z < min_distance || z > max_distance)
+			{
+				cloud.points[cnt] = bad_point;
+				continue;
+			}
+
+			pcl::PointXYZ p;
+			p.z = z;
+			p.x = (c - cx) * z / fx;
+			p.y = (r - cy) * z / fy;
+
+			//ROS_INFO("pre tf P[%f, %f, %f]", p.x, p.y, p.z);
+
+			am::AMPCLUtils::doTransform(p, p,transform);
+			cloud.points[cnt] = p;
+		}
+	}
+
+
+	return true;
+}
+
 void AMPCLUtils::toPointCloud2(const pcl::PointCloud<pcl::PointXYZ> &cloud, sensor_msgs::msg::PointCloud2 &cloud_out)
 {
 	pcl::toROSMsg<pcl::PointXYZ>(cloud, cloud_out);
@@ -226,6 +301,21 @@ void AMPCLUtils::setNaN(pcl::PointXYZ &point)
   point.z = std::nanf("");
 }
 
+void AMPCLUtils::doTransform(const pcl::PointXYZ & t_in, pcl::PointXYZ & t_out, const geometry_msgs::msg::TransformStamped & transform)
+{
+	KDL::Vector v_out = tf2::gmTransformToKDL(transform) * KDL::Vector(t_in.x, t_in.y, t_in.z);
+	t_out.x = v_out[0];
+	t_out.y = v_out[1];
+	t_out.z = v_out[2];
+}
+
+void AMPCLUtils::doTransform(const pcl::PointXYZIR & t_in, pcl::PointXYZIR & t_out, const geometry_msgs::msg::TransformStamped & transform)
+{
+	KDL::Vector v_out = tf2::gmTransformToKDL(transform) * KDL::Vector(t_in.x, t_in.y, t_in.z);
+	t_out.x = v_out[0];
+	t_out.y = v_out[1];
+	t_out.z = v_out[2];
+}
 void AMPCLUtils::setNaN(pcl::PointXYZRGB &point)
 {
   point.x = std::nanf("");
