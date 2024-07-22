@@ -66,6 +66,7 @@ const std::string &parent, const std::string &child)
     }
 
     ROS_INFO("Cannot find the transform between %s and %s", parent.c_str(), child.c_str());
+    return false;
 }
 
 void Kinematics::initROS(rclcpp::Node::SharedPtr n)

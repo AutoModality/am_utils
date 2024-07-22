@@ -147,6 +147,13 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 	return vec;
 }
 
+std::string getenv(const std::string &variable_name);
+std::string getAmId();
+std::string getAmPlatform();
+std::string getAmApplication();
+std::string getAmLocation();
+std::string getAmSensors();
+
 std::string toString(bool flag);
 
 //this will convert a vector to a string

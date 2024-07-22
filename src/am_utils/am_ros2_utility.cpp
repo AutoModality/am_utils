@@ -199,4 +199,36 @@ std::string getPackagePath(const std::string &package_name)
 	return ament_index_cpp::get_package_share_directory(package_name);
 }
 
+std::string getenv(const std::string &variable_name)
+{
+	const char* value = std::getenv(variable_name.c_str());
+	if (value == nullptr) 
+	{
+        return "";
+    }
+	return std::string(value);
+}
+
+std::string getAmId()
+{
+	return getenv("AM_ID");
+}
+std::string getAmPlatform()
+{
+	return getenv("AM_PLATFORM");
+}
+std::string getAmApplication()
+{
+	return getenv("AM_APPLICATION");
+}
+std::string getAmLocation()
+{
+	return getenv("AM_LOCATION");
+}
+std::string getAmSensors()
+{
+	return getenv("AM_SENSORS");
+}
+
+
 }
