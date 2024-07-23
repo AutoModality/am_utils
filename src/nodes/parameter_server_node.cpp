@@ -3,11 +3,12 @@
 #include <rcl_interfaces/srv/get_parameters.hpp>
 #include <rcl_interfaces/srv/set_parameters.hpp>
 #include <brain_box_msgs/msg/parameter_array.hpp>
+#include <brain_box_msgs/msg/key_value.hpp>
 #include <brain_box_msgs/msg/log_control.hpp>
 #include <vb_util_lib/bag_logger.h>
 #include <vb_util_lib/vb_main.h>
 #include <yaml-cpp/yaml.h>
-
+#include <vb_util_lib/key_value_stamped.h>
 
 std::shared_ptr<am::AMLifeCycle> am::Node::node = nullptr;
 
@@ -196,8 +197,11 @@ public:
         getParams();
         
         updateTimer_ = am::Node::node->create_wall_timer(am::toDuration(5.0), std::bind(&ParameterServer::updateTimerCB, this));
+        internal_pub_ = am::Node::node->create_publisher<brain_box_msgs::msg::ParameterArray>(param_server_outlet_topic_, 1);
         log_control_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::LogControl>("/ctrl/log_control", 1, std::bind(&ParameterServer::logControlCB, this, std::placeholders::_1));
-        param_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::ParameterArray>("/param_server/params", 1, std::bind(&ParameterServer::paramsCB, this, std::placeholders::_1));
+        fp_params_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::KeyValue>("/param_update",100, std::bind(&ParameterServer::fpParamCB, this, std::placeholders::_1));
+        param_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::ParameterArray>(param_server_outlet_topic_, 1, std::bind(&ParameterServer::paramsCB, this, std::placeholders::_1));
+
     }
 
     ~ParameterServer()
@@ -211,6 +215,8 @@ private:
     std::unordered_map<std::string, std::shared_ptr<am::NodeParam>> nodes_;
     std::unordered_map<std::string, rclcpp::ParameterValue> global_parameters_;
     rclcpp::Subscription<brain_box_msgs::msg::ParameterArray>::SharedPtr param_sub_;
+    rclcpp::Publisher<brain_box_msgs::msg::ParameterArray>::SharedPtr internal_pub_;
+    rclcpp::Subscription<brain_box_msgs::msg::KeyValue>::SharedPtr fp_params_sub_;
     rclcpp::Subscription<brain_box_msgs::msg::LogControl>::SharedPtr log_control_sub_;
     rclcpp::TimerBase::SharedPtr updateTimer_;
     std::string log_file_name_;
@@ -219,7 +225,7 @@ private:
 
     std::string global_yaml_file_location_ = "/home/ubuntu/ros2_ws/install/am_config/share/am_config/launch/vineyard/vineyard_mockup_amiga.yaml";
      
-    
+    const std::string param_server_outlet_topic_ = "/param_server/params";
     void getParams()
     {
         am::getParam<std::string>("global_yaml", global_yaml_file_location_, global_yaml_file_location_);
@@ -237,6 +243,72 @@ private:
         printYamlNode(config);
 
     }
+
+    bool extractNodeNameAndParamName(const std::string& input, std::string& nodeName, std::string& paramName) {
+    // Find the position of the first dot
+    size_t dotPos = input.find('.');
+
+    // If there's no dot, set nodeName as the input and paramName as empty
+    if (dotPos == std::string::npos) {
+        nodeName = input;
+        paramName = "";
+        return false;
+    }
+
+    // Extract the nodeName and paramName
+    nodeName = input.substr(0, dotPos);
+    paramName = input.substr(dotPos + 1);
+    return true;
+}
+
+    //flightplan parameters
+    void fpParamCB(const brain_box_msgs::msg::KeyValue::SharedPtr param_msg)
+    {
+        ROS_INFO("Received Parameters from FP");
+        std::shared_ptr<KeyValueStamped> key_value_ = std::make_shared<KeyValueStamped>(param_msg);
+        double d_value = 0.0;
+        int i_value = 0;
+        std::string s_value = "";
+        bool b_value = false;
+
+        brain_box_msgs::msg::ParameterArray pa;
+        brain_box_msgs::msg::Parameter p;
+        p.receiver_type = brain_box_msgs::msg::Parameter::RECEIVER_TYPE_LOCAL;
+        
+        if(!extractNodeNameAndParamName(key_value_->getKey(), p.node_name, p.parameter.name))
+        {
+            ROS_INFO("The received parameter does not have a correct ros2 structure: %s", key_value_->getKey().c_str());
+            return;
+        }
+
+        if(param_msg->type == brain_box_msgs::msg::KeyValue::DOUBLE)
+        {
+            key_value_->getValue(p.parameter.value.double_value);
+            ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %f" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), p.parameter.value.double_value);
+        }
+        else if(param_msg->type == brain_box_msgs::msg::KeyValue::INT)
+        {
+            int i_value = 0;
+            key_value_->getValue(i_value);
+            p.parameter.value.integer_value = i_value;
+            ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %d" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), (int)p.parameter.value.integer_value);
+        }
+        else if(param_msg->type == brain_box_msgs::msg::KeyValue::BOOL)
+        {
+            key_value_->getValue(p.parameter.value.bool_value);
+            ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %s" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), (p.parameter.value.bool_value?"True":"False"));
+        }
+        else if(param_msg->type == brain_box_msgs::msg::KeyValue::STRING)
+        {
+            key_value_->getValue(p.parameter.value.string_value);
+            ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %s" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), p.parameter.value.string_value.c_str());
+        }
+
+        pa.parameters.push_back(p);
+        internal_pub_->publish(pa);
+      
+    }
+
 
     void printYamlNode(const YAML::Node& node, const std::string& parentKey = "") 
     {
