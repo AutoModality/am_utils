@@ -200,7 +200,7 @@ public:
         internal_pub_ = am::Node::node->create_publisher<brain_box_msgs::msg::ParameterArray>(param_server_outlet_topic_, 1);
         log_control_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::LogControl>("/ctrl/log_control", 1, std::bind(&ParameterServer::logControlCB, this, std::placeholders::_1));
         fp_params_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::KeyValue>("/param_update",100, std::bind(&ParameterServer::fpParamCB, this, std::placeholders::_1));
-        param_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::ParameterArray>(param_server_outlet_topic_, 1, std::bind(&ParameterServer::paramsCB, this, std::placeholders::_1));
+        param_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::ParameterArray>(param_server_outlet_topic_, 10, std::bind(&ParameterServer::paramsCB, this, std::placeholders::_1));
 
     }
 
@@ -256,7 +256,7 @@ private:
     }
 
     // Extract the nodeName and paramName
-    nodeName = input.substr(0, dotPos);
+    nodeName = std::string("/") + input.substr(0, dotPos);
     paramName = input.substr(dotPos + 1);
     return true;
 }
@@ -457,6 +457,7 @@ private:
                     ROS_INFO(RED "The param change request for %s node is invalid. The node cannot be found" COLOR_RESET, param.node_name.c_str());
                     continue;
                 }
+                ROS_INFO("Sending %s to %s --> found node name: %s", param.parameter.name.c_str(), param.node_name.c_str(), it->first.c_str());
                 it->second->setParam(param.parameter);
             }
         }
