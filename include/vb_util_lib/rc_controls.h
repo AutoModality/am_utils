@@ -127,8 +127,11 @@ private:
 
     // DJI callback functions
     void djiRemoteCB(const sensor_msgs::msg::Joy::SharedPtr msg);
+    void djiPsdkRemoteCB(const sensor_msgs::msg::Joy::SharedPtr msg);
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr dji_rc_channels_sub_;
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr dji_psdk_rc_channels_sub_;
     void setDJIControls(const sensor_msgs::msg::Joy::SharedPtr  msg);
+    void setDJIPsdkControls(const sensor_msgs::msg::Joy::SharedPtr  msg);
     bool setDJIModeSwitch(double mode_switch, RC_MODE& state);
     bool setDJIGearSwitch(double gear_switch, RC_GEAR& state);
     void setDJIStickValue(double input, double& state) { state = input; }

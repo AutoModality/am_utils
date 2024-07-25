@@ -162,6 +162,7 @@ void RC_Controls::setSubscriber(rclcpp::Node::SharedPtr node) {
 	logitech_rc_channels_sub_ = node_->create_subscription<sensor_msgs::msg::Joy>("/joy", 10, std::bind(&RC_Controls::logitechRemoteCB, this, _1));
 
 	dji_rc_channels_sub_ = node_->create_subscription<sensor_msgs::msg::Joy>(am_topics::DJI_SDK_RC, 10,	std::bind(&RC_Controls::djiRemoteCB, this, _1));
+	dji_psdk_rc_channels_sub_ = node_->create_subscription<sensor_msgs::msg::Joy>("/wrapper/psdk_ros2/rc", 10,	std::bind(&RC_Controls::djiPsdkRemoteCB, this, _1));
 
 	px4_rc_channels_sub_ = node_->create_subscription<mavros_msgs::msg::RCIn>(am_topics::MAVROS_RC_IN, 10, std::bind(&RC_Controls::px4RemoteCB, this,_1));
 
@@ -208,6 +209,32 @@ void RC_Controls::setDJIControls(const sensor_msgs::msg::Joy::SharedPtr msg) {
 	roll_ = msg->axes[roll_idx_];
 	gear_ = msg->axes[gear_idx_];
 	mode_ = msg->axes[mode_idx_];
+
+	setDJIStickValue(yaw_, yaw);
+	setDJIStickValue(pitch_, pitch);
+	setDJIStickValue(roll_, roll);
+	setDJIStickValue(throttle_, throttle);
+
+	setDJIModeSwitch(mode_, mode);
+	setDJIGearSwitch(gear_, gear);
+
+	setEngagedState();
+
+//    printf("XXX RC: roll[%0.2f], pitch[%0.2f], yaw[%0.2f], throttle[%0.2f], gear[%0.2f], mode[%0.2f]\n",
+//          roll_, pitch_, yaw_, throttle_, gear_, mode_);
+}
+
+
+void RC_Controls::setDJIPsdkControls(const sensor_msgs::msg::Joy::SharedPtr msg) {
+
+	stamp = msg->header.stamp;
+
+	throttle_ = msg->axes[throttle_idx_];
+	yaw_ = msg->axes[yaw_idx_];
+	pitch_ = msg->axes[pitch_idx_];
+	roll_ = msg->axes[roll_idx_];
+	gear_ = msg->buttons[gear_idx_];
+	mode_ = msg->buttons[mode_idx_];
 
 	setDJIStickValue(yaw_, yaw);
 	setDJIStickValue(pitch_, pitch);
@@ -284,6 +311,15 @@ bool RC_Controls::setDJIGearSwitch(double gear_switch, RC_GEAR& state) {
 
 void RC_Controls::djiRemoteCB(const sensor_msgs::msg::Joy::SharedPtr  rc_msg) {
 	setDJIControls(rc_msg);
+
+    if (callback_ != NULL)
+    {
+        callback_(this);
+    }
+}
+
+void RC_Controls::djiPsdkRemoteCB(const sensor_msgs::msg::Joy::SharedPtr  rc_msg) {
+	setDJIPsdkControls(rc_msg);
 
     if (callback_ != NULL)
     {
