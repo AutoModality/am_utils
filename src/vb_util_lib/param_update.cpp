@@ -23,7 +23,9 @@ ParamUpdate::ParamUpdate(rclcpp::Node::SharedPtr n, bool publisher) : nh_(n), la
 	}
 	else
 	{
-		sub_ = nh_->create_subscription<brain_box_msgs::msg::KeyValue>(PARAM_UPDATE_TOPIC, 10, std::bind(&ParamUpdate::paramUpdateCB, this, _1));
+		//This is busted for ROS2. In ROS1, it was possible for every node to set every other nodes' parameters. In ROS2, every parameter is private 
+		//to each node and it is not accessible from outside.
+		//sub_ = nh_->create_subscription<brain_box_msgs::msg::KeyValue>(PARAM_UPDATE_TOPIC, 10, std::bind(&ParamUpdate::paramUpdateCB, this, _1));
 	}
 	ros_init_ = true;
 }

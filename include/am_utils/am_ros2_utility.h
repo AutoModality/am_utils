@@ -15,6 +15,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <any>
 #include <vb_util_lib/utility.h>
+#include <vb_util_lib/topics.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <super_lib/am_life_cycle.h>
 #include <nav_msgs/msg/odometry.hpp>
@@ -145,6 +146,13 @@ std::vector<T> toVector(const std::string& raw_str, char del)
 	}
 	return vec;
 }
+
+std::string getenv(const std::string &variable_name);
+std::string getAmId();
+std::string getAmPlatform();
+std::string getAmApplication();
+std::string getAmLocation();
+std::string getAmSensors();
 
 std::string toString(bool flag);
 

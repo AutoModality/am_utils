@@ -51,11 +51,33 @@ void Kinematics::_init() {
 	velLinear_[2] = 0.0;
 }
 
-void Kinematics::initROS(rclcpp::Node::SharedPtr n) {
+bool Kinematics::getTransform(std::pair<bool, geometry_msgs::msg::TransformStamped> &transform, 
+const std::string &parent, const std::string &child)
+{
+    if(transform.first)
+    {
+        return true;
+    }
+
+    if(transformer_.getTransform(parent, child, transform.second, 1.0, false))
+    {
+        transform.first = true;
+        return true;
+    }
+
+    ROS_INFO("Cannot find the transform between %s and %s", parent.c_str(), child.c_str());
+    return false;
+}
+
+void Kinematics::initROS(rclcpp::Node::SharedPtr n)
+{
+
     if (pub_on_change_ || pub_rate_ > 0.0)
     {
         publisher_ = true;
         pub_nh_ = n->create_publisher<nav_msgs::msg::Odometry>(topic_.c_str(), 1000);
+        asset_frame_pub_ = n->create_publisher<nav_msgs::msg::Odometry>("/ctrl/vx/vehicle/currentAF", 1000);
+        
 //        pub_nh_ = n->create_publisher<brain_box_msgs::msg::VxKinematics>(topic_.c_str(), 1000);
     }
     else
@@ -509,9 +531,19 @@ void Kinematics::sendKinematics() {
     nav_msgs::msg::Odometry ms;
 
     getOdometry(ms);
-//print(">>>>>>> SENDING KINEMATICS: ", true);
+    //print(">>>>>>> SENDING KINEMATICS: ", true);
     pub_nh_->publish(ms);
     // LOG_MSG(topic_, ms, 2); // TODO (dan) bag_logger
+
+    //publish odom in asset_frame
+    if(!getTransform(asset_frame_to_enu_tf_, "Asset_Frame", "Asset_ENU"))
+    {
+        return;
+    }
+    tf2::doTransform(ms.pose.pose, ms.pose.pose, asset_frame_to_enu_tf_.second);
+    ms.header.frame_id = "Asset_Frame";
+    ms.child_frame_id = "base_link";
+    asset_frame_pub_->publish(ms);
 }
 
 void Kinematics::updateCB(const nav_msgs::msg::Odometry::SharedPtr msg) {

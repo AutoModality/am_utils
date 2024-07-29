@@ -13,6 +13,9 @@ public:
 
         set_param_srv_ = am::Node::node->create_service<rcl_interfaces::srv::SetParameters>("/parameter_receiver_tester/set_parameters",
         std::bind(&ParamReceiver::setParamCB,this, std::placeholders::_1, std::placeholders::_2) );
+
+
+        testEnvVariables();
     }
 
     ~ParamReceiver()
@@ -28,6 +31,15 @@ private:
     double parameter_a {-10000.0};
     int parameter_b {-1};
     bool parameter_c {false};
+
+    void testEnvVariables()
+    {
+        ROS_INFO(GREEN "AM_PLATFORM: %s" COLOR_RESET, am::getAmPlatform().c_str());
+        ROS_INFO(GREEN "AM_ID: %s" COLOR_RESET, am::getAmId().c_str());
+        ROS_INFO(GREEN "AM_LOCATION: %s" COLOR_RESET, am::getAmLocation().c_str());
+        ROS_INFO(GREEN "AM_APPLICATION: %s" COLOR_RESET, am::getAmApplication().c_str());
+        ROS_INFO(GREEN "AM_SENSORS: %s" COLOR_RESET, am::getAmSensors().c_str());
+    }
 
     void getParams()
     {

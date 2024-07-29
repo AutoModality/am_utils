@@ -51,6 +51,7 @@ set(dependencies
     tf2_geometry_msgs
     tf2_ros
     visualization_msgs
+    cv_bridge
 )
 
 # find dependencies
@@ -124,6 +125,10 @@ add_executable(odometry_gps_validator src/nodes/odometry_gps_validator.cpp)
 target_link_libraries(odometry_gps_validator am_utils)
 ament_target_dependencies(odometry_gps_validator ${dependencies})
 
+add_executable(feature_status_list_publisher src/nodes/feature_status_list_publisher.cpp)
+target_link_libraries(feature_status_list_publisher am_utils)
+ament_target_dependencies(feature_status_list_publisher ${dependencies})
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -151,6 +156,7 @@ install(TARGETS
   parameter_server
   parameter_server_tester
   parameter_receiver_tester
+  feature_status_list_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

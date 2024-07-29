@@ -208,6 +208,7 @@ constexpr char am_topics::AMIGA_VELOCITY[];
 constexpr char am_topics::AMIGA_STATE[];
 constexpr char am_topics::AMIGA_EXTENDED_STATE[];
 
+
 constexpr char am_topics::SYGNAL_MCM_CMD[];
 constexpr char am_topics::SYGNAL_MCM_ENABLE[];
 constexpr char am_topics::SYGNAL_MCM_RESET_STATE[];

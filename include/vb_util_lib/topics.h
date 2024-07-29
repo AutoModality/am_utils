@@ -228,6 +228,7 @@ public:
 	static constexpr char AMIGA_STATE[] = "/amiga/state";
 	static constexpr char AMIGA_EXTENDED_STATE[] = "/amiga/extended_state";
 
+
 	static constexpr char SYGNAL_MCM_CMD[] = "/command";
 	static constexpr char SYGNAL_MCM_ENABLE[] = "/enable";
 	static constexpr char SYGNAL_MCM_RESET_STATE[] = "/reset_state";
@@ -236,7 +237,6 @@ public:
 	static constexpr char SYGNAL_MCM_FAULT[] = "/sygnal_fault";
 	static constexpr char SYGNAL_MCM_CONNECT_FCU[] = "/sygnal_mcm/connect_fcu";
 	static constexpr char SYGNAL_MCM_FCU_STATUS[] = "/sygnal_mcm/fcu_status";
-
 
 
 	static std::string addBodySuffix(const char *topic);
