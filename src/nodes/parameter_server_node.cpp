@@ -361,9 +361,15 @@ private:
                 return;
             }
             std::string yaml_file_name = BagLogger::getLogFileName("PM") + ".yaml";
+            
             // Write YAML node to a file
+            std::ostringstream oss;
             std::ofstream fout(yaml_file_name);
-            fout << yaml_data;
+            //fout << yaml_data;
+            oss << yaml_data;
+            std::string cleaned = cleanString(oss.str());
+            //ROS_INFO("oss: %s", cleaned.c_str());
+            fout << cleaned;
             fout.close();
 
             //txt writer
@@ -385,7 +391,6 @@ private:
         std::unordered_map<std::string, std::shared_ptr<am::NodeParam>>::iterator it = nodes_.begin();
         for(; it != nodes_.end(); ++it)
         {
-            
             std::unordered_map<std::string, rclcpp::ParameterValue>::iterator param_it = it->second->parameters_.begin();
             for(; param_it != it->second->parameters_.end(); ++param_it)
             {
@@ -397,6 +402,9 @@ private:
                     global_it->second = param_it->second;
                     continue;
                 }
+                
+                //ROS_INFO("src: %s, result: %s", to_string(param_it->second).c_str(), cleaned.c_str());
+
                 yaml_data[it->first.substr(1)][ros_str][param_it->first]= to_string(param_it->second);
             }         
         }
@@ -411,6 +419,36 @@ private:
         }
 
         return true;
+    }
+
+    std::string cleanString(const std::string &input)
+    {
+        std::string result;
+        for (size_t i = 0; i < input.size(); ++i) {
+            if (i < input.size() - 1 && input[i] == '"' && input[i + 1] == '[') {
+                result += '[';
+                ++i; // Skip the next character
+            } else if (i < input.size() - 1 && input[i] == ']' && input[i + 1] == '"') {
+                result += ']';
+                ++i; // Skip the next character
+            } else {
+                result += input[i];
+            }
+        }
+        return result;
+    }
+
+    bool isArray(const rclcpp::ParameterValue &pv)
+    {
+        if(pv.get_type() == rclcpp::ParameterType::PARAMETER_BOOL_ARRAY
+        || pv.get_type() == rclcpp::ParameterType::PARAMETER_INTEGER_ARRAY
+        || pv.get_type() == rclcpp::ParameterType::PARAMETER_DOUBLE_ARRAY
+        || pv.get_type() == rclcpp::ParameterType::PARAMETER_BYTE_ARRAY
+        || pv.get_type() == rclcpp::ParameterType::PARAMETER_STRING_ARRAY)
+        {
+            return true;
+        }
+        return false;
     }
 
     void logParameters()
