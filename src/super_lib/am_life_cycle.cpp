@@ -615,8 +615,10 @@ LifeCycleStatus AMLifeCycle::getStatus() const
 
 bool AMLifeCycle::setStatus(const LifeCycleStatus status)
 {
-  //if we are in error and want to leave it
-  if(life_cycle_info_.state != LifeCycleState::CONFIGURING && life_cycle_info_.status == LifeCycleStatus::ERROR && status != LifeCycleStatus::ERROR)  {
+  // if we are in error, we want to leave it after CONFIGURING (and INACTIVE for now).
+  if(life_cycle_info_.state != LifeCycleState::CONFIGURING && life_cycle_info_.state != LifeCycleState::INACTIVE && 
+    life_cycle_info_.status == LifeCycleStatus::ERROR && status != LifeCycleStatus::ERROR)  
+  {
     ROS_WARN_STREAM_THROTTLE( getThrottle(), "requested to change status from ERROR to " << life_cycle_mediator_.statusToString(status) << " [DFRE]");
   }
   else if (life_cycle_mediator_.setStatus(status, life_cycle_info_))

@@ -13,12 +13,6 @@ namespace am
   }
 
   AMStatAve::AMStatAve(const std::string& short_name, const std::string& long_name, uint32_t min_error, uint32_t min_warn,
-            uint32_t max_warn, uint32_t max_error)
-    : AMStatReset(short_name, long_name, min_error, min_warn, max_warn, max_error)
-  {
-  }
-
-  AMStatAve::AMStatAve(const std::string& short_name, const std::string& long_name, uint32_t min_error, uint32_t min_warn,
             uint32_t max_warn, uint32_t max_error, uint32_t min_min_error, uint32_t min_min_warn,
             uint32_t max_max_warn, uint32_t max_max_error)
     : AMStatReset(short_name, long_name, min_error, min_warn, max_warn, max_error)
@@ -113,6 +107,11 @@ namespace am
 
   uint32_t AMStatAve::getAve()
   {
+    if(value_ == 0)
+    {
+      return 0;
+    }
+    
     uint64_t ave_64 = ((float)total_ / (float)value_ + 0.5);
     uint32_t ave_32 = ave_64 > std::numeric_limits<uint32_t>::max() ? std::numeric_limits<uint32_t>::max() : ave_64;
     return ave_32;
@@ -128,16 +127,30 @@ namespace am
   std::string AMStatAve::getStrShort() 
   {
     std::stringstream ss;
-    ss << short_name_ << "-av:" << getAve() << "," << short_name_ << "-mx:" << getMax() << "," << short_name_
-       << "-mn:" << getMin();
+    if(!total_)
+    {
+      ss << short_name_ << "-av:0," << short_name_ << "-mx:0," << short_name_ << "-mn:0";
+    }
+    else
+    {
+      ss << short_name_ << "-av:" << getAve() << "," << short_name_ << "-mx:" << getMax() << "," << short_name_
+        << "-mn:" << getMin();
+    }
     return ss.str();
   }
 
   std::string AMStatAve::getStr() 
   {
     std::stringstream ss;
-    ss << long_name_ << " Ave: " << getAve() << "," << long_name_ << " Max: " << getMax() << "," << long_name_
-       << " Min: " << getMin();
+    if(!total_)
+    {
+      ss << long_name_ << " Ave: 0," << long_name_ << " Max: 0," << long_name_ << " Min: 0";
+    }
+    else
+    {
+      ss << long_name_ << " Ave: " << getAve() << "," << long_name_ << " Max: " << getMax() << "," << long_name_
+        << " Min: " << getMin();
+    }
     return ss.str();
   }
 

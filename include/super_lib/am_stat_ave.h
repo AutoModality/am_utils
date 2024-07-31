@@ -29,8 +29,6 @@ public:
   AMStatAve(const std::string& short_name, const std::string& long_name, uint32_t max_warn, uint32_t max_error);
 
   AMStatAve(const std::string& short_name, const std::string& long_name, uint32_t min_error, uint32_t min_warn,
-            uint32_t max_warn, uint32_t max_error);
-  AMStatAve(const std::string& short_name, const std::string& long_name, uint32_t min_error, uint32_t min_warn,
             uint32_t max_warn, uint32_t max_error, uint32_t min_min_error = 0, uint32_t min_min_warn = 0,
             uint32_t max_max_warn = std::numeric_limits<uint32_t>::max(),
             uint32_t max_max_error = std::numeric_limits<uint32_t>::max());
