@@ -42,13 +42,13 @@ namespace am
       {
         if (value_ > max_error_)
         {
-         ROS_ERROR_STREAM_THROTTLE(error_throttle_s, "stat: " << long_name_ << " exceeding max_error: " << value_
+         ROS_ERROR_STREAM_THROTTLE(error_throttle_s, "Stats: " << long_name_ << " exceeding max_error: " << value_
                                                                << " (max:" << max_error_ << ") [TF5R]");
           compoundStatus(status, LifeCycleStatus::ERROR);
         }
         else if (value_ > max_warn_)
         {
-         ROS_WARN_STREAM_THROTTLE(warn_throttle_s, "stat: " << long_name_ << " exceeding max_warn: " << value_ << " (max:" << max_warn_
+         ROS_WARN_STREAM_THROTTLE(warn_throttle_s, "Stats: " << long_name_ << " exceeding max_warn: " << value_ << " (max:" << max_warn_
                                                              << ") [PO9P]");
           compoundStatus(status, LifeCycleStatus::WARN);
         }
@@ -58,13 +58,13 @@ namespace am
       {
         if (value_ < min_error_)
         {
-         ROS_ERROR_STREAM_THROTTLE(error_throttle_s, "stat: " << long_name_ << " exceeding min_error: " << value_
+         ROS_ERROR_STREAM_THROTTLE(error_throttle_s, "Stats: " << long_name_ << " exceeding min_error: " << value_
                                                                << " (min:" << min_error_ << ") [K08K]");
           compoundStatus(status, LifeCycleStatus::ERROR);
         }
         else if (value_ < min_warn_)
         {
-         ROS_WARN_STREAM_THROTTLE(warn_throttle_s, "stat: " << long_name_ << " exceeding min_warn: " << value_ << " (min:" << min_warn_
+         ROS_WARN_STREAM_THROTTLE(warn_throttle_s, "Stats: " << long_name_ << " exceeding min_warn: " << value_ << " (min:" << min_warn_
                                                              << ") [H9H8]");
           compoundStatus(status, LifeCycleStatus::WARN);
         }
@@ -72,15 +72,16 @@ namespace am
 
       if(!validate_max_ && !validate_min_)
       {   
-          //report this warning once during first validation
-         ROS_WARN_STREAM_THROTTLE(9999, "stat: " << long_name_ << " lacks validation since min/max is not set [TRB5]");
+        //report this warning once during first validation
+        // TODO: i don't like this technique for onlyprinting once - an explicit flag would probably be better
+        ROS_WARN_STREAM_THROTTLE(9999, "Stats: " << long_name_ << " lacks validation since min/max is not set [TRB5]");
       }
     }
     else
     {
       //sample is required and not yet received
       status = LifeCycleStatus::ERROR;
-     ROS_ERROR_STREAM_THROTTLE(error_throttle_s, "stat: " << long_name_ << " no samples received [NAQE] ");
+     ROS_ERROR_STREAM_THROTTLE(error_throttle_s, "Stats: " << long_name_ << " no samples received [NAQE] ");
     }
     return status;
   }

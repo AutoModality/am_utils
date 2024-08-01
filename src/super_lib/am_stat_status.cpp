@@ -16,12 +16,12 @@ namespace am
     {
       if((LifeCycleStatus)value_ == LifeCycleStatus::WARN)
       {
-        ROS_WARN_STREAM_THROTTLE(warn_throttle_s, long_name_ << " warning");
+        ROS_WARN_STREAM_THROTTLE(warn_throttle_s, "Stats: " << long_name_ << " warning");
         compoundStatus(status, LifeCycleStatus::WARN);
       }
       else if((LifeCycleStatus)value_ == LifeCycleStatus::ERROR)
       {
-        ROS_ERROR_STREAM_THROTTLE(warn_throttle_s, long_name_ << " error");
+        ROS_ERROR_STREAM_THROTTLE(warn_throttle_s, "Stats: " << long_name_ << " error");
         compoundStatus(status, LifeCycleStatus::ERROR);
       }
     }

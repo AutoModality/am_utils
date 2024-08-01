@@ -36,14 +36,9 @@ void AMLifeCycle::initialize()
   // param would be: `/am_child_node/life_cycle/some_param` so no conflict with `/am_child_node/some_param`
   std::string param_prefix="life_cycle/";
   
-  //deprecated - prefix with life_cycle instead
   std::string default_state = "UNCONFIGURED";
-  param<std::string>("init_state", init_state_str, default_state);
   param<std::string>(param_prefix + "init_state", init_state_str, default_state);
-  
-  //deprecated - prefix with life_cycle instead
-  param<int>("configure_tolerance_s", configure_tolerance_s, 10);
-  param<int>(param_prefix + "configure_tolerance_s", configure_tolerance_s, configure_tolerance_s);
+  param<int>(param_prefix + "configure_tolerance_s", configure_tolerance_s, 10);
 
   // TODO: Introduce parameter for tolerant vs. aggressive mode. Tolerant does not act on node status, aggressive does.
 
@@ -100,7 +95,7 @@ bool AMLifeCycle::param(const std::string& param_name, T& param_val, const T& de
       ;
     }
     bool result = get_parameter_or<T>(param_name, param_val, default_val);
-    RCLCPP_INFO_STREAM(get_logger(), param_name << " = " << param_val);
+    RCLCPP_INFO_STREAM(get_logger(), "LifeCycle: " << param_name << " = " << param_val);
     return result;
 }
 
@@ -126,7 +121,7 @@ void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::Share
         configure();
         break;
       case LifeCycleCommand::CREATE:
-        ROS_WARN_STREAM("illegal command " << life_cycle_mediator_.commandToString(LifeCycleCommand::CREATE) << " [7YT8]");
+        ROS_WARN_STREAM("LifeCycle: illegal command " << life_cycle_mediator_.commandToString(LifeCycleCommand::CREATE) << " [7YT8]");
         break;
       case LifeCycleCommand::DEACTIVATE:
         transition("deactivate", LifeCycleState::ACTIVE, LifeCycleState::DEACTIVATING, LifeCycleState::INACTIVE,
@@ -148,7 +143,7 @@ void AMLifeCycle::transition(std::string transition_name, LifeCycleState initial
 {
     if (life_cycle_info_.state == initial_state)
     {
-      ROS_INFO_STREAM(transition_name << ", current state: " 
+      ROS_INFO_STREAM("LifeCycle: " << transition_name << ", current state: " 
           << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [ASWU]");
       
       setState(transition_state);
@@ -165,11 +160,11 @@ void AMLifeCycle::transition(std::string transition_name, LifeCycleState initial
     }
     else if (life_cycle_info_.state == final_state)
     {
-        ROS_DEBUG_STREAM("ignoring redundant " << transition_name << " [0393]");
+        ROS_DEBUG_STREAM("LifeCycle: ignoring redundant " << transition_name << " [0393]");
     }
     else
     {
-        ROS_WARN_STREAM("received illegal " << transition_name  
+        ROS_WARN_STREAM("LifeCycle: received illegal " << transition_name  
             << " in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [JGV5]");
     }
 }
@@ -180,12 +175,12 @@ void AMLifeCycle::doTransition(std::string transition_name, bool success, LifeCy
   logState();
   if (success)
   {
-    ROS_INFO_STREAM(transition_name << " succeeded");
+    ROS_INFO_STREAM("LifeCycle: " << transition_name << " succeeded");
     setState(success_state);
   }
   else
   {
-	  ROS_INFO_STREAM(transition_name << " failed");
+	  ROS_INFO_STREAM("LifeCycle: " << transition_name << " failed");
     setState(failure_state);
   }
 }
@@ -219,14 +214,14 @@ void AMLifeCycle::doCleanup(bool success)
 bool AMLifeCycle::onConfigure()
 { 
 
-  ROS_INFO("onConfigure called [POMH]");
+  ROS_INFO("LifeCycle: onConfigure called [POMH]");
   if(stats_list_.hasStats())
   {
     // LifeCycleStatus status = stats_list_.process(throttle_info_.warn_throttle_s, throttle_info_.error_throttle_s);
     LifeCycleStatus status = getStatus();
     if(!stats_initialized_)
     {
-       ROS_INFO_STREAM_THROTTLE(5, "stats not initialized");     
+       ROS_INFO_STREAM_THROTTLE(5, "LifeCycle: stats not initialized");     
     }
     else if(status != LifeCycleStatus::ERROR)
     {
@@ -234,7 +229,7 @@ bool AMLifeCycle::onConfigure()
     }
     else if (!withinConfigureTolerance())
     {
-      ROS_WARN_STREAM_THROTTLE(5, stats_list_.getStatsStr() << " blocked by stats past configure tolerance with status " << life_cycle_mediator_.statusToString(status) );
+      ROS_WARN_STREAM_THROTTLE(5, "LifeCycle: " << stats_list_.getStatsStr() << " blocked by stats past configure tolerance with status " << life_cycle_mediator_.statusToString(status) );
     }
   }
   //if there are no stats and request to configure, then configure
@@ -290,12 +285,12 @@ void AMLifeCycle::destroy()
 {
   if (life_cycle_mediator_.illegalDestroy(life_cycle_info_))
   {
-    ROS_INFO_STREAM("received illegal activate in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [45RT]");
+    ROS_INFO_STREAM("LifeCycle: received illegal activate in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [45RT]");
   }
   /* This condition is hit only if state equals FINALIZED. Checking SHUTTING_DOWN is redundant */
   else
   {
-    ROS_INFO_STREAM("current state: " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [RE45]");
+    ROS_INFO_STREAM("LifeCycle: current state: " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << " [RE45]");
     onDestroy();
   }
 }
@@ -345,7 +340,7 @@ void AMLifeCycle::error(std::string message, std::string error_code, bool forced
   std::string error_code_message = "Error[" + error_code + "] ";
   if(withinConfigureTolerance() && !forced)
   {
-    ROS_WARN_STREAM_THROTTLE(throttle_info_.warn_throttle_s,"Ignoring tolerant error for (" << configure_tolerance_s << "s) `" << message << "` " << error_code_message << "[GFRT]");
+    ROS_WARN_STREAM_THROTTLE(throttle_info_.warn_throttle_s,"LifeCycle: Ignoring tolerant error for (" << configure_tolerance_s << "s) `" << message << "` " << error_code_message << "[GFRT]");
   }
   else
   {
@@ -363,7 +358,7 @@ void AMLifeCycle::error(std::string message, std::string error_code, bool forced
       repeat_prefix = "Repeated ";
     }
     std::string error_explanation=forced_prefix + repeat_prefix + error_code_message;
-    ROS_ERROR_STREAM(message << " -> " << error_explanation << " [R45Y]" );
+    ROS_ERROR_STREAM("LifeCycle: " << message << " -> " << error_explanation << " [R45Y]" );
   }
 }
 
@@ -402,17 +397,17 @@ void AMLifeCycle::shutdown()
 {
   if (life_cycle_mediator_.shutdown(life_cycle_info_))
   {
-    ROS_INFO_STREAM("current state: " << life_cycle_mediator_.stateToString(life_cycle_info_.state));
+    ROS_INFO_STREAM("LifeCycle: current state: " << life_cycle_mediator_.stateToString(life_cycle_info_.state));
     setState(LifeCycleState::SHUTTING_DOWN);
     onShutdown();
   }
   else if (life_cycle_mediator_.redundantShutdown(life_cycle_info_))
   {
-    ROS_DEBUG_STREAM("ignoring redundant shutdown");
+    ROS_DEBUG_STREAM("iLifeCycle: gnoring redundant shutdown");
   }
   else
   {
-    ROS_INFO_STREAM("received illegal activate in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state));
+    ROS_INFO_STREAM("LifeCycle: received illegal activate in state " << life_cycle_mediator_.stateToString(life_cycle_info_.state));
   }
 }
 
@@ -555,7 +550,7 @@ void AMLifeCycle::heartbeatCB()
   }
 
   std::stringstream ss;
-  ss << life_cycle_mediator_.stateToString(life_cycle_info_.state) << "," << life_cycle_mediator_.statusToString(life_cycle_info_.status) << ","
+  ss << "LifeCycle: " << life_cycle_mediator_.stateToString(life_cycle_info_.state) << "," << life_cycle_mediator_.statusToString(life_cycle_info_.status) << ","
      << stats_list_.getStatsStrShort();
 
   double throttle_s = getThrottle();
@@ -599,12 +594,8 @@ void AMLifeCycle::setState(const LifeCycleState state)
 
   if (life_cycle_mediator_.setState(state, life_cycle_info_))
   {
-    ROS_INFO_STREAM("changing state from " << life_cycle_mediator_.stateToString(initial_state) << " to " << life_cycle_mediator_.stateToString(state));
+    ROS_INFO_STREAM("LifeCycle: changing state from " << life_cycle_mediator_.stateToString(initial_state) << " to " << life_cycle_mediator_.stateToString(state));
     sendNodeUpdate();
-  }
-  else
-  {
-    ROS_ERROR_STREAM("illegal state: " << (int)state);
   }
 }
 
@@ -619,16 +610,14 @@ bool AMLifeCycle::setStatus(const LifeCycleStatus status)
   if(life_cycle_info_.state != LifeCycleState::CONFIGURING && life_cycle_info_.state != LifeCycleState::INACTIVE && 
     life_cycle_info_.status == LifeCycleStatus::ERROR && status != LifeCycleStatus::ERROR)  
   {
-    ROS_WARN_STREAM_THROTTLE( getThrottle(), "requested to change status from ERROR to " << life_cycle_mediator_.statusToString(status) << " [DFRE]");
+    ROS_WARN_STREAM_THROTTLE( getThrottle(), "LifeCycle: requested to change status from ERROR to " << life_cycle_mediator_.statusToString(status) << " [DFRE]");
   }
   else if (life_cycle_mediator_.setStatus(status, life_cycle_info_))
   {
     sendNodeUpdate();
   }
-
   else
   {
-    ROS_ERROR_STREAM("illegal status: " << life_cycle_mediator_.statusToString(status));
   }
 
   return true;
