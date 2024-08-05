@@ -193,6 +193,79 @@ std::string toString(bool flag)
 	return (flag?"True":"False");
 }
 
+std::string toString(const rcl_interfaces::msg::Parameter &param)
+{
+	std::ostringstream oss;
+	switch (param.value.type) {
+		case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL:
+			oss << toString(param.value.bool_value);
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER:
+			oss << param.value.integer_value;
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE:
+			oss << param.value.double_value;
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
+			oss << param.value.string_value;
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_BYTE_ARRAY:
+			oss << "[";
+			for (size_t i = 0; i < param.value.byte_array_value.size(); ++i) {
+				if (i > 0) {
+					oss << ", ";
+				}
+				oss << static_cast<int>(param.value.byte_array_value[i]);
+			}
+			oss << "]";
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL_ARRAY:
+			oss << "[";
+			for (size_t i = 0; i < param.value.bool_array_value.size(); ++i) {
+				if (i > 0) {
+					oss << ", ";
+				}
+				oss << toString(param.value.bool_array_value[i]);
+			}
+			oss << "]";
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER_ARRAY:
+			oss << "[";
+			for (size_t i = 0; i < param.value.integer_array_value.size(); ++i) {
+				if (i > 0) {
+					oss << ", ";
+				}
+				oss << param.value.integer_array_value[i];
+			}
+			oss << "]";
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE_ARRAY:
+			oss << "[";
+			for (size_t i = 0; i < param.value.double_array_value.size(); ++i) {
+				if (i > 0) {
+					oss << ", ";
+				}
+				oss << param.value.double_array_value[i];
+			}
+			oss << "]";
+			break;
+		case rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY:
+			oss << "[";
+			for (size_t i = 0; i < param.value.string_array_value.size(); ++i) {
+				if (i > 0) {
+					oss << ", ";
+				}
+				oss << param.value.string_array_value[i];
+			}
+			oss << "]";
+			break;
+		default:
+			oss << "unknown type";
+	}
+
+	return oss.str();
+}
+
 
 std::string getPackagePath(const std::string &package_name)
 {

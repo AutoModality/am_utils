@@ -21,6 +21,8 @@ public:
     ParameterServer();
 
     ~ParameterServer();
+
+    void initialize();
 private:
     std::unordered_map<std::string, std::shared_ptr<am::NodeParamHandler>> nodes_;
     std::unordered_map<std::string, rclcpp::ParameterValue> global_parameters_;
@@ -29,7 +31,7 @@ private:
     rclcpp::Subscription<brain_box_msgs::msg::KeyValue>::SharedPtr fp_params_sub_;
     rclcpp::Subscription<brain_box_msgs::msg::LogControl>::SharedPtr log_control_sub_;
     rclcpp::TimerBase::SharedPtr updateTimer_;
-    std::string log_file_name_;
+    std::string update_param_file_name_;
     std::ofstream mFile;
     std::vector<std::string> black_list_ = {"transform_listener", "parameter_server", "ros2cli_daemon"};
 
@@ -61,6 +63,8 @@ private:
     void updateTimerCB();
     void updateNodesList();
     bool isNodeInBlackList(const std::string &node_name);
+
+    void recordParamUpdate(const brain_box_msgs::msg::Parameter &param, rclcpp::Time &stamp);
 };    
 }
 

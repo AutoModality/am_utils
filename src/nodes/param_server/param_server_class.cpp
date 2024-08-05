@@ -16,6 +16,19 @@ namespace am
 ParameterServer::ParameterServer()
 {
 
+}
+
+ParameterServer::~ParameterServer()
+{
+    if(mFile.is_open())
+    {
+        mFile.close();
+        ROS_INFO("File is closed");
+    }
+}
+
+void ParameterServer::initialize()
+{
     getParams();
     
     updateTimer_ = am::Node::node->create_wall_timer(am::toDuration(5.0), std::bind(&ParameterServer::updateTimerCB, this));
@@ -25,15 +38,6 @@ ParameterServer::ParameterServer()
     param_sub_ = am::Node::node->create_subscription<brain_box_msgs::msg::ParameterArray>(param_server_outlet_topic_, 10, std::bind(&ParameterServer::paramsCB, this, std::placeholders::_1));
 
 }
-
-ParameterServer::~ParameterServer()
-{
-    if(mFile.is_open())
-    {
-        mFile.close();
-    }
-}
-
     
 void ParameterServer::getParams()
 {
@@ -94,6 +98,7 @@ void ParameterServer::fpParamCB(const brain_box_msgs::msg::KeyValue::SharedPtr p
     if(param_msg->type == brain_box_msgs::msg::KeyValue::DOUBLE)
     {
         key_value_->getValue(p.parameter.value.double_value);
+        p.parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
         ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %f" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), p.parameter.value.double_value);
     }
     else if(param_msg->type == brain_box_msgs::msg::KeyValue::INT)
@@ -101,16 +106,19 @@ void ParameterServer::fpParamCB(const brain_box_msgs::msg::KeyValue::SharedPtr p
         int i_value = 0;
         key_value_->getValue(i_value);
         p.parameter.value.integer_value = i_value;
+        p.parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
         ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %d" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), (int)p.parameter.value.integer_value);
     }
     else if(param_msg->type == brain_box_msgs::msg::KeyValue::BOOL)
     {
         key_value_->getValue(p.parameter.value.bool_value);
+        p.parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_BOOL;
         ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %s" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), (p.parameter.value.bool_value?"True":"False"));
     }
     else if(param_msg->type == brain_box_msgs::msg::KeyValue::STRING)
     {
         key_value_->getValue(p.parameter.value.string_value);
+        p.parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
         ROS_INFO(GREEN "Received the following parameter: %s for node: %s --> %s" COLOR_RESET, p.parameter.name.c_str(), p.node_name.c_str(), p.parameter.value.string_value.c_str());
     }
 
@@ -161,7 +169,7 @@ void ParameterServer::printYamlNode(const YAML::Node& node, const std::string& p
 void ParameterServer::logControlCB(const brain_box_msgs::msg::LogControl::SharedPtr msg)
 {
     //start logging
-    if(msg->enable && !mFile.is_open())
+    if(msg->enable)
     {
         //yaml writer
         YAML::Node yaml_data;
@@ -180,17 +188,21 @@ void ParameterServer::logControlCB(const brain_box_msgs::msg::LogControl::Shared
         std::string cleaned = cleanString(oss.str());
         //ROS_INFO("oss: %s", cleaned.c_str());
         fout << cleaned;
-        fout.close();
+        fout.close();   
 
+        if(mFile.is_open())
+        {
+            mFile.close();
+        }
         //txt writer
-        log_file_name_ = BagLogger::getLogFileName("PM") + ".txt";   
-        mFile.open(log_file_name_);
-        logParameters();    
+        update_param_file_name_ = BagLogger::getLogFileName("PM") + ".txt";
+        mFile.open(update_param_file_name_);
+        //logParameters();    
     }
-    if(!msg->enable)
+    /*if(!msg->enable)
     {
         mFile.close();
-    }
+    }*/
 
 }
 
@@ -282,6 +294,7 @@ void ParameterServer::logParameters()
 
 void ParameterServer::paramsCB(const brain_box_msgs::msg::ParameterArray::SharedPtr msg)
 {
+    rclcpp::Time time_stamp = am::ClockNow();
     for(brain_box_msgs::msg::Parameter &param : msg->parameters)
     {
         //send global parameters
@@ -307,8 +320,26 @@ void ParameterServer::paramsCB(const brain_box_msgs::msg::ParameterArray::Shared
             }
             ROS_INFO("Sending %s to %s --> found node name: %s", param.parameter.name.c_str(), param.node_name.c_str(), it->first.c_str());
             it->second->setParam(param.parameter);
+            recordParamUpdate(param, time_stamp);
         }
     }
+}
+
+void ParameterServer::recordParamUpdate(const brain_box_msgs::msg::Parameter &param, rclcpp::Time &stamp)
+{
+    if(!mFile.is_open())
+    {
+        ROS_INFO("Param Update cannot be logged: MFile is not openned");
+        return;
+    }
+
+    
+
+    std::string param_str = std::to_string(stamp.seconds()) + "--->" + param.node_name + "." + param.parameter.name + ": " + am::toString(param.parameter) + "\n";
+
+    ROS_INFO("PARAM UPDATE IS SAVED AS: %s", param_str.c_str());
+    
+    mFile << param_str;
 }
 
 void ParameterServer::updateTimerCB()

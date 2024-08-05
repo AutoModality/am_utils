@@ -15,11 +15,10 @@ int main(int argc, char** argv)
 
     am::Node::node = am_node;
 
-
-
-    am::Node::node = std::make_shared<am::AMLifeCycle>("parameter_server");
-
     std::shared_ptr<am::ParameterServer> param_server = std::make_shared<am::ParameterServer>();
+    am_node->setParamServer(param_server);
+    param_server->initialize();
+
 
     rclcpp::spin(am::Node::node);
     rclcpp::shutdown();
