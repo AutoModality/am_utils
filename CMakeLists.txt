@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 project(am_utils)
 
-set(ROS_BUILD_TYPE Debug)
+#set(ROS_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 if(POLICY CMP0074)
-    cmake_policy(SET CMP0074 NEW)
+  cmake_policy(SET CMP0074 NEW)
 endif()
 
 # Default to C99
@@ -102,15 +105,19 @@ add_executable(node_killer src/nodes/node_killer.cpp)
 target_link_libraries(node_killer am_utils)
 ament_target_dependencies(node_killer ${dependencies})
 
-add_executable(parameter_server src/nodes/parameter_server_node.cpp)
+add_executable(parameter_server src/nodes/param_server/parameter_server_node.cpp
+                                src/nodes/param_server/parameter_server_main.cpp
+                                src/nodes/param_server/param_server_class.cpp
+                                src/nodes/param_server/param_server_stats.cpp
+                                src/nodes/param_server/node_param_handler_class.cpp)
 target_link_libraries(parameter_server am_utils)
 ament_target_dependencies(parameter_server ${dependencies})
 
-add_executable(parameter_server_tester src/nodes/parameter_server_tester_node.cpp)
+add_executable(parameter_server_tester src/nodes/param_server/parameter_server_tester_node.cpp)
 target_link_libraries(parameter_server_tester am_utils)
 ament_target_dependencies(parameter_server_tester ${dependencies})
 
-add_executable(parameter_receiver_tester src/nodes/parameter_receiver_tester.cpp)
+add_executable(parameter_receiver_tester src/nodes/param_server/parameter_receiver_tester.cpp)
 target_link_libraries(parameter_receiver_tester am_utils)
 ament_target_dependencies(parameter_receiver_tester ${dependencies})
 

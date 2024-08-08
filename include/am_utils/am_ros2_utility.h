@@ -156,6 +156,8 @@ std::string getAmSensors();
 
 std::string toString(bool flag);
 
+std::string toString(const rcl_interfaces::msg::Parameter &param);
+
 //this will convert a vector to a string
 std::string vectToStr(const std::vector<std::string>& vect);
 
