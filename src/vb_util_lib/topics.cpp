@@ -29,6 +29,14 @@ constexpr char am_topics::DJI_SDK_ODOMETRY[];
 constexpr char am_topics::DJI_SDK_SEND_DATA_TO_MOBILE[];
 constexpr char am_topics::DJI_SDK_CORRECTED_ATTITUDE[];
 
+constexpr char am_topics::PSDK_IMU[];
+constexpr char am_topics::PSDK_ATTITUDE[];
+constexpr char am_topics::PSDK_ODOM[];
+constexpr char am_topics::PSDK_ALTITUDE_BAROMETRIC[];
+constexpr char am_topics::PSDK_HEIGHT_ABOVE_GROUND[];
+constexpr char am_topics::PSDK_ALTITUDE_SEA_LEVEL[];
+constexpr char am_topics::PSDK_VELOCITY_GROUND_FUSED[];
+
 constexpr char am_topics::FEATURE_ODOMETRY[];
 constexpr char am_topics::FEATURE_SEARCH_IDS[];
 
