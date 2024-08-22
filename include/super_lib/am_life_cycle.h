@@ -56,6 +56,8 @@ class AMLifeCycle : public rclcpp::Node
      * max_configure_seconds_ to allow startup error tolerance.*/
     rclcpp::Time configure_start_time_;
 
+    bool stats_initialized_ = false;
+    
     /** initialization - called by  constructors. 
      */   
     void initialize();
@@ -64,9 +66,15 @@ class AMLifeCycle : public rclcpp::Node
 
     /* if status is valid, then set this status to status */
     bool setStatus(const LifeCycleStatus status);
-
+  /*
     void transition(std::string transition_name, LifeCycleState initial_state, LifeCycleState transition_state,
                     LifeCycleState new_state, std::function<void(void)> on_function);
+  */
+    void transition(std::string transition_name, LifeCycleState initial_state, 
+                LifeCycleState transition_state, LifeCycleState final_state, 
+                std::function<bool(void)> on_function, bool support_failure = false);
+
+                
     void doTransition(std::string transition_name, bool success, LifeCycleState success_state,
                       LifeCycleState failure_state);
     
@@ -120,21 +128,24 @@ class AMLifeCycle : public rclcpp::Node
      * @brief Function to be defined by the user.
      *        Called at the end of transition from INACTIVE to ACTIVE.
      */
-    virtual void onActivate();
+    //virtual void onActivate();
+    virtual bool onActivate();
     void doActivate(bool success);
 
     /**
      * @brief Function to be defined by the user.
      *        Called at the end of transition from INACTIVE to UNCONFIGURED.
      */
-    virtual void onCleanup();
+    //virtual void onCleanup();
+    virtual bool onCleanup();
     void doCleanup(bool success);
 
     /**
      * @brief Function to be defined by the user.
      *        Called at the end of transition from UNCONFIGURED to INACTIVE.
      */
-    virtual void onConfigure();
+    //virtual void onConfigure();
+    virtual bool onConfigure();
     void doConfigure(bool success);
     
     /**
@@ -146,7 +157,8 @@ class AMLifeCycle : public rclcpp::Node
      * @brief Function to be defined by the user.
      *        Called at the end of transition from ACTIVE to INACTIVE.
      */
-    virtual void onDeactivate();
+    //virtual void onDeactivate();
+    virtual bool onDeactivate();
     void doDeactivate(bool success);
 
     /**

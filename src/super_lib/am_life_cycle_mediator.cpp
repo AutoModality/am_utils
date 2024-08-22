@@ -1,8 +1,6 @@
+#include <am_utils/am_ros2_utility.h>
 #include <super_lib/am_life_cycle_mediator.h>
 #include <super_lib/am_life_cycle.h>
-
-
-
 
 namespace am
 {
@@ -96,29 +94,46 @@ bool AMLifeCycleMediator::stringToState(std::string& state_str, LifeCycleState& 
   return false;
 }
 
+// return true if status is changed
 bool AMLifeCycleMediator::setStatus(const LifeCycleStatus& status, LifeCycleInfo& info)
 {
-  if (status < AMLifeCycleMediator::FIRST_STATUS || status > AMLifeCycleMediator::LAST_STATUS) 
-    return false;
-
-  if(info.status != LifeCycleStatus::ERROR)
+  if (status < AMLifeCycleMediator::FIRST_STATUS || status > AMLifeCycleMediator::LAST_STATUS)
   {
-    info.status = status;
+    ROS_ERROR_STREAM("illegal status: " << statusToString(status));
+    return false;
   }
-  return true;
+
+  if(info.state == am::LifeCycleState::CONFIGURING || info.state == am::LifeCycleState::INACTIVE || info.status != LifeCycleStatus::ERROR)
+  {
+    if(info.status != status)
+    {
+      info.status = status;
+      return true;
+    }
+  }
+  return false;
 }
 LifeCycleStatus AMLifeCycleMediator::getStatus(const LifeCycleInfo& info) const
 {
   return info.status;
 }
 
+// return true if state is changed
 bool AMLifeCycleMediator::setState(const LifeCycleState& state, LifeCycleInfo& info)
 {
   if (state < AMLifeCycleMediator::FIRST_STATE || state > AMLifeCycleMediator::LAST_STATE) 
+  {
+    ROS_ERROR_STREAM("illegal state: " << stateToString(state));
     return false;
-    
-  info.state = state;
-  return true;
+  }
+
+  if(info.state != state)
+  {
+    info.state = state;
+    return true;
+  }
+
+  return false;
 }
 
 LifeCycleState AMLifeCycleMediator::getState(const LifeCycleInfo& info) const

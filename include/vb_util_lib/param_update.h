@@ -14,6 +14,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <vb_util_lib/key_value_stamped.h>
 #include <brain_box_msgs/msg/key_value.hpp>
+#include <am_utils/am_ros2_utility.h>
+#include <brain_box_msgs/msg/parameter_array.hpp>
 
 #define PARAM_UPDATE_TOPIC "/param_update"
 
@@ -43,6 +45,8 @@ public:
     void setCallback(std::function<void(KeyValueStamped&)> callback) {
         callback_ = callback;
     }
+
+    void publishToParamServer(std::vector<KeyValueStamped>& param_list);
 
     // Return the KeyValue object from the params list
     bool getParam(KeyValueStamped& param) {
@@ -120,6 +124,7 @@ private:
     KeyValueStamped* findParam(KeyValueStamped& kvs);
 
 	rclcpp::Publisher<brain_box_msgs::msg::KeyValue>::SharedPtr pub_;
+    rclcpp::Publisher<brain_box_msgs::msg::ParameterArray>::SharedPtr param_server_pub_;
 	rclcpp::Subscription<brain_box_msgs::msg::KeyValue>::SharedPtr sub_;
 	bool ros_init_ {false};
 

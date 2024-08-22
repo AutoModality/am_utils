@@ -34,6 +34,14 @@ public:
 	static constexpr char DJI_SDK_ODOMETRY[] = "/dji_osdk_ros/odometry";
 	static constexpr char DJI_SDK_SEND_DATA_TO_MOBILE[] = "/dji_osdk_ros/send_data_to_mobile";
 	static constexpr char DJI_SDK_CORRECTED_ATTITUDE[] = "/dji_osdk_ros/corrected_attitude";
+	
+	static constexpr char PSDK_IMU[] = "/wrapper/psdk_ros2/imu";
+	static constexpr char PSDK_ATTITUDE[] = "/wrapper/psdk_ros2/attitude";
+	static constexpr char PSDK_ODOM[] = "/wrapper/psdk_ros2/odom";
+	static constexpr char PSDK_ALTITUDE_BAROMETRIC[] = "/wrapper/psdk_ros2/altitude_barometric";
+	static constexpr char PSDK_HEIGHT_ABOVE_GROUND[] = "/wrapper/psdk_ros2/height_above_ground";
+	static constexpr char PSDK_ALTITUDE_SEA_LEVEL[] = "/wrapper/psdk_ros2/altitude_sea_level";
+	static constexpr char PSDK_VELOCITY_GROUND_FUSED[] = "/wrapper/psdk_ros2/velocity_ground_fused";
 
 	static constexpr char FEATURE_ODOMETRY[] = "/feature/odometry";
 	static constexpr char FEATURE_SEARCH_IDS[] = "/feature/search_ids";
