@@ -228,13 +228,14 @@ void RC_Controls::setDJIControls(const sensor_msgs::msg::Joy::SharedPtr msg) {
 void RC_Controls::setDJIPsdkControls(const sensor_msgs::msg::Joy::SharedPtr msg) {
 
 	stamp = msg->header.stamp;
-
-	throttle_ = msg->axes[throttle_idx_];
-	yaw_ = msg->axes[yaw_idx_];
-	pitch_ = msg->axes[pitch_idx_];
-	roll_ = msg->axes[roll_idx_];
-	gear_ = msg->buttons[gear_idx_];
-	mode_ = msg->buttons[mode_idx_];
+	float max_value = 10000.0;
+	// check idx properly and match to equivalent value
+	throttle_ = msg->axes[throttle_idx_] / max_value;
+	yaw_ = msg->axes[yaw_idx_] / max_value;
+	pitch_ = msg->axes[pitch_idx_] / max_value;
+	roll_ = msg->axes[roll_idx_] / max_value;
+	gear_ = msg->buttons[gear_idx_] / max_value;
+	mode_ = msg->buttons[mode_idx_] / max_value;
 
 	setDJIStickValue(yaw_, yaw);
 	setDJIStickValue(pitch_, pitch);
