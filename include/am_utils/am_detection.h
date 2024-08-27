@@ -11,9 +11,9 @@ struct Detection
 
     int class_id_{0};
     std::string class_name_;
-    double confidence{0.0};
-    cv::Scalar color{};
-    cv::Rect box{};
+    double confidence_{0.0};
+    cv::Scalar color_{};
+    cv::Rect box_{};
 };
 }
 
