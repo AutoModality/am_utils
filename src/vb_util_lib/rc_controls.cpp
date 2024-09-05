@@ -234,8 +234,8 @@ void RC_Controls::setDJIPsdkControls(const sensor_msgs::msg::Joy::SharedPtr msg)
 	yaw_ = msg->axes[yaw_idx_] / max_value;
 	pitch_ = msg->axes[pitch_idx_] / max_value;
 	roll_ = msg->axes[roll_idx_] / max_value;
-	gear_ = msg->buttons[gear_idx_] / max_value;
-	mode_ = msg->buttons[mode_idx_] / max_value;
+	gear_ = msg->buttons[gear_idx_];
+	mode_ = msg->buttons[mode_idx_];
 
 	setDJIStickValue(yaw_, yaw);
 	setDJIStickValue(pitch_, pitch);
