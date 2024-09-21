@@ -5,6 +5,32 @@
 
 namespace am
 {
+
+// std::ostream &operator << ( std::ostream& strm, LifeCycleCommand lccommand )
+std::string printLifeCycleCommand(LifeCycleCommand lccommand )
+{
+  switch (lccommand)
+  {
+    case LifeCycleCommand::CREATE:
+      return "CREATE";
+    case LifeCycleCommand::CONFIGURE:
+      return "CONFIGURE";
+    case LifeCycleCommand::CLEANUP:
+      return "CLEANUP";
+    case LifeCycleCommand::ACTIVATE:
+      return "ACTIVATE";
+    case LifeCycleCommand::DEACTIVATE:
+      return "DEACTIVATE";
+    case LifeCycleCommand::SHUTDOWN:
+      return "SHUTDOWN";
+    case LifeCycleCommand::DESTROY:
+      return "DESTROY";
+    // case LifeCycleCommand::LAST_COMMAND:
+    //   return "LAST_COMMAND";
+  }
+  return "Unclear LifeCycleCommand. Check ostream override.";
+}
+
 // static constexpr std::string AMLifeCycle::STATE_INVALID_STRING;
 // static constexpr std::string AMLifeCycle::STATE_UNCONFIGURED_STRING;
 
@@ -102,8 +128,10 @@ bool AMLifeCycle::param(const std::string& param_name, T& param_val, const T& de
 void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::SharedPtr msg)
 {
   // ROS_DEBUG_STREAM_THROTTLE(1.0, life_cycle_mediator_.commandToString((LifeCycleCommand)msg->command));
-  ROS_DEBUG_STREAM(life_cycle_mediator_.commandToString((LifeCycleCommand)msg->command));
+  ROS_WARN_STREAM(life_cycle_mediator_.commandToString((LifeCycleCommand)msg->command) << "---" << node_name_);
 
+  ROS_WARN_STREAM( !msg->node_name.compare(AMLifeCycle::BROADCAST_NODE_NAME) << " --or-- " << !msg->node_name.compare(node_name_) << "--and--" << am::printLifeCycleCommand((LifeCycleCommand)msg->command));
+  ROS_WARN_STREAM(msg->node_name << " | " << AMLifeCycle::BROADCAST_NODE_NAME << " | " << node_name_ );
   if (!msg->node_name.compare(AMLifeCycle::BROADCAST_NODE_NAME) || !msg->node_name.compare(node_name_))
   {
     // if this message is for us
@@ -118,6 +146,7 @@ void AMLifeCycle::lifecycleCB(const brain_box_msgs::msg::LifeCycleCommand::Share
                    std::bind(&AMLifeCycle::onCleanup, this), true);
         break;
       case LifeCycleCommand::CONFIGURE:
+        ROS_WARN_STREAM("lifecycleCB is sending Configure to  "<< node_name_);
         configure();
         break;
       case LifeCycleCommand::CREATE:
@@ -221,22 +250,27 @@ bool AMLifeCycle::onConfigure()
     LifeCycleStatus status = getStatus();
     if(!stats_initialized_)
     {
+      ROS_WARN("HARDIK: in here point 0 to configuring.");
        ROS_INFO_STREAM_THROTTLE(5, "LifeCycle: stats not initialized");     
     }
     else if(status != LifeCycleStatus::ERROR)
     {
+      ROS_WARN("HARDIK: in here point 1 to configuring.");
       doConfigure(true);
     }
     else if (!withinConfigureTolerance())
     {
+      ROS_WARN("HARDIK: in here point 1.5 to configuring.");
       ROS_WARN_STREAM_THROTTLE(5, "LifeCycle: " << stats_list_.getStatsStr() << " blocked by stats past configure tolerance with status " << life_cycle_mediator_.statusToString(status) );
     }
   }
   //if there are no stats and request to configure, then configure
   else
   {
+    ROS_WARN("HARDIK: in here point 2 to configuring.");
     doConfigure(true);
   }
+  ROS_WARN("HARDIK: in here point 3 to configuring.");
   return true;
 }
 
@@ -277,6 +311,7 @@ void AMLifeCycle::configure()
   {
     configure_start_time_= get_clock()->now();
   }
+  ROS_INFO_STREAM("HARDIK:::::: Sending a configure command to " << node_name_);
   transition("configure", LifeCycleState::UNCONFIGURED, LifeCycleState::CONFIGURING, LifeCycleState::INACTIVE,
     std::bind(&AMLifeCycle::onConfigure, this), true);
 }
