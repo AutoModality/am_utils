@@ -15,12 +15,16 @@ ImuDelta::~ImuDelta()
 
 void ImuDelta::updateImu(const sensor_msgs::msg::Imu::SharedPtr &src, sensor_msgs::msg::Imu &res)
 {
+    updateImu(*src, res);
+}
 
-    initialize(src->orientation);
+void ImuDelta::updateImu(const sensor_msgs::msg::Imu &src, sensor_msgs::msg::Imu &res)
+{
+    initialize(src.orientation);
 
-    res.header = src->header;
+    res.header = src.header;
     double roll = 0.0, pitch = 0.0, yaw = 0.0;
-    am::Rotate::getRPY(src->orientation, roll, pitch, yaw);
+    am::Rotate::getRPY(src.orientation, roll, pitch, yaw);
     if(use_original_roll_)
     {
         roll = am::Rotate::wrap_pi(roll - init_roll_);
@@ -32,7 +36,7 @@ void ImuDelta::updateImu(const sensor_msgs::msg::Imu::SharedPtr &src, sensor_msg
 
     yaw = am::Rotate::wrap_pi(yaw - init_yaw_);
 
-    res = *src;
+    res = src;
     res.orientation = am::Rotate::toQuaternionMsg(roll, pitch, yaw);
 }
 

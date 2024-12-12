@@ -15,6 +15,8 @@ public:
 
     void updateImu(const sensor_msgs::msg::Imu::SharedPtr &src, sensor_msgs::msg::Imu &res);
 
+    void updateImu(const sensor_msgs::msg::Imu &src, sensor_msgs::msg::Imu &res);
+
     void initialize(const geometry_msgs::msg::Quaternion &q);
 
     void reset();
