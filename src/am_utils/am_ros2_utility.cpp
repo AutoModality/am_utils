@@ -193,6 +193,15 @@ std::string toString(bool flag)
 	return (flag?"True":"False");
 }
 
+//Pre-C++20
+std::string toString(double value, int precision)
+{
+	std::ostringstream oss;
+    oss.precision(precision);            // Set precision to 1 decimal point
+    oss << std::fixed << value;  // Use fixed-point notation
+    return oss.str();
+}
+
 std::string toString(const rcl_interfaces::msg::Parameter &param)
 {
 	std::ostringstream oss;
