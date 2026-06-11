@@ -18,6 +18,7 @@
 //# key="FP_EXECUTE" value="id"			execute flight plan with id
 //# key="FP_ABORT" value=""  			abort currently executing flight plan
 //# key="FP_PAUSE" value=""				pause currently executing flight plan
+//# key="FP_LOAD_XML_FILE value="file name"  load XML flight plan from file
 
 /**
  * Defines for the commands used in VxFlightPlan service requests
@@ -31,6 +32,7 @@ enum class FP_CMD { FP_LOAD=0,
     FP_START,
 	FP_ABORT,
 	FP_PAUSE,
+	FP_LOAD_XML_FILE,
 };
 
 extern std::string FP_CMD_KEY[];

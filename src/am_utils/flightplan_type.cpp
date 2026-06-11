@@ -16,6 +16,7 @@ std::string FP_CMD_KEY[] {
         "FP_START",
 		"FP_ABORT",
 		"FP_PAUSE",
+		"FP_LOAD_XML_FILE",
 };
 
 
