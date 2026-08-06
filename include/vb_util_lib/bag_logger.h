@@ -25,6 +25,7 @@
 
 
 #define DEFAULT_BAG_DIR "/var/log/amros/"
+#define MOUNTED_MEDIA_DIR "/mnt/usb/"
 #define DEFAULT_MEDIA_DIR "/media/amros"
 
 
