@@ -143,6 +143,9 @@ install(DIRECTORY include/
 install(DIRECTORY launch/
         DESTINATION share/${PROJECT_NAME}
     )
+install(DIRECTORY config
+        DESTINATION share/${PROJECT_NAME}
+    )
 install(
   TARGETS am_utils
   EXPORT am_utilsTargets
