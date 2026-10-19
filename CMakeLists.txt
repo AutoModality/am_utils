@@ -26,6 +26,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set(dependencies
+  ament_index_cpp
 	brain_box_msgs
 	builtin_interfaces
 	camera_info_manager
