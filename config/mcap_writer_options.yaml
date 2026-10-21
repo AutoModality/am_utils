@@ -1,0 +1,4 @@
+compression: "Zstd"
+compressionLevel: "Fastest"
+chunkSize: 786432
+noChunkCRC: true

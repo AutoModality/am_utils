@@ -173,6 +173,8 @@ void BagLogger::startLogging(std::string prefix, unsigned log_level)
 
     rosbag2_storage::StorageOptions storage_options;
     storage_options.uri = /*std::string("sqlite:///") +*/ file_name_;
+    storage_options.storage_id = "mcap";
+    storage_options.storage_config_uri = ament_index_cpp::get_package_share_directory("am_utils") + "/config/mcap_writer_options.yaml";
     writer_ = std::make_unique<rosbag2_cpp::Writer>();
     writer_->open(storage_options);
     printf("Opening bag file %s\n", file_name_.c_str());
